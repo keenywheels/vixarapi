@@ -54,6 +54,7 @@ func (app *App) Run() error {
 	}
 
 	// create and run main http server
+	// TODO: continue there
 
 	return nil
 }

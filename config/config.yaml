@@ -1,0 +1,19 @@
+app:
+  http:
+    port: :8080
+  cors:
+    allow_origins: ["http://localhost:3000"]
+    allow_credentials: true
+    max_age: 24h
+  logger:
+    loglvl: debug
+    mode: development
+    encoding: console
+
+postgres:
+  host: localhost
+  port: 5432
+  user: user
+  password: password
+  database: db
+  sslmode: disable

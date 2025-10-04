@@ -1,0 +1,75 @@
+openapi: 3.1.0
+
+info:
+  version: 1.0.0
+  title: Auth API
+  description: API for users' authentication
+
+servers:
+  - url: http://localhost:8080/api/v1/
+
+paths:
+  /api/v1/domain/example:
+    post:
+      tags: [domain]
+      summary: Example endpoint
+      operationId: example
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExampleDomainRequest'
+      responses:
+        '200':
+          description: Got valid data
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/ExampleDomainResponse'
+        '400':
+          description: Wrong request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Wrong creds
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    ExampleDomainRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          minLength: 4
+          maxLength: 64
+        username:
+          type: string
+          minLength: 4
+          maxLength: 64
+        secret:
+          type: string
+          minLength: 8
+          maxLength: 64
+      required: [ email, username, secret ]
+    ExampleDomainResponse:
+      type: object
+      properties:
+        message:
+          type: string
+        length:
+          type: integer
+      required: [message, length]
+
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+      required: [error]

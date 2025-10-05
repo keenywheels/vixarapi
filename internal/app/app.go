@@ -6,7 +6,9 @@ import (
 	"net/http"
 
 	oas "github.com/keenywheels/backend/internal/api/v1"
-	httpdomain "github.com/keenywheels/backend/internal/example_domain/delivery/http/v1"
+	interestapi "github.com/keenywheels/backend/internal/interest/delivery/http/v1"
+	interestrepo "github.com/keenywheels/backend/internal/interest/repository"
+	"github.com/keenywheels/backend/internal/interest/service"
 	"github.com/keenywheels/backend/pkg/cors"
 	"github.com/keenywheels/backend/pkg/httpserver"
 	"github.com/keenywheels/backend/pkg/httputils"
@@ -113,7 +115,9 @@ func (app *App) initLogger() {
 // initRouter creates router using ogen
 func (app *App) initRouter() (http.Handler, error) {
 	// create handler
-	domainHandler := httpdomain.NewController()
+	interestRepo := interestrepo.New()
+	interestSvc := service.New(interestRepo)
+	interestHandler := interestapi.New(interestSvc)
 
 	// create custom handlers
 	notFoundHandler := func(w http.ResponseWriter, r *http.Request) {
@@ -125,7 +129,7 @@ func (app *App) initRouter() (http.Handler, error) {
 	}
 
 	// create ogen http server
-	srv, err := oas.NewServer(domainHandler,
+	srv, err := oas.NewServer(interestHandler,
 		oas.WithNotFound(notFoundHandler),
 		oas.WithErrorHandler(errorHandler),
 	)

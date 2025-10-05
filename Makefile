@@ -1,5 +1,7 @@
 GO := go
 
+# TODO: добавить остальные таргеты
+
 .PHONY: build
 build:
 	$(GO) build -o bin/app cmd/app/main.go

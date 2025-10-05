@@ -8,12 +8,12 @@ import (
 
 // Handler handles operations described by OpenAPI v3 specification.
 type Handler interface {
-	// Example implements example operation.
+	// GetAllInterest implements getAllInterest operation.
 	//
-	// Example endpoint.
+	// Get interest for specified token in all time.
 	//
-	// POST /api/v1/domain/example
-	Example(ctx context.Context, req *ExampleDomainRequest) (ExampleRes, error)
+	// POST /api/v1/interest/all
+	GetAllInterest(ctx context.Context, req *GetAllInterestRequest) (GetAllInterestRes, error)
 }
 
 // Server implements http server based on OpenAPI v3 specification and

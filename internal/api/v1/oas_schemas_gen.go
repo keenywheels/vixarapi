@@ -17,75 +17,69 @@ func (s *Error) SetError(val string) {
 	s.Error = val
 }
 
-type ExampleBadRequest Error
+type GetAllInterestBadRequest Error
 
-func (*ExampleBadRequest) exampleRes() {}
+func (*GetAllInterestBadRequest) getAllInterestRes() {}
 
-// Ref: #/components/schemas/ExampleDomainRequest
-type ExampleDomainRequest struct {
-	Email    string `json:"email"`
-	Username string `json:"username"`
-	Secret   string `json:"secret"`
+type GetAllInterestInternalServerError Error
+
+func (*GetAllInterestInternalServerError) getAllInterestRes() {}
+
+type GetAllInterestOKApplicationJSON []Interest
+
+func (*GetAllInterestOKApplicationJSON) getAllInterestRes() {}
+
+// Ref: #/components/schemas/GetAllInterestRequest
+type GetAllInterestRequest struct {
+	Token string `json:"token"`
 }
 
-// GetEmail returns the value of Email.
-func (s *ExampleDomainRequest) GetEmail() string {
-	return s.Email
+// GetToken returns the value of Token.
+func (s *GetAllInterestRequest) GetToken() string {
+	return s.Token
 }
 
-// GetUsername returns the value of Username.
-func (s *ExampleDomainRequest) GetUsername() string {
-	return s.Username
+// SetToken sets the value of Token.
+func (s *GetAllInterestRequest) SetToken(val string) {
+	s.Token = val
 }
 
-// GetSecret returns the value of Secret.
-func (s *ExampleDomainRequest) GetSecret() string {
-	return s.Secret
+// Ref: #/components/schemas/Interest
+type Interest struct {
+	Timestamp int64            `json:"timestamp"`
+	Features  InterestFeatures `json:"features"`
 }
 
-// SetEmail sets the value of Email.
-func (s *ExampleDomainRequest) SetEmail(val string) {
-	s.Email = val
+// GetTimestamp returns the value of Timestamp.
+func (s *Interest) GetTimestamp() int64 {
+	return s.Timestamp
 }
 
-// SetUsername sets the value of Username.
-func (s *ExampleDomainRequest) SetUsername(val string) {
-	s.Username = val
+// GetFeatures returns the value of Features.
+func (s *Interest) GetFeatures() InterestFeatures {
+	return s.Features
 }
 
-// SetSecret sets the value of Secret.
-func (s *ExampleDomainRequest) SetSecret(val string) {
-	s.Secret = val
+// SetTimestamp sets the value of Timestamp.
+func (s *Interest) SetTimestamp(val int64) {
+	s.Timestamp = val
 }
 
-// Ref: #/components/schemas/ExampleDomainResponse
-type ExampleDomainResponse struct {
-	Message string `json:"message"`
-	Length  int    `json:"length"`
+// SetFeatures sets the value of Features.
+func (s *Interest) SetFeatures(val InterestFeatures) {
+	s.Features = val
 }
 
-// GetMessage returns the value of Message.
-func (s *ExampleDomainResponse) GetMessage() string {
-	return s.Message
+type InterestFeatures struct {
+	Interest int `json:"interest"`
 }
 
-// GetLength returns the value of Length.
-func (s *ExampleDomainResponse) GetLength() int {
-	return s.Length
+// GetInterest returns the value of Interest.
+func (s *InterestFeatures) GetInterest() int {
+	return s.Interest
 }
 
-// SetMessage sets the value of Message.
-func (s *ExampleDomainResponse) SetMessage(val string) {
-	s.Message = val
+// SetInterest sets the value of Interest.
+func (s *InterestFeatures) SetInterest(val int) {
+	s.Interest = val
 }
-
-// SetLength sets the value of Length.
-func (s *ExampleDomainResponse) SetLength(val int) {
-	s.Length = val
-}
-
-func (*ExampleDomainResponse) exampleRes() {}
-
-type ExampleUnauthorized Error
-
-func (*ExampleUnauthorized) exampleRes() {}

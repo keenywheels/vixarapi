@@ -30,22 +30,22 @@ func (c *codeRecorder) WriteHeader(status int) {
 	c.ResponseWriter.WriteHeader(status)
 }
 
-// handleExampleRequest handles example operation.
+// handleGetAllInterestRequest handles getAllInterest operation.
 //
-// Example endpoint.
+// Get interest for specified token in all time.
 //
-// POST /api/v1/domain/example
-func (s *Server) handleExampleRequest(args [0]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
+// POST /api/v1/interest/all
+func (s *Server) handleGetAllInterestRequest(args [0]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
 	statusWriter := &codeRecorder{ResponseWriter: w}
 	w = statusWriter
 	otelAttrs := []attribute.KeyValue{
-		otelogen.OperationID("example"),
+		otelogen.OperationID("getAllInterest"),
 		semconv.HTTPRequestMethodKey.String("POST"),
-		semconv.HTTPRouteKey.String("/api/v1/domain/example"),
+		semconv.HTTPRouteKey.String("/api/v1/interest/all"),
 	}
 
 	// Start a span for this request.
-	ctx, span := s.cfg.Tracer.Start(r.Context(), ExampleOperation,
+	ctx, span := s.cfg.Tracer.Start(r.Context(), GetAllInterestOperation,
 		trace.WithAttributes(otelAttrs...),
 		serverSpanKind,
 	)
@@ -100,11 +100,11 @@ func (s *Server) handleExampleRequest(args [0]string, argsEscaped bool, w http.R
 		}
 		err          error
 		opErrContext = ogenerrors.OperationContext{
-			Name: ExampleOperation,
-			ID:   "example",
+			Name: GetAllInterestOperation,
+			ID:   "getAllInterest",
 		}
 	)
-	request, close, err := s.decodeExampleRequest(r)
+	request, close, err := s.decodeGetAllInterestRequest(r)
 	if err != nil {
 		err = &ogenerrors.DecodeRequestError{
 			OperationContext: opErrContext,
@@ -120,22 +120,22 @@ func (s *Server) handleExampleRequest(args [0]string, argsEscaped bool, w http.R
 		}
 	}()
 
-	var response ExampleRes
+	var response GetAllInterestRes
 	if m := s.cfg.Middleware; m != nil {
 		mreq := middleware.Request{
 			Context:          ctx,
-			OperationName:    ExampleOperation,
-			OperationSummary: "Example endpoint",
-			OperationID:      "example",
+			OperationName:    GetAllInterestOperation,
+			OperationSummary: "Get interest for specified token in all time",
+			OperationID:      "getAllInterest",
 			Body:             request,
 			Params:           middleware.Parameters{},
 			Raw:              r,
 		}
 
 		type (
-			Request  = *ExampleDomainRequest
+			Request  = *GetAllInterestRequest
 			Params   = struct{}
-			Response = ExampleRes
+			Response = GetAllInterestRes
 		)
 		response, err = middleware.HookMiddleware[
 			Request,
@@ -146,12 +146,12 @@ func (s *Server) handleExampleRequest(args [0]string, argsEscaped bool, w http.R
 			mreq,
 			nil,
 			func(ctx context.Context, request Request, params Params) (response Response, err error) {
-				response, err = s.h.Example(ctx, request)
+				response, err = s.h.GetAllInterest(ctx, request)
 				return response, err
 			},
 		)
 	} else {
-		response, err = s.h.Example(ctx, request)
+		response, err = s.h.GetAllInterest(ctx, request)
 	}
 	if err != nil {
 		defer recordError("Internal", err)
@@ -159,7 +159,7 @@ func (s *Server) handleExampleRequest(args [0]string, argsEscaped bool, w http.R
 		return
 	}
 
-	if err := encodeExampleResponse(response, w, span); err != nil {
+	if err := encodeGetAllInterestResponse(response, w, span); err != nil {
 		defer recordError("EncodeResponse", err)
 		if !errors.Is(err, ht.ErrInternalServerErrorResponse) {
 			s.cfg.ErrorHandler(ctx, w, r, err)

@@ -14,8 +14,8 @@ import (
 	"github.com/ogen-go/ogen/validate"
 )
 
-func (s *Server) decodeExampleRequest(r *http.Request) (
-	req *ExampleDomainRequest,
+func (s *Server) decodeGetAllInterestRequest(r *http.Request) (
+	req *GetAllInterestRequest,
 	close func() error,
 	rerr error,
 ) {
@@ -54,7 +54,7 @@ func (s *Server) decodeExampleRequest(r *http.Request) (
 
 		d := jx.DecodeBytes(buf)
 
-		var request ExampleDomainRequest
+		var request GetAllInterestRequest
 		if err := func() error {
 			if err := request.Decode(d); err != nil {
 				return err

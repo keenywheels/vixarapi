@@ -13,6 +13,7 @@ import (
 	"github.com/keenywheels/backend/pkg/logger"
 	"github.com/keenywheels/backend/pkg/logger/zap"
 	mw "github.com/keenywheels/backend/pkg/middleware"
+	"golang.org/x/sync/errgroup"
 )
 
 // middleware allias for middleware funcs
@@ -54,34 +55,21 @@ func (app *App) Run() error {
 	}
 
 	// create and run main http server
-	// TODO: continue there
+	apiSrv := app.createHttpServer(context.Background(), mux)
+
+	g, ctx := errgroup.WithContext(context.Background())
+
+	g.Go(func() error {
+		app.logger.Infof("http api server is running on %s", apiSrv.GetAddr())
+		return apiSrv.Run(ctx)
+	})
+
+	if err := g.Wait(); err != nil {
+		app.logger.Error("server error: %v", err)
+		return err
+	}
 
 	return nil
-}
-
-func (app *App) startApiServer(ctx context.Context, h http.Handler) error {
-	opts := []httpserver.Option{}
-	httpCfg := app.cfg.AppCfg.HttpCfg
-
-	// apply opts
-	if len(httpCfg.Port) != 0 {
-		opts = append(opts, httpserver.Port(httpCfg.Port))
-	}
-
-	if httpCfg.ReadTimeout != 0 {
-		opts = append(opts, httpserver.ReadTimeout(httpCfg.ReadTimeout))
-	}
-
-	if httpCfg.WriteTimeout != 0 {
-		opts = append(opts, httpserver.WriteTimeout(httpCfg.WriteTimeout))
-	}
-
-	if httpCfg.ShutdownTimeout != 0 {
-		opts = append(opts, httpserver.ShutdownTimeout(httpCfg.ShutdownTimeout))
-	}
-
-	// run server and return error
-	return httpserver.New(context.Background(), h, opts...).Run(ctx)
 }
 
 // initLogger create new Logger based on config
@@ -132,7 +120,7 @@ func (app *App) initRouter() (http.Handler, error) {
 		httputils.NotFoundJSON(w)
 	}
 
-	errorHandler := func(w http.ResponseWriter, r *http.Request) {
+	errorHandler := func(_ context.Context, w http.ResponseWriter, r *http.Request, err error) {
 		httputils.InternalErrorJSON(w)
 	}
 

@@ -4,7 +4,7 @@ import "os"
 
 // default opts values
 const (
-	defaultConfigPath = "./config/config.yaml"
+	defaultConfigPath = "./config"
 )
 
 // envs

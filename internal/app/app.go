@@ -145,7 +145,7 @@ func (app *App) initRouter() (http.Handler, error) {
 		mux = m(mux)
 	}
 
-	return srv, nil
+	return mux, nil
 }
 
 // prepareMiddlewares generates all middleware to be used in app

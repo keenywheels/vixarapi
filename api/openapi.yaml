@@ -6,7 +6,7 @@ info:
   description: Public API for Vixar
 
 servers:
-  - url: http://localhost:8080/api/v1/
+  - url: http://localhost:8000/api/v1/
 
 paths:
   /api/v1/interest/all:

@@ -1,41 +1,42 @@
 # paths
 ENV_PATH := .env.dev
-DOCKER_COMPOSE_PATH = ./docker-compose.yaml
+DOCKER_COMPOSE_PATH = ./build/compose.yaml
 
 # exec
 GO := go
 DOCKER_COMPOSE := docker compose -f $(DOCKER_COMPOSE_PATH) --env-file $(ENV_PATH)
 
-# ======================================================================
-# APP MANAGEMENT
 .PHONY: build
-build:
-	@$(GO) build -o bin/app cmd/app/main.go
-	@echo "[MAKE] done building app"
+build: clean build/bin/vixarapi
 
-.PHONY: generate-api
-generate-api:
-	@ogen --target internal/api/v1/ --clean api/openapi.yaml
-	@echo "[MAKE] done generating user api"
+build/bin/vixarapi:
+	$(GO) build -o $(@) ./cmd/vixarapi/main.go
 
-# ======================================================================
-# DOCKER-COMPOSE
+.PHONY: clean
+clean:
+	rm -rf build/bin/*
+
+.PHONY: tidyvendor
+tidyvendor:
+	$(GO) mod tidy
+	$(GO) mod vendor
+
+.PHONY: generate
+generate:
+	$(GO) generate ./...
+
 .PHONY: docker-build
 docker-build:
-	@$(DOCKER_COMPOSE) build
-	@echo "[MAKE] build docker images"
+	$(DOCKER_COMPOSE) build
 
 .PHONY: docker-up
 docker-up:
-	@$(DOCKER_COMPOSE) up -d
-	@echo "[MAKE] done starting containers"
+	$(DOCKER_COMPOSE) up -d
 
 .PHONY: docker-stop
 docker-stop:
-	@$(DOCKER_COMPOSE) stop
-	@echo "[MAKE] done stopping containers"
+	$(DOCKER_COMPOSE) stop
 
 .PHONY: docker-down
 docker-down:
-	@$(DOCKER_COMPOSE) down -v
-	@echo "[MAKE] done removing containers"
+	$(DOCKER_COMPOSE) down -v

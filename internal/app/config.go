@@ -73,9 +73,7 @@ type Config struct {
 func LoadConfig(path string) (*Config, error) {
 	v := viper.New()
 
-	v.SetConfigName("config")
-	v.SetConfigType("yaml")
-	v.AddConfigPath(path)
+	v.SetConfigFile(path)
 
 	if err := v.ReadInConfig(); err != nil {
 		return nil, fmt.Errorf("read config error: %w", err)

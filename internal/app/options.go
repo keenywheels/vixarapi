@@ -1,10 +1,13 @@
 package app
 
-import "os"
+import (
+	"flag"
+	"os"
+)
 
 // default opts values
 const (
-	defaultConfigPath = "./config"
+	defaultConfigPath = "./configs/config.yaml"
 )
 
 // envs
@@ -29,4 +32,12 @@ func (opts *Options) LoadEnv() {
 	if val, ok := os.LookupEnv(envConfigPath); ok {
 		opts.ConfigPath = val
 	}
+}
+
+// LoadFlags updates options with values from cmd flags
+func (opts *Options) LoadFlags() {
+	configFlag := flag.String("config", opts.ConfigPath, "path to config file")
+	flag.Parse()
+
+	opts.ConfigPath = *configFlag
 }

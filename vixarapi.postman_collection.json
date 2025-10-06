@@ -36,11 +36,11 @@
 							"raw": "{\n    \"token\": \"random_token\"\n}"
 						},
 						"url": {
-							"raw": "localhost:8080/api/v1/interest/all",
+							"raw": "localhost:8000/api/v1/interest/all",
 							"host": [
 								"localhost"
 							],
-							"port": "8080",
+							"port": "8000",
 							"path": [
 								"api",
 								"v1",

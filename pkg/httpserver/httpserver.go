@@ -20,7 +20,7 @@ const (
 	defaultShutdownTimeout = 5 * time.Second
 	defaultReadTimeout     = 3 * time.Second
 	defaultWriteTimeout    = 3 * time.Second
-	defaultAddr            = ":8080"
+	defaultAddr            = ":8000"
 )
 
 // Server wrapper over net/http server

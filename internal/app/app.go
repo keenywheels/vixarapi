@@ -33,6 +33,7 @@ type App struct {
 func New() *App {
 	opts := NewDefaultOpts()
 	opts.LoadEnv()
+	opts.LoadFlags()
 
 	return &App{
 		opts: opts,
@@ -210,7 +211,7 @@ func (app *App) createHttpServer(ctx context.Context, mux http.Handler) *httpser
 	}
 
 	if httpCfg.Port != "" && httpCfg.Host != "" {
-		port := "8080"
+		port := "8000"
 		if httpCfg.Port != "" {
 			port = httpCfg.Port
 		}

@@ -1,0 +1,57 @@
+{
+	"info": {
+		"_postman_id": "530382e2-5f67-4c19-b122-9849911f36bb",
+		"name": "vixarapi",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "38504534"
+	},
+	"item": [
+		{
+			"name": "interest",
+			"item": [
+				{
+					"name": "Get all interest",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept-Encoding",
+								"value": "",
+								"type": "text"
+							},
+							{
+								"key": "Content-Encoding",
+								"value": "gzip",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"token\": \"random_token\"\n}"
+						},
+						"url": {
+							"raw": "localhost:8080/api/v1/interest/all",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"interest",
+								"all"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

@@ -14,7 +14,7 @@ import (
 	"github.com/ogen-go/ogen/validate"
 )
 
-func decodeExampleResponse(resp *http.Response) (res ExampleRes, _ error) {
+func decodeGetAllInterestResponse(resp *http.Response) (res GetAllInterestRes, _ error) {
 	switch resp.StatusCode {
 	case 200:
 		// Code 200.
@@ -30,7 +30,7 @@ func decodeExampleResponse(resp *http.Response) (res ExampleRes, _ error) {
 			}
 			d := jx.DecodeBytes(buf)
 
-			var response ExampleDomainResponse
+			var response GetAllInterestOKApplicationJSON
 			if err := func() error {
 				if err := response.Decode(d); err != nil {
 					return err
@@ -46,6 +46,15 @@ func decodeExampleResponse(resp *http.Response) (res ExampleRes, _ error) {
 					Err:         err,
 				}
 				return res, err
+			}
+			// Validate response.
+			if err := func() error {
+				if err := response.Validate(); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return res, errors.Wrap(err, "validate")
 			}
 			return &response, nil
 		default:
@@ -65,7 +74,7 @@ func decodeExampleResponse(resp *http.Response) (res ExampleRes, _ error) {
 			}
 			d := jx.DecodeBytes(buf)
 
-			var response ExampleBadRequest
+			var response GetAllInterestBadRequest
 			if err := func() error {
 				if err := response.Decode(d); err != nil {
 					return err
@@ -86,8 +95,8 @@ func decodeExampleResponse(resp *http.Response) (res ExampleRes, _ error) {
 		default:
 			return res, validate.InvalidContentType(ct)
 		}
-	case 401:
-		// Code 401.
+	case 500:
+		// Code 500.
 		ct, _, err := mime.ParseMediaType(resp.Header.Get("Content-Type"))
 		if err != nil {
 			return res, errors.Wrap(err, "parse media type")
@@ -100,7 +109,7 @@ func decodeExampleResponse(resp *http.Response) (res ExampleRes, _ error) {
 			}
 			d := jx.DecodeBytes(buf)
 
-			var response ExampleUnauthorized
+			var response GetAllInterestInternalServerError
 			if err := func() error {
 				if err := response.Decode(d); err != nil {
 					return err

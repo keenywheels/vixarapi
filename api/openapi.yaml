@@ -2,70 +2,67 @@ openapi: 3.1.0
 
 info:
   version: 1.0.0
-  title: Auth API
-  description: API for users' authentication
+  title: Vixar API
+  description: Public API for Vixar
 
 servers:
   - url: http://localhost:8080/api/v1/
 
 paths:
-  /api/v1/domain/example:
+  /api/v1/interest/all:
     post:
-      tags: [domain]
-      summary: Example endpoint
-      operationId: example
+      tags: [interest]
+      summary: Get interest for specified token in all time
+      operationId: getAllInterest
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ExampleDomainRequest'
+              $ref: '#/components/schemas/GetAllInterestRequest'
       responses:
         '200':
-          description: Got valid data
+          description: Successfully retrieved interest data
           content:
             application/json:
-              schema:
-                  $ref: '#/components/schemas/ExampleDomainResponse'
+                schema:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Interest'
         '400':
           description: Wrong request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-        '401':
-          description: Wrong creds
+        '500':
+          description: Internal server error
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
 components:
   schemas:
-    ExampleDomainRequest:
+    GetAllInterestRequest:
       type: object
       properties:
-        email:
+        token:
           type: string
-          format: email
-          minLength: 4
-          maxLength: 64
-        username:
-          type: string
-          minLength: 4
-          maxLength: 64
-        secret:
-          type: string
-          minLength: 8
-          maxLength: 64
-      required: [ email, username, secret ]
-    ExampleDomainResponse:
+          minLength: 2
+      required: [token]
+    Interest:
       type: object
       properties:
-        message:
-          type: string
-        length:
+        timestamp:
           type: integer
-      required: [message, length]
+          format: int64
+        features:
+          type: object
+          properties:
+            interest:
+              type: integer
+          required: [interest]
+      required: [timestamp, features]
 
     Error:
       type: object

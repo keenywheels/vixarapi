@@ -8,7 +8,15 @@ import (
 	"github.com/ogen-go/ogen/validate"
 )
 
-func (s *ExampleDomainRequest) Validate() error {
+func (s GetAllInterestOKApplicationJSON) Validate() error {
+	alias := ([]Interest)(s)
+	if alias == nil {
+		return errors.New("nil is invalid value")
+	}
+	return nil
+}
+
+func (s *GetAllInterestRequest) Validate() error {
 	if s == nil {
 		return validate.ErrNilPointer
 	}
@@ -16,58 +24,20 @@ func (s *ExampleDomainRequest) Validate() error {
 	var failures []validate.FieldError
 	if err := func() error {
 		if err := (validate.String{
-			MinLength:    4,
+			MinLength:    2,
 			MinLengthSet: true,
-			MaxLength:    64,
-			MaxLengthSet: true,
-			Email:        true,
-			Hostname:     false,
-			Regex:        nil,
-		}).Validate(string(s.Email)); err != nil {
-			return errors.Wrap(err, "string")
-		}
-		return nil
-	}(); err != nil {
-		failures = append(failures, validate.FieldError{
-			Name:  "email",
-			Error: err,
-		})
-	}
-	if err := func() error {
-		if err := (validate.String{
-			MinLength:    4,
-			MinLengthSet: true,
-			MaxLength:    64,
-			MaxLengthSet: true,
+			MaxLength:    0,
+			MaxLengthSet: false,
 			Email:        false,
 			Hostname:     false,
 			Regex:        nil,
-		}).Validate(string(s.Username)); err != nil {
+		}).Validate(string(s.Token)); err != nil {
 			return errors.Wrap(err, "string")
 		}
 		return nil
 	}(); err != nil {
 		failures = append(failures, validate.FieldError{
-			Name:  "username",
-			Error: err,
-		})
-	}
-	if err := func() error {
-		if err := (validate.String{
-			MinLength:    8,
-			MinLengthSet: true,
-			MaxLength:    64,
-			MaxLengthSet: true,
-			Email:        false,
-			Hostname:     false,
-			Regex:        nil,
-		}).Validate(string(s.Secret)); err != nil {
-			return errors.Wrap(err, "string")
-		}
-		return nil
-	}(); err != nil {
-		failures = append(failures, validate.FieldError{
-			Name:  "secret",
+			Name:  "token",
 			Error: err,
 		})
 	}

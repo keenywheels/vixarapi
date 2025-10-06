@@ -48,9 +48,9 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			break
 		}
 		switch elem[0] {
-		case '/': // Prefix: "/api/v1/domain/example"
+		case '/': // Prefix: "/api/v1/interest/all"
 
-			if l := len("/api/v1/domain/example"); len(elem) >= l && elem[0:l] == "/api/v1/domain/example" {
+			if l := len("/api/v1/interest/all"); len(elem) >= l && elem[0:l] == "/api/v1/interest/all" {
 				elem = elem[l:]
 			} else {
 				break
@@ -60,7 +60,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 				// Leaf node.
 				switch r.Method {
 				case "POST":
-					s.handleExampleRequest([0]string{}, elemIsEscaped, w, r)
+					s.handleGetAllInterestRequest([0]string{}, elemIsEscaped, w, r)
 				default:
 					s.notAllowed(w, r, "POST")
 				}
@@ -148,9 +148,9 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 			break
 		}
 		switch elem[0] {
-		case '/': // Prefix: "/api/v1/domain/example"
+		case '/': // Prefix: "/api/v1/interest/all"
 
-			if l := len("/api/v1/domain/example"); len(elem) >= l && elem[0:l] == "/api/v1/domain/example" {
+			if l := len("/api/v1/interest/all"); len(elem) >= l && elem[0:l] == "/api/v1/interest/all" {
 				elem = elem[l:]
 			} else {
 				break
@@ -160,10 +160,10 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 				// Leaf node.
 				switch method {
 				case "POST":
-					r.name = ExampleOperation
-					r.summary = "Example endpoint"
-					r.operationID = "example"
-					r.pathPattern = "/api/v1/domain/example"
+					r.name = GetAllInterestOperation
+					r.summary = "Get interest for specified token in all time"
+					r.operationID = "getAllInterest"
+					r.pathPattern = "/api/v1/interest/all"
 					r.args = args
 					r.count = 0
 					return r, true

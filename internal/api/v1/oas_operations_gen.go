@@ -6,5 +6,5 @@ package api
 type OperationName = string
 
 const (
-	ExampleOperation OperationName = "Example"
+	GetAllInterestOperation OperationName = "GetAllInterest"
 )

@@ -27,12 +27,12 @@ func trimTrailingSlashes(u *url.URL) {
 
 // Invoker invokes operations described by OpenAPI v3 specification.
 type Invoker interface {
-	// Example invokes example operation.
+	// GetAllInterest invokes getAllInterest operation.
 	//
-	// Example endpoint.
+	// Get interest for specified token in all time.
 	//
-	// POST /api/v1/domain/example
-	Example(ctx context.Context, request *ExampleDomainRequest) (ExampleRes, error)
+	// POST /api/v1/interest/all
+	GetAllInterest(ctx context.Context, request *GetAllInterestRequest) (GetAllInterestRes, error)
 }
 
 // Client implements OAS client.
@@ -78,21 +78,21 @@ func (c *Client) requestURL(ctx context.Context) *url.URL {
 	return u
 }
 
-// Example invokes example operation.
+// GetAllInterest invokes getAllInterest operation.
 //
-// Example endpoint.
+// Get interest for specified token in all time.
 //
-// POST /api/v1/domain/example
-func (c *Client) Example(ctx context.Context, request *ExampleDomainRequest) (ExampleRes, error) {
-	res, err := c.sendExample(ctx, request)
+// POST /api/v1/interest/all
+func (c *Client) GetAllInterest(ctx context.Context, request *GetAllInterestRequest) (GetAllInterestRes, error) {
+	res, err := c.sendGetAllInterest(ctx, request)
 	return res, err
 }
 
-func (c *Client) sendExample(ctx context.Context, request *ExampleDomainRequest) (res ExampleRes, err error) {
+func (c *Client) sendGetAllInterest(ctx context.Context, request *GetAllInterestRequest) (res GetAllInterestRes, err error) {
 	otelAttrs := []attribute.KeyValue{
-		otelogen.OperationID("example"),
+		otelogen.OperationID("getAllInterest"),
 		semconv.HTTPRequestMethodKey.String("POST"),
-		semconv.HTTPRouteKey.String("/api/v1/domain/example"),
+		semconv.HTTPRouteKey.String("/api/v1/interest/all"),
 	}
 
 	// Run stopwatch.
@@ -107,7 +107,7 @@ func (c *Client) sendExample(ctx context.Context, request *ExampleDomainRequest)
 	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
 
 	// Start a span for this request.
-	ctx, span := c.cfg.Tracer.Start(ctx, ExampleOperation,
+	ctx, span := c.cfg.Tracer.Start(ctx, GetAllInterestOperation,
 		trace.WithAttributes(otelAttrs...),
 		clientSpanKind,
 	)
@@ -125,7 +125,7 @@ func (c *Client) sendExample(ctx context.Context, request *ExampleDomainRequest)
 	stage = "BuildURL"
 	u := uri.Clone(c.requestURL(ctx))
 	var pathParts [1]string
-	pathParts[0] = "/api/v1/domain/example"
+	pathParts[0] = "/api/v1/interest/all"
 	uri.AddPathParts(u, pathParts[:]...)
 
 	stage = "EncodeRequest"
@@ -133,7 +133,7 @@ func (c *Client) sendExample(ctx context.Context, request *ExampleDomainRequest)
 	if err != nil {
 		return res, errors.Wrap(err, "create request")
 	}
-	if err := encodeExampleRequest(request, r); err != nil {
+	if err := encodeGetAllInterestRequest(request, r); err != nil {
 		return res, errors.Wrap(err, "encode request")
 	}
 
@@ -145,7 +145,7 @@ func (c *Client) sendExample(ctx context.Context, request *ExampleDomainRequest)
 	defer resp.Body.Close()
 
 	stage = "DecodeResponse"
-	result, err := decodeExampleResponse(resp)
+	result, err := decodeGetAllInterestResponse(resp)
 	if err != nil {
 		return res, errors.Wrap(err, "decode response")
 	}

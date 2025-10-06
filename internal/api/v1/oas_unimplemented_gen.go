@@ -13,11 +13,11 @@ type UnimplementedHandler struct{}
 
 var _ Handler = UnimplementedHandler{}
 
-// Example implements example operation.
+// GetAllInterest implements getAllInterest operation.
 //
-// Example endpoint.
+// Get interest for specified token in all time.
 //
-// POST /api/v1/domain/example
-func (UnimplementedHandler) Example(ctx context.Context, req *ExampleDomainRequest) (r ExampleRes, _ error) {
+// POST /api/v1/interest/all
+func (UnimplementedHandler) GetAllInterest(ctx context.Context, req *GetAllInterestRequest) (r GetAllInterestRes, _ error) {
 	return r, ht.ErrNotImplemented
 }

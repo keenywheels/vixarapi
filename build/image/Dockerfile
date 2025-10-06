@@ -5,10 +5,12 @@ ENV GOOS=linux
 
 RUN apk update --no-cache && apk add --no-cache tzdata
 
-COPY . /vixarapi
+COPY go.mod go.sum /vixarapi/
 
 WORKDIR /vixarapi
 
+RUN go mod download
+COPY . /vixarapi
 RUN go build -ldflags="-s -w" -o /vixarapi/bin/vixarapi ./cmd/vixarapi/main.go
 
 FROM alpine:latest

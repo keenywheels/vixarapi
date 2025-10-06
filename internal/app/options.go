@@ -39,7 +39,5 @@ func (opts *Options) LoadFlags() {
 	configFlag := flag.String("config", opts.ConfigPath, "path to config file")
 	flag.Parse()
 
-	if configFlag != nil {
-		opts.ConfigPath = *configFlag
-	}
+	opts.ConfigPath = *configFlag
 }

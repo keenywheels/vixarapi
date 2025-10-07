@@ -21,10 +21,7 @@ EXPOSE 8000
 
 WORKDIR /vixarapi
 
-RUN adduser -D -g '' appuser
-
 COPY --from=builder /usr/share/zoneinfo/${TZ} /etc/localtime
 RUN echo $TZ > /etc/timezone
 
 COPY --from=builder /vixarapi/bin/vixarapi .
-USER appuser

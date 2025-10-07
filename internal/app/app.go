@@ -210,7 +210,7 @@ func (app *App) createHttpServer(ctx context.Context, mux http.Handler) *httpser
 		opts = append(opts, httpserver.ShutdownTimeout(httpCfg.ShutdownTimeout))
 	}
 
-	if httpCfg.Port != "" && httpCfg.Host != "" {
+	if httpCfg.Port != "" || httpCfg.Host != "" {
 		port := "8000"
 		if httpCfg.Port != "" {
 			port = httpCfg.Port

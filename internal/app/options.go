@@ -36,8 +36,6 @@ func (opts *Options) LoadEnv() {
 
 // LoadFlags updates options with values from cmd flags
 func (opts *Options) LoadFlags() {
-	configFlag := flag.String("config", opts.ConfigPath, "path to config file")
+	flag.StringVar(&opts.ConfigPath, "config", defaultConfigPath, "path to config file")
 	flag.Parse()
-
-	opts.ConfigPath = *configFlag
 }

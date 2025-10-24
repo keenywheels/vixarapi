@@ -1,6 +1,6 @@
 package service
 
-import "github.com/keenywheels/backend/internal/interest/models"
+import "github.com/keenywheels/backend/internal/vixarapi/models"
 
 // convertToServiceInterest converts repository structs to service layer structs
 func convertToServiceInterest(interests []models.Interest) []Interest {

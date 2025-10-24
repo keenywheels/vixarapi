@@ -2,7 +2,7 @@
 PROJECT_NAME := vixarapi
 
 # paths
-ENV_PATH := .env.dev
+ENV_PATH := ./build/.dev.env
 DOCKER_COMPOSE_PATH = ./build/compose.yaml
 
 # exec
@@ -15,6 +15,7 @@ DOCKER_COMPOSE := docker compose -f $(DOCKER_COMPOSE_PATH) --env-file $(ENV_PATH
 .PHONY: build
 build: clean build/bin/vixarapi
 
+.PHONY: build/bin/vixarapi
 build/bin/vixarapi:
 	$(GO) build -o $(@) ./cmd/vixarapi/main.go
 

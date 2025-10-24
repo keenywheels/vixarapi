@@ -4,7 +4,7 @@ import (
 	"context"
 
 	gen "github.com/keenywheels/backend/internal/api/v1"
-	"github.com/keenywheels/backend/internal/interest/service"
+	"github.com/keenywheels/backend/internal/vixarapi/service"
 )
 
 var _ gen.Handler = (*Controller)(nil)

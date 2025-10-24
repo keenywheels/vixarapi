@@ -9,9 +9,9 @@ import (
 	"syscall"
 
 	oas "github.com/keenywheels/backend/internal/api/v1"
-	interestapi "github.com/keenywheels/backend/internal/interest/delivery/http/v1"
-	interestrepo "github.com/keenywheels/backend/internal/interest/repository"
-	"github.com/keenywheels/backend/internal/interest/service"
+	api "github.com/keenywheels/backend/internal/vixarapi/delivery/http/v1"
+	repo "github.com/keenywheels/backend/internal/vixarapi/repository"
+	"github.com/keenywheels/backend/internal/vixarapi/service"
 	"github.com/keenywheels/backend/pkg/cors"
 	"github.com/keenywheels/backend/pkg/httpserver"
 	"github.com/keenywheels/backend/pkg/httputils"
@@ -127,9 +127,9 @@ func (app *App) initLogger() {
 // initRouter creates router using ogen
 func (app *App) initRouter() (http.Handler, error) {
 	// create handler
-	interestRepo := interestrepo.New()
+	interestRepo := repo.New()
 	interestSvc := service.New(interestRepo)
-	interestHandler := interestapi.New(interestSvc)
+	interestHandler := api.New(interestSvc)
 
 	// create custom handlers
 	notFoundHandler := func(w http.ResponseWriter, r *http.Request) {

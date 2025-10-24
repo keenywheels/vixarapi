@@ -3,7 +3,10 @@ package app
 import (
 	"context"
 	"fmt"
+	"log"
 	"net/http"
+	"os/signal"
+	"syscall"
 
 	oas "github.com/keenywheels/backend/internal/api/v1"
 	interestapi "github.com/keenywheels/backend/internal/interest/delivery/http/v1"
@@ -50,6 +53,11 @@ func (app *App) Run() error {
 
 	app.cfg = cfg
 	app.initLogger()
+	defer func() {
+		if err := app.logger.Close(); err != nil {
+			log.Printf("failed to close logger: %v", err)
+		}
+	}()
 
 	// create mux using ogen
 	mux, err := app.initRouter()
@@ -60,7 +68,10 @@ func (app *App) Run() error {
 	// create and run main http server
 	apiSrv := app.createHttpServer(context.Background(), mux)
 
-	g, ctx := errgroup.WithContext(context.Background())
+	ctx, cancel := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
+	defer cancel()
+
+	g, ctx := errgroup.WithContext(ctx)
 
 	g.Go(func() error {
 		app.logger.Infof("http api server is running on %s", apiSrv.GetAddr())
@@ -126,7 +137,7 @@ func (app *App) initRouter() (http.Handler, error) {
 	}
 
 	errorHandler := func(_ context.Context, w http.ResponseWriter, r *http.Request, err error) {
-		httputils.InternalErrorJSON(w)
+		httputils.BadRequestJSON(w)
 	}
 
 	// create ogen http server

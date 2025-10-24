@@ -2,7 +2,7 @@ package v1
 
 import (
 	gen "github.com/keenywheels/backend/internal/api/v1"
-	"github.com/keenywheels/backend/internal/interest/service"
+	"github.com/keenywheels/backend/internal/vixarapi/service"
 )
 
 // convertToGetAllInterestResp converts service layer structs to api response structs

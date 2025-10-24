@@ -9,6 +9,7 @@ import (
 const (
 	ErrorBadRequest    = "BAD_REQUEST"
 	ErrorUnathorized   = "UNATHORIZED"
+	ErrorForbidden     = "FORBIDDEN"
 	ErrorNotFound      = "NOT_FOUND"
 	ErrorConflict      = "CONFLICT"
 	ErrorInternalError = "INTERNAL_ERROR"
@@ -19,6 +20,13 @@ func BadRequestJSON(w http.ResponseWriter) {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.WriteHeader(http.StatusBadRequest)
 	fmt.Fprintf(w, `{ "error": "BAD_REQUEST" }`)
+}
+
+// ForbiddenJSON template for forbidden status response
+func ForbiddenJSON(w http.ResponseWriter) {
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	w.WriteHeader(http.StatusForbidden)
+	fmt.Fprintf(w, `{ "error": "FORBIDDEN" }`)
 }
 
 // NotFoundJSON template for not found status response

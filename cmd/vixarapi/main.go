@@ -3,7 +3,7 @@ package main
 import (
 	"log"
 
-	"github.com/keenywheels/backend/internal/app"
+	app "github.com/keenywheels/backend/internal/vixarapi"
 )
 
 func main() {

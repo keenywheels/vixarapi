@@ -3,7 +3,7 @@ package repository
 import (
 	"context"
 
-	"github.com/keenywheels/backend/internal/interest/models"
+	"github.com/keenywheels/backend/internal/vixarapi/models"
 )
 
 // GetAllInterest retrieves all interest records for the specified token from database

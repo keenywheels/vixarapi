@@ -33,7 +33,7 @@ jobs:
           TAG_LATEST=${IMAGE_NAME}:latest
 
           docker build \
-            --file build/image/Dockerfile \
+            --file build/image/vixarapi/Dockerfile \
             --tag $TAG_SHA \
             --tag $TAG_LATEST \
             .

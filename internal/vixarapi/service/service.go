@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 
-	"github.com/keenywheels/backend/internal/interest/models"
+	"github.com/keenywheels/backend/internal/vixarapi/models"
 )
 
 // IRepository provides interface to communicate with the repository layer

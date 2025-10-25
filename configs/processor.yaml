@@ -1,0 +1,6 @@
+app:
+  workers_count: 10
+  logger:
+    loglvl: debug
+    mode: development
+    encoding: json

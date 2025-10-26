@@ -1,6 +1,16 @@
 app:
-  workers_count: 10
+  processor:
+    workers_count: 10
+    max_retries: 2
+    retry_delay: 10s
   logger:
     loglvl: debug
     mode: development
     encoding: json
+
+kafka:
+  group_id: "vixar_processor"
+  brokers:
+    - kafka:9093
+  topics:
+    scraper_data: "scraper_data"

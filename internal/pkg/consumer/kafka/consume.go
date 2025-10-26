@@ -2,6 +2,7 @@ package kafka
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"strings"
 
@@ -30,7 +31,9 @@ func (k *Kafka) StartConsuming(ctx context.Context, topics []string, handler sar
 					return
 				}
 
-				k.l.Errorf("[%s] got error: %v", prefix, err)
+				if !errors.Is(err, context.Canceled) {
+					k.l.Errorf("[%s] got error: %v", prefix, err)
+				}
 			}
 		}
 	}()
@@ -39,17 +42,15 @@ func (k *Kafka) StartConsuming(ctx context.Context, topics []string, handler sar
 	for {
 		if ctx.Err() != nil {
 			k.l.Infof("[%s] stopping consume because context done: %v", prefix, ctx.Err())
-			return ctx.Err()
+			return nil
 		}
 
 		// start consuming
 		if err := k.c.Consume(ctx, topics, handler); err != nil {
 			if ctx.Err() != nil {
 				k.l.Infof("[%s] stopping consume because context done: %v", prefix, ctx.Err())
-				return ctx.Err()
+				return nil
 			}
-
-			k.l.Errorf("[%s] error during consuming: %v", prefix, err)
 
 			return fmt.Errorf("error during consuming: %w", err)
 		}

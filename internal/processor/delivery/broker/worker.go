@@ -3,6 +3,8 @@ package broker
 import (
 	"context"
 	"fmt"
+
+	"github.com/keenywheels/backend/pkg/ctxutils"
 )
 
 // worker processes messages from the message queue
@@ -15,6 +17,8 @@ func (b *Broker) worker(ctx context.Context, i int) {
 		if ctx.Err() != nil {
 			return
 		}
+
+		ctxutils.GetLogger(ctx).Debugf("[%s] start processing message: %s", prefix, string(msg.msg.Value))
 
 		err := b.service.TokenizeMessage(ctx, string(msg.msg.Value))
 		if err != nil {

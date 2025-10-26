@@ -11,3 +11,75 @@ services:
     volumes:
       - ../configs/vixarapi.yaml:/vixarapi/configs/vixarapi.yaml:ro
     command: ./vixarapi --config ${VIXARAPI_CONFIG_PATH}
+
+  vixar-processor:
+    container_name: vixar-processor
+    build:
+      context: ..
+      dockerfile: build/image/processor/Dockerfile
+    depends_on:
+      - init-kafka
+      # uncomment if you want to wait for kafka init to complete
+      # init-kafka:
+      #   condition: service_completed_successfully
+    env_file: processor.env
+    restart: always
+    volumes:
+      - ../configs/processor.yaml:/processor/configs/processor.yaml:ro
+    command: ./processor --config ${PROCESSOR_CONFIG_PATH}
+
+  # standalone kafka setup; should be replaced with a proper cluster if needed
+  kafka:
+    container_name: kafka
+    image: confluentinc/cp-kafka:7.8.0
+    hostname: ${KAFKA_HOSTNAME}
+    ports:
+      - "${KAFKA_HOST_PORT}:${KAFKA_HOST_PORT}"
+    environment:
+      CLUSTER_ID: DnYp3Yv0TqK3f7lS0BqgVQ
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@localhost:${KAFKA_CONTROLLER_PORT}
+      KAFKA_INTER_BROKER_LISTENER_NAME: DOCKER
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_LISTENERS: CONTROLLER://localhost:${KAFKA_CONTROLLER_PORT},HOST://0.0.0.0:${KAFKA_HOST_PORT}, DOCKER://0.0.0.0:${KAFKA_DOCKER_PORT}
+      KAFKA_ADVERTISED_LISTENERS: HOST://localhost:${KAFKA_HOST_PORT},DOCKER://${KAFKA_HOSTNAME}:${KAFKA_DOCKER_PORT}
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,HOST:PLAINTEXT,DOCKER:PLAINTEXT
+    healthcheck:
+      test: kafka-broker-api-versions --bootstrap-server localhost:9092 || exit 1
+      interval: 5s
+      timeout: 10s
+      retries: 10
+
+  kafka-ui:
+    container_name: kafka-ui
+    image: provectuslabs/kafka-ui:latest
+    depends_on:
+      kafka:
+        condition: service_healthy
+    ports:
+      - "${KAFKA_UI_PORT}:${KAFKA_UI_PORT}"
+    environment:
+      SERVER_PORT: ${KAFKA_UI_PORT}
+      KAFKA_CLUSTERS_0_NAME: local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: ${KAFKA_HOSTNAME}:${KAFKA_DOCKER_PORT}
+      AUTH_TYPE: "LOGIN_FORM"
+      SPRING_SECURITY_USER_NAME: ${KAFKA_UI_USERNAME}
+      SPRING_SECURITY_USER_PASSWORD: ${KAFKA_UI_PASSWORD}
+
+  # create topic and test messages
+  init-kafka:
+    container_name: init-kafka
+    image: confluentinc/cp-kafka:7.8.0
+    restart: "no"
+    depends_on:
+      kafka:
+        condition: service_healthy
+    environment:
+      - KAFKA_HOSTNAME=${KAFKA_HOSTNAME}
+      - KAFKA_DOCKER_PORT=${KAFKA_DOCKER_PORT}
+      - KAFKA_SCRAPER_TOPIC=${KAFKA_SCRAPER_TOPIC}
+    volumes:
+      - ../scripts/init_kafka.sh:/tmp/init_kafka.sh:ro
+    entrypoint: ['/bin/bash', '/tmp/init_kafka.sh']

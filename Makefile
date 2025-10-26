@@ -13,11 +13,15 @@ DOCKER_COMPOSE := docker compose -f $(DOCKER_COMPOSE_PATH) --env-file $(ENV_PATH
 # APP MANAGEMENT
 # ======================================================================
 .PHONY: build
-build: clean build/bin/vixarapi
+build: clean build/bin/vixarapi build/bin/processor
 
 .PHONY: build/bin/vixarapi
 build/bin/vixarapi:
 	$(GO) build -o $(@) ./cmd/vixarapi/main.go
+
+.PHONY: build/bin/processor
+build/bin/processor:
+	$(GO) build -o $(@) ./cmd/processor/main.go
 
 .PHONY: clean
 clean:

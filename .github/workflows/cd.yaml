@@ -11,8 +11,13 @@ jobs:
   delivery:
     runs-on: ubuntu-latest
 
-    env:
-      IMAGE_NAME: daronenko/vixarapi
+    strategy:
+      matrix:
+        include:
+          - image: daronenko/vixarapi
+            dockerfile: build/image/vixarapi/Dockerfile
+          - image: daronenko/vixar-processor
+            dockerfile: build/image/processor/Dockerfile
 
     steps:
       - name: checkout code
@@ -29,11 +34,11 @@ jobs:
       - name: build docker image
         run: |
           SHORT_SHA=$(git rev-parse --short=8 HEAD)
-          TAG_SHA=${IMAGE_NAME}:${SHORT_SHA}
-          TAG_LATEST=${IMAGE_NAME}:latest
+          TAG_SHA=${{ matrix.image }}:${SHORT_SHA}
+          TAG_LATEST=${{ matrix.image }}:latest
 
           docker build \
-            --file build/image/vixarapi/Dockerfile \
+            --file ${{ matrix.dockerfile }} \
             --tag $TAG_SHA \
             --tag $TAG_LATEST \
             .
@@ -41,5 +46,5 @@ jobs:
       - name: push docker image
         run: |
           SHORT_SHA=$(git rev-parse --short=8 HEAD)
-          docker push ${IMAGE_NAME}:${SHORT_SHA}
-          docker push ${IMAGE_NAME}:latest
+          docker push ${{ matrix.image }}:${SHORT_SHA}
+          docker push ${{ matrix.image }}:latest

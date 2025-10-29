@@ -36,3 +36,6 @@ bin/
 
 # logs
 log/
+
+# postgres
+pgdata/

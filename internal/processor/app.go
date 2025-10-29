@@ -9,15 +9,19 @@ import (
 
 	"github.com/keenywheels/backend/internal/pkg/consumer/kafka"
 	"github.com/keenywheels/backend/internal/processor/delivery/broker"
+	"github.com/keenywheels/backend/internal/processor/repository"
 	"github.com/keenywheels/backend/internal/processor/service"
 	"github.com/keenywheels/backend/pkg/logger"
 	"github.com/keenywheels/backend/pkg/logger/zap"
+	"github.com/keenywheels/backend/pkg/postgres"
 	"golang.org/x/sync/errgroup"
 )
 
 // App represent app environment
 type App struct {
 	opts *Options
+
+	db *postgres.Postgres
 
 	cfg    *Config
 	logger logger.Logger
@@ -50,8 +54,16 @@ func (app *App) Run() error {
 		}
 	}()
 
+	// create postgres connection
+	db, err := app.getPostgresConn()
+	if err != nil {
+		return fmt.Errorf("failed to create postgres connection: %w", err)
+	}
+	defer db.Close()
+
 	// create service layer
-	service := service.New()
+	repo := repository.New(db)
+	service := service.New(repo)
 
 	// create broker
 	brokerOpts := []broker.Option{
@@ -144,4 +156,23 @@ func (app *App) initLogger() {
 
 	// set logger
 	app.logger = zap.New(opts...)
+}
+
+// getPostgresConn creates and returns a new Postgres connection
+func (app *App) getPostgresConn() (*postgres.Postgres, error) {
+	var opts []postgres.Option
+
+	if app.cfg.App.Postgres.MaxPoolSize != 0 {
+		opts = append(opts, postgres.MaxPoolSize(app.cfg.App.Postgres.MaxPoolSize))
+	}
+
+	if app.cfg.App.Postgres.ConnAttempts != 0 {
+		opts = append(opts, postgres.ConnAttempts(app.cfg.App.Postgres.ConnAttempts))
+	}
+
+	if app.cfg.App.Postgres.ConnTimeout != 0 {
+		opts = append(opts, postgres.ConnTimeout(app.cfg.App.Postgres.ConnTimeout))
+	}
+
+	return postgres.New(app.cfg.App.Postgres.DSN(), opts...)
 }

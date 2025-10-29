@@ -26,9 +26,35 @@ type ProcessorConfig struct {
 	RetryDelay   time.Duration `mapstructure:"retry_delay"`
 }
 
+// PostgresConfig struct for postgres config
+type PostgresConfig struct {
+	Host         string        `mapstructure:"host"`
+	Port         int           `mapstructure:"port"`
+	User         string        `mapstructure:"user"`
+	Password     string        `mapstructure:"password"`
+	DBName       string        `mapstructure:"dbname"`
+	SSLMode      string        `mapstructure:"sslmode"`
+	MaxPoolSize  int           `mapstructure:"max_pool_size"`
+	ConnAttempts int           `mapstructure:"conn_attempts"`
+	ConnTimeout  time.Duration `mapstructure:"conn_timeout"`
+}
+
+// DSN returns the dsn for postgres connection
+func (pc PostgresConfig) DSN() string {
+	return fmt.Sprintf("postgres://%s:%s@%s:%d/%s?sslmode=%s",
+		pc.User,
+		pc.Password,
+		pc.Host,
+		pc.Port,
+		pc.DBName,
+		pc.SSLMode,
+	)
+}
+
 // AppConfig contains application configuration
 type AppConfig struct {
 	Processor ProcessorConfig `mapstructure:"processor"`
+	Postgres  PostgresConfig  `mapstructure:"postgres"`
 	LoggerCfg LoggerConfig    `mapstructure:"logger"`
 }
 

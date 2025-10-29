@@ -1,5 +1,7 @@
 # const
 PROJECT_NAME := vixarapi
+MIGRATIONS_PATH := ./migrations
+POSTGRES_DB_URL := postgres://user:password@localhost:5432/db?sslmode=disable
 
 # paths
 ENV_PATH := ./build/.dev.env
@@ -54,3 +56,25 @@ docker-stop:
 .PHONY: docker-down
 docker-down:
 	$(DOCKER_COMPOSE) down -v
+
+# ======================================================================
+# MIGRATIONS
+# ======================================================================
+.PHONY: postgres-new
+postgres-new:
+	@if [ -z "$(name)" ]; then \
+		echo "Error: 'name' is not set. Usage: make postgres-new name=migration_name"; \
+		exit 1; \
+	fi
+	@migrate create -ext sql -dir $(MIGRATIONS_PATH) $(name)
+	@echo "[INFO] create $(name) migrations in $(MIGRATIONS_PATH)"
+
+.PHONY: postgres-up
+postgres-up:
+	@migrate -database "${POSTGRES_DB_URL}" -path $(MIGRATIONS_PATH) -verbose up
+	@echo "[INFO] migrations up done"
+
+.PHONY: postgres-down
+postgres-down:
+	@migrate -database "${POSTGRES_DB_URL}" -path $(MIGRATIONS_PATH) -verbose down
+	@echo "[INFO] migrations down done"

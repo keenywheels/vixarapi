@@ -7,18 +7,25 @@ import (
 	"github.com/keenywheels/backend/pkg/ctxutils"
 )
 
+const maxLogMsgLength = 25
+
 // worker processes messages from the message queue
 func (b *Broker) worker(ctx context.Context, i int) {
 	defer b.wg.Done()
 
-	prefix := fmt.Sprintf("WORKER %d", i)
+	var (
+		prefix = fmt.Sprintf("WORKER %d", i)
+		log    = ctxutils.GetLogger(ctx)
+	)
 
 	for msg := range b.messageQueue {
 		if ctx.Err() != nil {
 			return
 		}
 
-		ctxutils.GetLogger(ctx).Debugf("[%s] start processing message: %s", prefix, string(msg.msg.Value))
+		// TODO: сделать нормальное логгирование
+		// TODO: добавить логику с выбором топика
+		log.Debugf("[%s] start processing message: partial_msg=%s", prefix, string(msg.msg.Value)[:maxLogMsgLength])
 
 		err := b.service.TokenizeMessage(ctx, string(msg.msg.Value))
 		if err != nil {

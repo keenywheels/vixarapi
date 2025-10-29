@@ -3,7 +3,7 @@ package metrics
 import (
 	"sync"
 
-	"github.com/keenywheels/backend/internal/pkg/tokenizer/models"
+	"github.com/keenywheels/backend/internal/pkg/tokenizer"
 )
 
 // InterestMetric tracks the number of times tokens target specific entities.
@@ -20,7 +20,7 @@ func NewInterestMetric() *InterestMetric {
 }
 
 // Collect implements collecting interest metrics for a given token.
-func (m *InterestMetric) Collect(token *models.Token) error {
+func (m *InterestMetric) Collect(token *tokenizer.Token) error {
 	if token.Target == "" {
 		return nil
 	}

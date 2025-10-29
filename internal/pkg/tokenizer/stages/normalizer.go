@@ -5,7 +5,6 @@ import (
 	"unicode"
 
 	"github.com/keenywheels/backend/internal/pkg/tokenizer"
-	"github.com/keenywheels/backend/internal/pkg/tokenizer/models"
 	"golang.org/x/text/unicode/norm"
 )
 
@@ -13,7 +12,7 @@ import (
 func NewNormalizerStage() *tokenizer.Stage {
 	stage := &tokenizer.Stage{}
 
-	stage.CallbackFunc = func(token *models.Token) error {
+	stage.CallbackFunc = func(token *tokenizer.Token) error {
 		token.Target = normalizeString(token.Target)
 		return nil
 	}

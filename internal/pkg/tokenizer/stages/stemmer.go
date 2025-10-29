@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/keenywheels/backend/internal/pkg/tokenizer"
-	"github.com/keenywheels/backend/internal/pkg/tokenizer/models"
 )
 
 // Stemmer defines the interface for stemming tokens.
@@ -16,7 +15,7 @@ type Stemmer interface {
 func NewStemmerStage(stemmer Stemmer) *tokenizer.Stage {
 	stage := &tokenizer.Stage{}
 
-	stage.CallbackFunc = func(token *models.Token) error {
+	stage.CallbackFunc = func(token *tokenizer.Token) error {
 		stemmedToken, err := stemmer.Stem(token.Target)
 		if err != nil {
 			return fmt.Errorf("stemmer failed: %w", err)

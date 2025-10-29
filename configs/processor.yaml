@@ -3,6 +3,13 @@ app:
     workers_count: 10
     max_retries: 2
     retry_delay: 10s
+  postgres:
+    host: postgres
+    port: 5432
+    user: user
+    password: password
+    dbname: db
+    sslmode: disable
   logger:
     loglvl: debug
     mode: development

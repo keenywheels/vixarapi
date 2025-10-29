@@ -1,14 +1,12 @@
 package tokenizer
 
-import "github.com/keenywheels/backend/internal/pkg/tokenizer/models"
-
 // Pipeline represents a sequence of processing stages for tokens.
 type Pipeline struct {
 	initStage PipelineStage
 }
 
 // Run processes the input tokens through the pipeline and returns the processed tokens.
-func (p *Pipeline) Run(tokens []models.Token) []models.Token {
+func (p *Pipeline) Run(tokens []Token) []Token {
 	if p.initStage == nil {
 		return tokens
 	}

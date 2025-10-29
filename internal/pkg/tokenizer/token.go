@@ -1,4 +1,4 @@
-package models
+package tokenizer
 
 import (
 	"strings"
@@ -38,6 +38,17 @@ func GetTokens(text string, tokenConfig *TokenConfig) []Token {
 	collectContext(tokens, tokenConfig)
 
 	return tokens
+}
+
+// IsFiltered checks if the token is marked as filtered in its metadata
+func (t *Token) IsFiltered() bool {
+	if t.Metadata == nil {
+		return false
+	}
+
+	filtered, ok := t.Metadata["filtered"].(bool)
+
+	return ok && filtered
 }
 
 // Filter marks the token as filtered in its metadata

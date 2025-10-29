@@ -68,3 +68,8 @@ func New(dsn string, opts ...Option) (*Postgres, error) {
 
 	return pg, nil
 }
+
+// Close closes the postgres pool
+func (p *Postgres) Close() {
+	p.Pool.Close()
+}

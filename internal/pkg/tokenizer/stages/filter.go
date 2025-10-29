@@ -2,7 +2,6 @@ package stages
 
 import (
 	"github.com/keenywheels/backend/internal/pkg/tokenizer"
-	"github.com/keenywheels/backend/internal/pkg/tokenizer/models"
 	"github.com/keenywheels/backend/internal/pkg/tokenizer/pkg/stopwords"
 )
 
@@ -13,7 +12,7 @@ func NewFilterStage(tokenMinLength int) *tokenizer.Stage {
 	stage := &tokenizer.Stage{}
 
 	tokenMinLength = getTokenMinLength(tokenMinLength)
-	stage.CallbackFunc = func(token *models.Token) error {
+	stage.CallbackFunc = func(token *tokenizer.Token) error {
 		if len([]rune(token.Target)) < tokenMinLength {
 			token.Filter()
 		}

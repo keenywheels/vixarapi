@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"strings"
+	"time"
 
 	tokenizerbase "github.com/keenywheels/backend/internal/pkg/tokenizer"
 	"github.com/keenywheels/backend/internal/pkg/tokenizer/metrics"
@@ -22,6 +23,12 @@ func convertToRepositoryTokens(
 		date   = msg.Date
 		result = make([]models.TokenData, 0, len(tokens))
 	)
+
+	dateParsed, err := time.Parse(models.ScrapeDataFormat, date)
+	if err != nil {
+		log.Errorf("failed to parse date %s: %v", date, err)
+		dateParsed = time.Now()
+	}
 
 	for _, t := range tokens {
 		// skip filtered tokens
@@ -54,7 +61,7 @@ func convertToRepositoryTokens(
 			Interest:  interestInt,
 			Context:   strings.Join(tokenContext, " "),
 			SiteName:  site,
-			Date:      date,
+			Date:      dateParsed,
 		})
 	}
 

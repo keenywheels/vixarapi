@@ -5,6 +5,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/keenywheels/backend/internal/vixarapi/repository"
 	"github.com/spf13/viper"
 )
 
@@ -39,9 +40,10 @@ type CORSConfig struct {
 
 // AppConfig contains all configs which connected to main app
 type AppConfig struct {
-	HttpCfg    HttpConfig   `mapstructure:"http"`
-	LoggerCfg  LoggerConfig `mapstructure:"logger"`
-	CORSConfig CORSConfig   `mapstructure:"cors"`
+	HttpCfg         HttpConfig                 `mapstructure:"http"`
+	LoggerCfg       LoggerConfig               `mapstructure:"logger"`
+	CORSConfig      CORSConfig                 `mapstructure:"cors"`
+	SchedulerConfig repository.SchedulerConfig `mapstructure:"scheduler"`
 }
 
 // PostgresConfig config for postgres
@@ -50,7 +52,7 @@ type PostgresConfig struct {
 	Port         int           `mapstructure:"port"`
 	User         string        `mapstructure:"user"`
 	Password     string        `mapstructure:"password"`
-	Database     string        `mapstructure:"database"`
+	DBName       string        `mapstructure:"dbname"`
 	SSLMode      string        `mapstructure:"sslmode"`
 	MaxPoolSize  int           `mapstructure:"max_pool_size"`
 	ConnAttempts int           `mapstructure:"conn_attempts"`
@@ -60,7 +62,7 @@ type PostgresConfig struct {
 // DSN return dsn using PostgresConfig
 func (cfg *PostgresConfig) DSN() string {
 	return fmt.Sprintf("postgres://%s:%s@%s:%d/%s?sslmode=%s",
-		cfg.User, cfg.Password, cfg.Host, cfg.Port, cfg.Database, cfg.SSLMode)
+		cfg.User, cfg.Password, cfg.Host, cfg.Port, cfg.DBName, cfg.SSLMode)
 }
 
 // Config global config, contains all configs

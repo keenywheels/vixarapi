@@ -8,7 +8,7 @@ import (
 
 // IRepository provides interface to communicate with the repository layer
 type IRepository interface {
-	GetAllInterest(context.Context, string) ([]models.Interest, error)
+	SearchTokenInfo(context.Context, string) ([]models.TokenInfo, error)
 }
 
 // Service provides interest-related business logic

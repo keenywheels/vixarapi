@@ -48,9 +48,9 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			break
 		}
 		switch elem[0] {
-		case '/': // Prefix: "/api/v1/interest/all"
+		case '/': // Prefix: "/api/v1/token/search"
 
-			if l := len("/api/v1/interest/all"); len(elem) >= l && elem[0:l] == "/api/v1/interest/all" {
+			if l := len("/api/v1/token/search"); len(elem) >= l && elem[0:l] == "/api/v1/token/search" {
 				elem = elem[l:]
 			} else {
 				break
@@ -59,10 +59,10 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			if len(elem) == 0 {
 				// Leaf node.
 				switch r.Method {
-				case "POST":
-					s.handleGetAllInterestRequest([0]string{}, elemIsEscaped, w, r)
+				case "GET":
+					s.handleSearchTokenInfoRequest([0]string{}, elemIsEscaped, w, r)
 				default:
-					s.notAllowed(w, r, "POST")
+					s.notAllowed(w, r, "GET")
 				}
 
 				return
@@ -148,9 +148,9 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 			break
 		}
 		switch elem[0] {
-		case '/': // Prefix: "/api/v1/interest/all"
+		case '/': // Prefix: "/api/v1/token/search"
 
-			if l := len("/api/v1/interest/all"); len(elem) >= l && elem[0:l] == "/api/v1/interest/all" {
+			if l := len("/api/v1/token/search"); len(elem) >= l && elem[0:l] == "/api/v1/token/search" {
 				elem = elem[l:]
 			} else {
 				break
@@ -159,11 +159,11 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 			if len(elem) == 0 {
 				// Leaf node.
 				switch method {
-				case "POST":
-					r.name = GetAllInterestOperation
-					r.summary = "Get interest for specified token in all time"
-					r.operationID = "getAllInterest"
-					r.pathPattern = "/api/v1/interest/all"
+				case "GET":
+					r.name = SearchTokenInfoOperation
+					r.summary = "Get info for specified token"
+					r.operationID = "searchTokenInfo"
+					r.pathPattern = "/api/v1/token/search"
 					r.args = args
 					r.count = 0
 					return r, true

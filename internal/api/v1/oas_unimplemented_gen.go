@@ -13,11 +13,11 @@ type UnimplementedHandler struct{}
 
 var _ Handler = UnimplementedHandler{}
 
-// GetAllInterest implements getAllInterest operation.
+// SearchTokenInfo implements searchTokenInfo operation.
 //
-// Get interest for specified token in all time.
+// Get info for specified token.
 //
-// POST /api/v1/interest/all
-func (UnimplementedHandler) GetAllInterest(ctx context.Context, req *GetAllInterestRequest) (r GetAllInterestRes, _ error) {
+// GET /api/v1/token/search
+func (UnimplementedHandler) SearchTokenInfo(ctx context.Context, params SearchTokenInfoParams) (r SearchTokenInfoRes, _ error) {
 	return r, ht.ErrNotImplemented
 }

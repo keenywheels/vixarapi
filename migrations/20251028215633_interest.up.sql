@@ -3,7 +3,7 @@ CREATE TABLE token_data (
   token_name TEXT NOT NULL,
   interest INT NOT NULL,
   site_name TEXT NOT NULL,
-  scrape_date TEXT NOT NULL,
+  scrape_date TIMESTAMP NOT NULL,
   context TEXT,
 
   CONSTRAINT token_id_pkey PRIMARY KEY(token_id)

@@ -1,5 +1,7 @@
 package models
 
+import "time"
+
 // TokenData represents the token data in postgres database
 type TokenData struct {
 	TokenID   int64
@@ -7,5 +9,5 @@ type TokenData struct {
 	Interest  int
 	Context   string
 	SiteName  string
-	Date      string
+	Date      time.Time
 }

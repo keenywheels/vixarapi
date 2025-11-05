@@ -29,22 +29,22 @@ func (c *codeRecorder) WriteHeader(status int) {
 	c.ResponseWriter.WriteHeader(status)
 }
 
-// handleGetAllInterestRequest handles getAllInterest operation.
+// handleSearchTokenInfoRequest handles searchTokenInfo operation.
 //
-// Get interest for specified token in all time.
+// Get info for specified token.
 //
-// POST /api/v1/interest/all
-func (s *Server) handleGetAllInterestRequest(args [0]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
+// GET /api/v1/token/search
+func (s *Server) handleSearchTokenInfoRequest(args [0]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
 	statusWriter := &codeRecorder{ResponseWriter: w}
 	w = statusWriter
 	otelAttrs := []attribute.KeyValue{
-		otelogen.OperationID("getAllInterest"),
-		semconv.HTTPRequestMethodKey.String("POST"),
-		semconv.HTTPRouteKey.String("/api/v1/interest/all"),
+		otelogen.OperationID("searchTokenInfo"),
+		semconv.HTTPRequestMethodKey.String("GET"),
+		semconv.HTTPRouteKey.String("/api/v1/token/search"),
 	}
 
 	// Start a span for this request.
-	ctx, span := s.cfg.Tracer.Start(r.Context(), GetAllInterestOperation,
+	ctx, span := s.cfg.Tracer.Start(r.Context(), SearchTokenInfoOperation,
 		trace.WithAttributes(otelAttrs...),
 		serverSpanKind,
 	)
@@ -99,45 +99,45 @@ func (s *Server) handleGetAllInterestRequest(args [0]string, argsEscaped bool, w
 		}
 		err          error
 		opErrContext = ogenerrors.OperationContext{
-			Name: GetAllInterestOperation,
-			ID:   "getAllInterest",
+			Name: SearchTokenInfoOperation,
+			ID:   "searchTokenInfo",
 		}
 	)
-
-	var rawBody []byte
-	request, rawBody, close, err := s.decodeGetAllInterestRequest(r)
+	params, err := decodeSearchTokenInfoParams(args, argsEscaped, r)
 	if err != nil {
-		err = &ogenerrors.DecodeRequestError{
+		err = &ogenerrors.DecodeParamsError{
 			OperationContext: opErrContext,
 			Err:              err,
 		}
-		defer recordError("DecodeRequest", err)
+		defer recordError("DecodeParams", err)
 		s.cfg.ErrorHandler(ctx, w, r, err)
 		return
 	}
-	defer func() {
-		if err := close(); err != nil {
-			recordError("CloseRequest", err)
-		}
-	}()
 
-	var response GetAllInterestRes
+	var rawBody []byte
+
+	var response SearchTokenInfoRes
 	if m := s.cfg.Middleware; m != nil {
 		mreq := middleware.Request{
 			Context:          ctx,
-			OperationName:    GetAllInterestOperation,
-			OperationSummary: "Get interest for specified token in all time",
-			OperationID:      "getAllInterest",
-			Body:             request,
+			OperationName:    SearchTokenInfoOperation,
+			OperationSummary: "Get info for specified token",
+			OperationID:      "searchTokenInfo",
+			Body:             nil,
 			RawBody:          rawBody,
-			Params:           middleware.Parameters{},
-			Raw:              r,
+			Params: middleware.Parameters{
+				{
+					Name: "token",
+					In:   "query",
+				}: params.Token,
+			},
+			Raw: r,
 		}
 
 		type (
-			Request  = *GetAllInterestRequest
-			Params   = struct{}
-			Response = GetAllInterestRes
+			Request  = struct{}
+			Params   = SearchTokenInfoParams
+			Response = SearchTokenInfoRes
 		)
 		response, err = middleware.HookMiddleware[
 			Request,
@@ -146,14 +146,14 @@ func (s *Server) handleGetAllInterestRequest(args [0]string, argsEscaped bool, w
 		](
 			m,
 			mreq,
-			nil,
+			unpackSearchTokenInfoParams,
 			func(ctx context.Context, request Request, params Params) (response Response, err error) {
-				response, err = s.h.GetAllInterest(ctx, request)
+				response, err = s.h.SearchTokenInfo(ctx, params)
 				return response, err
 			},
 		)
 	} else {
-		response, err = s.h.GetAllInterest(ctx, request)
+		response, err = s.h.SearchTokenInfo(ctx, params)
 	}
 	if err != nil {
 		defer recordError("Internal", err)
@@ -161,7 +161,7 @@ func (s *Server) handleGetAllInterestRequest(args [0]string, argsEscaped bool, w
 		return
 	}
 
-	if err := encodeGetAllInterestResponse(response, w, span); err != nil {
+	if err := encodeSearchTokenInfoResponse(response, w, span); err != nil {
 		defer recordError("EncodeResponse", err)
 		if !errors.Is(err, ht.ErrInternalServerErrorResponse) {
 			s.cfg.ErrorHandler(ctx, w, r, err)

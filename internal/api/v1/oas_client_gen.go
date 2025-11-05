@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/go-faster/errors"
+	"github.com/ogen-go/ogen/conv"
 	ht "github.com/ogen-go/ogen/http"
 	"github.com/ogen-go/ogen/otelogen"
 	"github.com/ogen-go/ogen/uri"
@@ -26,12 +27,12 @@ func trimTrailingSlashes(u *url.URL) {
 
 // Invoker invokes operations described by OpenAPI v3 specification.
 type Invoker interface {
-	// GetAllInterest invokes getAllInterest operation.
+	// SearchTokenInfo invokes searchTokenInfo operation.
 	//
-	// Get interest for specified token in all time.
+	// Get info for specified token.
 	//
-	// POST /api/v1/interest/all
-	GetAllInterest(ctx context.Context, request *GetAllInterestRequest) (GetAllInterestRes, error)
+	// GET /api/v1/token/search
+	SearchTokenInfo(ctx context.Context, params SearchTokenInfoParams) (SearchTokenInfoRes, error)
 }
 
 // Client implements OAS client.
@@ -77,21 +78,21 @@ func (c *Client) requestURL(ctx context.Context) *url.URL {
 	return u
 }
 
-// GetAllInterest invokes getAllInterest operation.
+// SearchTokenInfo invokes searchTokenInfo operation.
 //
-// Get interest for specified token in all time.
+// Get info for specified token.
 //
-// POST /api/v1/interest/all
-func (c *Client) GetAllInterest(ctx context.Context, request *GetAllInterestRequest) (GetAllInterestRes, error) {
-	res, err := c.sendGetAllInterest(ctx, request)
+// GET /api/v1/token/search
+func (c *Client) SearchTokenInfo(ctx context.Context, params SearchTokenInfoParams) (SearchTokenInfoRes, error) {
+	res, err := c.sendSearchTokenInfo(ctx, params)
 	return res, err
 }
 
-func (c *Client) sendGetAllInterest(ctx context.Context, request *GetAllInterestRequest) (res GetAllInterestRes, err error) {
+func (c *Client) sendSearchTokenInfo(ctx context.Context, params SearchTokenInfoParams) (res SearchTokenInfoRes, err error) {
 	otelAttrs := []attribute.KeyValue{
-		otelogen.OperationID("getAllInterest"),
-		semconv.HTTPRequestMethodKey.String("POST"),
-		semconv.URLTemplateKey.String("/api/v1/interest/all"),
+		otelogen.OperationID("searchTokenInfo"),
+		semconv.HTTPRequestMethodKey.String("GET"),
+		semconv.URLTemplateKey.String("/api/v1/token/search"),
 	}
 	otelAttrs = append(otelAttrs, c.cfg.Attributes...)
 
@@ -107,7 +108,7 @@ func (c *Client) sendGetAllInterest(ctx context.Context, request *GetAllInterest
 	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
 
 	// Start a span for this request.
-	ctx, span := c.cfg.Tracer.Start(ctx, GetAllInterestOperation,
+	ctx, span := c.cfg.Tracer.Start(ctx, SearchTokenInfoOperation,
 		trace.WithAttributes(otelAttrs...),
 		clientSpanKind,
 	)
@@ -125,16 +126,31 @@ func (c *Client) sendGetAllInterest(ctx context.Context, request *GetAllInterest
 	stage = "BuildURL"
 	u := uri.Clone(c.requestURL(ctx))
 	var pathParts [1]string
-	pathParts[0] = "/api/v1/interest/all"
+	pathParts[0] = "/api/v1/token/search"
 	uri.AddPathParts(u, pathParts[:]...)
 
+	stage = "EncodeQueryParams"
+	q := uri.NewQueryEncoder()
+	{
+		// Encode "token" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "token",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			return e.EncodeValue(conv.StringToString(params.Token))
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	u.RawQuery = q.Values().Encode()
+
 	stage = "EncodeRequest"
-	r, err := ht.NewRequest(ctx, "POST", u)
+	r, err := ht.NewRequest(ctx, "GET", u)
 	if err != nil {
 		return res, errors.Wrap(err, "create request")
-	}
-	if err := encodeGetAllInterestRequest(request, r); err != nil {
-		return res, errors.Wrap(err, "encode request")
 	}
 
 	stage = "SendRequest"
@@ -145,7 +161,7 @@ func (c *Client) sendGetAllInterest(ctx context.Context, request *GetAllInterest
 	defer resp.Body.Close()
 
 	stage = "DecodeResponse"
-	result, err := decodeGetAllInterestResponse(resp)
+	result, err := decodeSearchTokenInfoResponse(resp)
 	if err != nil {
 		return res, errors.Wrap(err, "decode response")
 	}

@@ -39,3 +39,4 @@ log/
 
 # postgres
 pgdata/
+dict/

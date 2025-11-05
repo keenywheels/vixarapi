@@ -11,9 +11,9 @@ import (
 	"go.opentelemetry.io/otel/trace"
 )
 
-func encodeGetAllInterestResponse(response GetAllInterestRes, w http.ResponseWriter, span trace.Span) error {
+func encodeSearchTokenInfoResponse(response SearchTokenInfoRes, w http.ResponseWriter, span trace.Span) error {
 	switch response := response.(type) {
-	case *GetAllInterestOKApplicationJSON:
+	case *SearchTokenInfoOKApplicationJSON:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(200)
 		span.SetStatus(codes.Ok, http.StatusText(200))
@@ -26,10 +26,10 @@ func encodeGetAllInterestResponse(response GetAllInterestRes, w http.ResponseWri
 
 		return nil
 
-	case *GetAllInterestBadRequest:
+	case *SearchTokenInfoNotFound:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
-		w.WriteHeader(400)
-		span.SetStatus(codes.Error, http.StatusText(400))
+		w.WriteHeader(404)
+		span.SetStatus(codes.Error, http.StatusText(404))
 
 		e := new(jx.Encoder)
 		response.Encode(e)
@@ -39,7 +39,7 @@ func encodeGetAllInterestResponse(response GetAllInterestRes, w http.ResponseWri
 
 		return nil
 
-	case *GetAllInterestInternalServerError:
+	case *SearchTokenInfoInternalServerError:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(500)
 		span.SetStatus(codes.Error, http.StatusText(500))

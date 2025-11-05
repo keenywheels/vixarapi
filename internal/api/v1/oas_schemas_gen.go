@@ -17,69 +17,91 @@ func (s *Error) SetError(val string) {
 	s.Error = val
 }
 
-type GetAllInterestBadRequest Error
+type SearchTokenInfoInternalServerError Error
 
-func (*GetAllInterestBadRequest) getAllInterestRes() {}
+func (*SearchTokenInfoInternalServerError) searchTokenInfoRes() {}
 
-type GetAllInterestInternalServerError Error
+type SearchTokenInfoNotFound Error
 
-func (*GetAllInterestInternalServerError) getAllInterestRes() {}
+func (*SearchTokenInfoNotFound) searchTokenInfoRes() {}
 
-type GetAllInterestOKApplicationJSON []Interest
+type SearchTokenInfoOKApplicationJSON []TokenInfo
 
-func (*GetAllInterestOKApplicationJSON) getAllInterestRes() {}
+func (*SearchTokenInfoOKApplicationJSON) searchTokenInfoRes() {}
 
-// Ref: #/components/schemas/GetAllInterestRequest
-type GetAllInterestRequest struct {
-	Token string `json:"token"`
+// Ref: #/components/schemas/TokenInfo
+type TokenInfo struct {
+	Token   string        `json:"token"`
+	Records []TokenRecord `json:"records"`
 }
 
 // GetToken returns the value of Token.
-func (s *GetAllInterestRequest) GetToken() string {
+func (s *TokenInfo) GetToken() string {
 	return s.Token
 }
 
+// GetRecords returns the value of Records.
+func (s *TokenInfo) GetRecords() []TokenRecord {
+	return s.Records
+}
+
 // SetToken sets the value of Token.
-func (s *GetAllInterestRequest) SetToken(val string) {
+func (s *TokenInfo) SetToken(val string) {
 	s.Token = val
 }
 
-// Ref: #/components/schemas/Interest
-type Interest struct {
-	Timestamp int64            `json:"timestamp"`
-	Features  InterestFeatures `json:"features"`
+// SetRecords sets the value of Records.
+func (s *TokenInfo) SetRecords(val []TokenRecord) {
+	s.Records = val
+}
+
+// Ref: #/components/schemas/TokenRecord
+type TokenRecord struct {
+	Timestamp string              `json:"timestamp"`
+	Features  TokenRecordFeatures `json:"features"`
 }
 
 // GetTimestamp returns the value of Timestamp.
-func (s *Interest) GetTimestamp() int64 {
+func (s *TokenRecord) GetTimestamp() string {
 	return s.Timestamp
 }
 
 // GetFeatures returns the value of Features.
-func (s *Interest) GetFeatures() InterestFeatures {
+func (s *TokenRecord) GetFeatures() TokenRecordFeatures {
 	return s.Features
 }
 
 // SetTimestamp sets the value of Timestamp.
-func (s *Interest) SetTimestamp(val int64) {
+func (s *TokenRecord) SetTimestamp(val string) {
 	s.Timestamp = val
 }
 
 // SetFeatures sets the value of Features.
-func (s *Interest) SetFeatures(val InterestFeatures) {
+func (s *TokenRecord) SetFeatures(val TokenRecordFeatures) {
 	s.Features = val
 }
 
-type InterestFeatures struct {
-	Interest int `json:"interest"`
+type TokenRecordFeatures struct {
+	Interest           int64   `json:"interest"`
+	InterestNormalized float64 `json:"interest_normalized"`
 }
 
 // GetInterest returns the value of Interest.
-func (s *InterestFeatures) GetInterest() int {
+func (s *TokenRecordFeatures) GetInterest() int64 {
 	return s.Interest
 }
 
+// GetInterestNormalized returns the value of InterestNormalized.
+func (s *TokenRecordFeatures) GetInterestNormalized() float64 {
+	return s.InterestNormalized
+}
+
 // SetInterest sets the value of Interest.
-func (s *InterestFeatures) SetInterest(val int) {
+func (s *TokenRecordFeatures) SetInterest(val int64) {
 	s.Interest = val
+}
+
+// SetInterestNormalized sets the value of InterestNormalized.
+func (s *TokenRecordFeatures) SetInterestNormalized(val float64) {
+	s.InterestNormalized = val
 }

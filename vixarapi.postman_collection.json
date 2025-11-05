@@ -7,12 +7,15 @@
 	},
 	"item": [
 		{
-			"name": "interest",
+			"name": "token",
 			"item": [
 				{
-					"name": "Get all interest",
+					"name": "Search token info",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
 					"request": {
-						"method": "POST",
+						"method": "GET",
 						"header": [
 							{
 								"key": "Content-Type",
@@ -36,7 +39,7 @@
 							"raw": "{\n    \"token\": \"random_token\"\n}"
 						},
 						"url": {
-							"raw": "localhost:8000/api/v1/interest/all",
+							"raw": "localhost:8000/api/v1/token/search?token=чип",
 							"host": [
 								"localhost"
 							],
@@ -44,8 +47,14 @@
 							"path": [
 								"api",
 								"v1",
-								"interest",
-								"all"
+								"token",
+								"search"
+							],
+							"query": [
+								{
+									"key": "token",
+									"value": "чип"
+								}
 							]
 						}
 					},

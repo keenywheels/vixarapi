@@ -11,7 +11,7 @@ var _ gen.Handler = (*Controller)(nil)
 
 // IService provides interest-related services
 type IService interface {
-	GetAllInterest(context.Context, string) ([]service.Interest, error)
+	SearchTokenInfo(ctx context.Context, token string) ([]service.TokenInfo, error)
 }
 
 // Controller contains handlers for interest-related endpoints

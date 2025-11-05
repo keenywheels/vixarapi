@@ -13,7 +13,7 @@ import (
 	"github.com/ogen-go/ogen/validate"
 )
 
-func decodeGetAllInterestResponse(resp *http.Response) (res GetAllInterestRes, _ error) {
+func decodeSearchTokenInfoResponse(resp *http.Response) (res SearchTokenInfoRes, _ error) {
 	switch resp.StatusCode {
 	case 200:
 		// Code 200.
@@ -29,7 +29,7 @@ func decodeGetAllInterestResponse(resp *http.Response) (res GetAllInterestRes, _
 			}
 			d := jx.DecodeBytes(buf)
 
-			var response GetAllInterestOKApplicationJSON
+			var response SearchTokenInfoOKApplicationJSON
 			if err := func() error {
 				if err := response.Decode(d); err != nil {
 					return err
@@ -59,8 +59,8 @@ func decodeGetAllInterestResponse(resp *http.Response) (res GetAllInterestRes, _
 		default:
 			return res, validate.InvalidContentType(ct)
 		}
-	case 400:
-		// Code 400.
+	case 404:
+		// Code 404.
 		ct, _, err := mime.ParseMediaType(resp.Header.Get("Content-Type"))
 		if err != nil {
 			return res, errors.Wrap(err, "parse media type")
@@ -73,7 +73,7 @@ func decodeGetAllInterestResponse(resp *http.Response) (res GetAllInterestRes, _
 			}
 			d := jx.DecodeBytes(buf)
 
-			var response GetAllInterestBadRequest
+			var response SearchTokenInfoNotFound
 			if err := func() error {
 				if err := response.Decode(d); err != nil {
 					return err
@@ -108,7 +108,7 @@ func decodeGetAllInterestResponse(resp *http.Response) (res GetAllInterestRes, _
 			}
 			d := jx.DecodeBytes(buf)
 
-			var response GetAllInterestInternalServerError
+			var response SearchTokenInfoInternalServerError
 			if err := func() error {
 				if err := response.Decode(d); err != nil {
 					return err

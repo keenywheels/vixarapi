@@ -48,9 +48,13 @@ func New(dsn string, opts ...Option) (*Postgres, error) {
 	}
 
 	poolCfg.MaxConns = int32(pg.maxPoolSize)
+	pg.Pool, err = pgxpool.NewWithConfig(context.Background(), poolCfg)
+	if err != nil {
+		return nil, fmt.Errorf("pgxpool.NewWithConfig failed: %w", err)
+	}
 
 	for pg.connAttempts > 0 {
-		pg.Pool, err = pgxpool.NewWithConfig(context.Background(), poolCfg)
+		err = pg.Pool.Ping(context.Background())
 		if err == nil {
 			break
 		}
@@ -58,7 +62,6 @@ func New(dsn string, opts ...Option) (*Postgres, error) {
 		log.Infof("trying to connect to postgres, attempts left: %d", pg.connAttempts)
 
 		time.Sleep(pg.connTimeout)
-
 		pg.connAttempts--
 	}
 

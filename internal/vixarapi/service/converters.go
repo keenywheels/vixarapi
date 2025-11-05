@@ -2,16 +2,23 @@ package service
 
 import "github.com/keenywheels/backend/internal/vixarapi/models"
 
-// convertToServiceInterest converts repository structs to service layer structs
-func convertToServiceInterest(interests []models.Interest) []Interest {
-	resp := make([]Interest, 0, len(interests))
+// convertToServiceTokenInfo converts repository structs to service layer structs
+func convertToServiceTokenInfo(tokens []models.TokenInfo) []TokenInfo {
+	resp := make([]TokenInfo, 0, len(tokens))
 
-	for _, interest := range interests {
-		resp = append(resp, Interest{
-			Timestamp: interest.Timestamp,
-			Features: Features{
-				Interest: interest.Features.Interest,
-			},
+	for _, t := range tokens {
+		records := make([]Record, 0, len(t.Records))
+		for _, r := range t.Records {
+			records = append(records, Record{
+				ScrapeDate:         r.ScrapeDate.Format(timedateLayout),
+				Interest:           r.Interest,
+				NormalizedInterest: r.NormalizedInterest,
+			})
+		}
+
+		resp = append(resp, TokenInfo{
+			TokenName: t.TokenName,
+			Records:   records,
 		})
 	}
 

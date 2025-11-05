@@ -18,6 +18,7 @@ import (
 	"github.com/keenywheels/backend/pkg/logger"
 	"github.com/keenywheels/backend/pkg/logger/zap"
 	mw "github.com/keenywheels/backend/pkg/middleware"
+	"github.com/keenywheels/backend/pkg/postgres"
 	"golang.org/x/sync/errgroup"
 )
 
@@ -59,13 +60,29 @@ func (app *App) Run() error {
 		}
 	}()
 
-	// create mux using ogen
-	mux, err := app.initRouter()
+	// create postgres connection
+	db, err := app.getPostgresConn()
+	if err != nil {
+		return fmt.Errorf("failed to create postgres connection: %w", err)
+	}
+	defer db.Close()
+
+	// create 3 layers
+	interestRepo, err := repo.New(db)
+	if err != nil {
+		return fmt.Errorf("failed to create interest repository: %w", err)
+	}
+
+	interestSvc := service.New(interestRepo)
+	tokenHandler := api.New(interestSvc)
+
+	// create router
+	mux, err := app.initRouter(tokenHandler)
 	if err != nil {
 		return fmt.Errorf("failed to create http ogen server: %v", err)
 	}
 
-	// create and run main http server
+	// create main http server
 	apiSrv := app.createHttpServer(context.Background(), mux)
 
 	ctx, cancel := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
@@ -73,11 +90,26 @@ func (app *App) Run() error {
 
 	g, ctx := errgroup.WithContext(ctx)
 
+	// run repository scheduler
+	app.logger.Infof("starting repository scheduler with cfg=%+v", app.cfg.AppCfg.SchedulerConfig)
+
+	if err := interestRepo.StartScheduler(ctx, app.logger, &app.cfg.AppCfg.SchedulerConfig); err != nil {
+		return fmt.Errorf("failed to start repository scheduler: %w", err)
+	}
+
+	g.Go(func() error {
+		<-ctx.Done()
+		app.logger.Infof("shutting down repository scheduler...")
+		return interestRepo.CloseScheduler()
+	})
+
+	// run http server
 	g.Go(func() error {
 		app.logger.Infof("http api server is running on %s", apiSrv.GetAddr())
 		return apiSrv.Run(ctx)
 	})
 
+	// wait for all goroutines to finish
 	if err := g.Wait(); err != nil {
 		app.logger.Error("server error: %v", err)
 		return err
@@ -125,12 +157,7 @@ func (app *App) initLogger() {
 }
 
 // initRouter creates router using ogen
-func (app *App) initRouter() (http.Handler, error) {
-	// create handler
-	interestRepo := repo.New()
-	interestSvc := service.New(interestRepo)
-	interestHandler := api.New(interestSvc)
-
+func (app *App) initRouter(interestHandler oas.Handler) (http.Handler, error) {
 	// create custom handlers
 	notFoundHandler := func(w http.ResponseWriter, r *http.Request) {
 		httputils.NotFoundJSON(w)
@@ -236,4 +263,23 @@ func (app *App) createHttpServer(ctx context.Context, mux http.Handler) *httpser
 	}
 
 	return httpserver.New(ctx, mux, opts...)
+}
+
+// getPostgresConn creates and returns a new Postgres connection
+func (app *App) getPostgresConn() (*postgres.Postgres, error) {
+	var opts []postgres.Option
+
+	if app.cfg.PostgresCfg.MaxPoolSize != 0 {
+		opts = append(opts, postgres.MaxPoolSize(app.cfg.PostgresCfg.MaxPoolSize))
+	}
+
+	if app.cfg.PostgresCfg.ConnAttempts != 0 {
+		opts = append(opts, postgres.ConnAttempts(app.cfg.PostgresCfg.ConnAttempts))
+	}
+
+	if app.cfg.PostgresCfg.ConnTimeout != 0 {
+		opts = append(opts, postgres.ConnTimeout(app.cfg.PostgresCfg.ConnTimeout))
+	}
+
+	return postgres.New(app.cfg.PostgresCfg.DSN(), opts...)
 }

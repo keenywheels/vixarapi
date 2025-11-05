@@ -9,11 +9,13 @@ app:
     loglvl: debug
     mode: development
     encoding: json
+  scheduler:
+    refresh_search_table_pattern: "*/1 * * * *"  # for testing, every minute
 
 postgres:
-  host: localhost
+  host: postgres
   port: 5432
   user: user
   password: password
-  database: db
+  dbname: db
   sslmode: disable

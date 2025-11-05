@@ -9,17 +9,19 @@ servers:
   - url: http://localhost:8000/api/v1/
 
 paths:
-  /api/v1/interest/all:
-    post:
-      tags: [interest]
-      summary: Get interest for specified token in all time
-      operationId: getAllInterest
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/GetAllInterestRequest'
+  /api/v1/token/search:
+    get:
+      tags: [token]
+      summary: Get info for specified token
+      parameters:
+        - in: query
+          name: token
+          schema:
+            type: string
+            minLength: 2
+          required: true
+          description: Token to get info for
+      operationId: searchTokenInfo
       responses:
         '200':
           description: Successfully retrieved interest data
@@ -28,9 +30,9 @@ paths:
                 schema:
                   type: array
                   items:
-                    $ref: '#/components/schemas/Interest'
-        '400':
-          description: Wrong request
+                    $ref: '#/components/schemas/TokenInfo'
+        '404':
+          description: Token not found
           content:
             application/json:
               schema:
@@ -43,25 +45,31 @@ paths:
                 $ref: '#/components/schemas/Error'
 components:
   schemas:
-    GetAllInterestRequest:
+    TokenInfo:
       type: object
       properties:
         token:
           type: string
-          minLength: 2
-      required: [token]
-    Interest:
+        records:
+          type: array
+          items:
+            $ref: '#/components/schemas/TokenRecord'
+      required: [token, records]
+    TokenRecord:
       type: object
       properties:
         timestamp:
-          type: integer
-          format: int64
+          type: string
         features:
           type: object
           properties:
             interest:
               type: integer
-          required: [interest]
+              format: int64
+            interest_normalized:
+              type: number
+              format: float64
+          required: [interest, interest_normalized]
       required: [timestamp, features]
 
     Error:

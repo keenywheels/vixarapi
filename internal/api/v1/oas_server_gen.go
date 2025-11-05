@@ -8,12 +8,12 @@ import (
 
 // Handler handles operations described by OpenAPI v3 specification.
 type Handler interface {
-	// GetAllInterest implements getAllInterest operation.
+	// SearchTokenInfo implements searchTokenInfo operation.
 	//
-	// Get interest for specified token in all time.
+	// Get info for specified token.
 	//
-	// POST /api/v1/interest/all
-	GetAllInterest(ctx context.Context, req *GetAllInterestRequest) (GetAllInterestRes, error)
+	// GET /api/v1/token/search
+	SearchTokenInfo(ctx context.Context, params SearchTokenInfoParams) (SearchTokenInfoRes, error)
 }
 
 // Server implements http server based on OpenAPI v3 specification and

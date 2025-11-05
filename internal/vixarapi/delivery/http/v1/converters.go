@@ -5,16 +5,25 @@ import (
 	"github.com/keenywheels/backend/internal/vixarapi/service"
 )
 
-// convertToGetAllInterestResp converts service layer structs to api response structs
-func convertToGetAllInterestResp(interests []service.Interest) []gen.Interest {
-	resp := make([]gen.Interest, 0, len(interests))
+// convertToSearchTokenInfoResp converts service layer structs to api response structs
+func convertToSearchTokenInfoResp(tokens []service.TokenInfo) []gen.TokenInfo {
+	resp := make([]gen.TokenInfo, 0, len(tokens))
 
-	for _, interest := range interests {
-		resp = append(resp, gen.Interest{
-			Timestamp: interest.Timestamp,
-			Features: gen.InterestFeatures{
-				Interest: interest.Features.Interest,
-			},
+	for _, t := range tokens {
+		records := make([]gen.TokenRecord, 0, len(t.Records))
+		for _, r := range t.Records {
+			records = append(records, gen.TokenRecord{
+				Timestamp: r.ScrapeDate,
+				Features: gen.TokenRecordFeatures{
+					Interest:           r.Interest,
+					InterestNormalized: r.NormalizedInterest,
+				},
+			})
+		}
+
+		resp = append(resp, gen.TokenInfo{
+			Token:   t.TokenName,
+			Records: records,
 		})
 	}
 

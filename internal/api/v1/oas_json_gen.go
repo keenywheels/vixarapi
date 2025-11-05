@@ -107,17 +107,17 @@ func (s *Error) UnmarshalJSON(data []byte) error {
 	return s.Decode(d)
 }
 
-// Encode encodes GetAllInterestBadRequest as json.
-func (s *GetAllInterestBadRequest) Encode(e *jx.Encoder) {
+// Encode encodes SearchTokenInfoInternalServerError as json.
+func (s *SearchTokenInfoInternalServerError) Encode(e *jx.Encoder) {
 	unwrapped := (*Error)(s)
 
 	unwrapped.Encode(e)
 }
 
-// Decode decodes GetAllInterestBadRequest from json.
-func (s *GetAllInterestBadRequest) Decode(d *jx.Decoder) error {
+// Decode decodes SearchTokenInfoInternalServerError from json.
+func (s *SearchTokenInfoInternalServerError) Decode(d *jx.Decoder) error {
 	if s == nil {
-		return errors.New("invalid: unable to decode GetAllInterestBadRequest to nil")
+		return errors.New("invalid: unable to decode SearchTokenInfoInternalServerError to nil")
 	}
 	var unwrapped Error
 	if err := func() error {
@@ -128,34 +128,34 @@ func (s *GetAllInterestBadRequest) Decode(d *jx.Decoder) error {
 	}(); err != nil {
 		return errors.Wrap(err, "alias")
 	}
-	*s = GetAllInterestBadRequest(unwrapped)
+	*s = SearchTokenInfoInternalServerError(unwrapped)
 	return nil
 }
 
 // MarshalJSON implements stdjson.Marshaler.
-func (s *GetAllInterestBadRequest) MarshalJSON() ([]byte, error) {
+func (s *SearchTokenInfoInternalServerError) MarshalJSON() ([]byte, error) {
 	e := jx.Encoder{}
 	s.Encode(&e)
 	return e.Bytes(), nil
 }
 
 // UnmarshalJSON implements stdjson.Unmarshaler.
-func (s *GetAllInterestBadRequest) UnmarshalJSON(data []byte) error {
+func (s *SearchTokenInfoInternalServerError) UnmarshalJSON(data []byte) error {
 	d := jx.DecodeBytes(data)
 	return s.Decode(d)
 }
 
-// Encode encodes GetAllInterestInternalServerError as json.
-func (s *GetAllInterestInternalServerError) Encode(e *jx.Encoder) {
+// Encode encodes SearchTokenInfoNotFound as json.
+func (s *SearchTokenInfoNotFound) Encode(e *jx.Encoder) {
 	unwrapped := (*Error)(s)
 
 	unwrapped.Encode(e)
 }
 
-// Decode decodes GetAllInterestInternalServerError from json.
-func (s *GetAllInterestInternalServerError) Decode(d *jx.Decoder) error {
+// Decode decodes SearchTokenInfoNotFound from json.
+func (s *SearchTokenInfoNotFound) Decode(d *jx.Decoder) error {
 	if s == nil {
-		return errors.New("invalid: unable to decode GetAllInterestInternalServerError to nil")
+		return errors.New("invalid: unable to decode SearchTokenInfoNotFound to nil")
 	}
 	var unwrapped Error
 	if err := func() error {
@@ -166,26 +166,26 @@ func (s *GetAllInterestInternalServerError) Decode(d *jx.Decoder) error {
 	}(); err != nil {
 		return errors.Wrap(err, "alias")
 	}
-	*s = GetAllInterestInternalServerError(unwrapped)
+	*s = SearchTokenInfoNotFound(unwrapped)
 	return nil
 }
 
 // MarshalJSON implements stdjson.Marshaler.
-func (s *GetAllInterestInternalServerError) MarshalJSON() ([]byte, error) {
+func (s *SearchTokenInfoNotFound) MarshalJSON() ([]byte, error) {
 	e := jx.Encoder{}
 	s.Encode(&e)
 	return e.Bytes(), nil
 }
 
 // UnmarshalJSON implements stdjson.Unmarshaler.
-func (s *GetAllInterestInternalServerError) UnmarshalJSON(data []byte) error {
+func (s *SearchTokenInfoNotFound) UnmarshalJSON(data []byte) error {
 	d := jx.DecodeBytes(data)
 	return s.Decode(d)
 }
 
-// Encode encodes GetAllInterestOKApplicationJSON as json.
-func (s GetAllInterestOKApplicationJSON) Encode(e *jx.Encoder) {
-	unwrapped := []Interest(s)
+// Encode encodes SearchTokenInfoOKApplicationJSON as json.
+func (s SearchTokenInfoOKApplicationJSON) Encode(e *jx.Encoder) {
+	unwrapped := []TokenInfo(s)
 
 	e.ArrStart()
 	for _, elem := range unwrapped {
@@ -194,16 +194,16 @@ func (s GetAllInterestOKApplicationJSON) Encode(e *jx.Encoder) {
 	e.ArrEnd()
 }
 
-// Decode decodes GetAllInterestOKApplicationJSON from json.
-func (s *GetAllInterestOKApplicationJSON) Decode(d *jx.Decoder) error {
+// Decode decodes SearchTokenInfoOKApplicationJSON from json.
+func (s *SearchTokenInfoOKApplicationJSON) Decode(d *jx.Decoder) error {
 	if s == nil {
-		return errors.New("invalid: unable to decode GetAllInterestOKApplicationJSON to nil")
+		return errors.New("invalid: unable to decode SearchTokenInfoOKApplicationJSON to nil")
 	}
-	var unwrapped []Interest
+	var unwrapped []TokenInfo
 	if err := func() error {
-		unwrapped = make([]Interest, 0)
+		unwrapped = make([]TokenInfo, 0)
 		if err := d.Arr(func(d *jx.Decoder) error {
-			var elem Interest
+			var elem TokenInfo
 			if err := elem.Decode(d); err != nil {
 				return err
 			}
@@ -216,46 +216,55 @@ func (s *GetAllInterestOKApplicationJSON) Decode(d *jx.Decoder) error {
 	}(); err != nil {
 		return errors.Wrap(err, "alias")
 	}
-	*s = GetAllInterestOKApplicationJSON(unwrapped)
+	*s = SearchTokenInfoOKApplicationJSON(unwrapped)
 	return nil
 }
 
 // MarshalJSON implements stdjson.Marshaler.
-func (s GetAllInterestOKApplicationJSON) MarshalJSON() ([]byte, error) {
+func (s SearchTokenInfoOKApplicationJSON) MarshalJSON() ([]byte, error) {
 	e := jx.Encoder{}
 	s.Encode(&e)
 	return e.Bytes(), nil
 }
 
 // UnmarshalJSON implements stdjson.Unmarshaler.
-func (s *GetAllInterestOKApplicationJSON) UnmarshalJSON(data []byte) error {
+func (s *SearchTokenInfoOKApplicationJSON) UnmarshalJSON(data []byte) error {
 	d := jx.DecodeBytes(data)
 	return s.Decode(d)
 }
 
 // Encode implements json.Marshaler.
-func (s *GetAllInterestRequest) Encode(e *jx.Encoder) {
+func (s *TokenInfo) Encode(e *jx.Encoder) {
 	e.ObjStart()
 	s.encodeFields(e)
 	e.ObjEnd()
 }
 
 // encodeFields encodes fields.
-func (s *GetAllInterestRequest) encodeFields(e *jx.Encoder) {
+func (s *TokenInfo) encodeFields(e *jx.Encoder) {
 	{
 		e.FieldStart("token")
 		e.Str(s.Token)
 	}
+	{
+		e.FieldStart("records")
+		e.ArrStart()
+		for _, elem := range s.Records {
+			elem.Encode(e)
+		}
+		e.ArrEnd()
+	}
 }
 
-var jsonFieldsNameOfGetAllInterestRequest = [1]string{
+var jsonFieldsNameOfTokenInfo = [2]string{
 	0: "token",
+	1: "records",
 }
 
-// Decode decodes GetAllInterestRequest from json.
-func (s *GetAllInterestRequest) Decode(d *jx.Decoder) error {
+// Decode decodes TokenInfo from json.
+func (s *TokenInfo) Decode(d *jx.Decoder) error {
 	if s == nil {
-		return errors.New("invalid: unable to decode GetAllInterestRequest to nil")
+		return errors.New("invalid: unable to decode TokenInfo to nil")
 	}
 	var requiredBitSet [1]uint8
 
@@ -273,17 +282,35 @@ func (s *GetAllInterestRequest) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"token\"")
 			}
+		case "records":
+			requiredBitSet[0] |= 1 << 1
+			if err := func() error {
+				s.Records = make([]TokenRecord, 0)
+				if err := d.Arr(func(d *jx.Decoder) error {
+					var elem TokenRecord
+					if err := elem.Decode(d); err != nil {
+						return err
+					}
+					s.Records = append(s.Records, elem)
+					return nil
+				}); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"records\"")
+			}
 		default:
 			return d.Skip()
 		}
 		return nil
 	}); err != nil {
-		return errors.Wrap(err, "decode GetAllInterestRequest")
+		return errors.Wrap(err, "decode TokenInfo")
 	}
 	// Validate required fields.
 	var failures []validate.FieldError
 	for i, mask := range [1]uint8{
-		0b00000001,
+		0b00000011,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
@@ -295,8 +322,8 @@ func (s *GetAllInterestRequest) Decode(d *jx.Decoder) error {
 				bitIdx := bits.TrailingZeros8(result)
 				fieldIdx := i*8 + bitIdx
 				var name string
-				if fieldIdx < len(jsonFieldsNameOfGetAllInterestRequest) {
-					name = jsonFieldsNameOfGetAllInterestRequest[fieldIdx]
+				if fieldIdx < len(jsonFieldsNameOfTokenInfo) {
+					name = jsonFieldsNameOfTokenInfo[fieldIdx]
 				} else {
 					name = strconv.Itoa(fieldIdx)
 				}
@@ -317,30 +344,30 @@ func (s *GetAllInterestRequest) Decode(d *jx.Decoder) error {
 }
 
 // MarshalJSON implements stdjson.Marshaler.
-func (s *GetAllInterestRequest) MarshalJSON() ([]byte, error) {
+func (s *TokenInfo) MarshalJSON() ([]byte, error) {
 	e := jx.Encoder{}
 	s.Encode(&e)
 	return e.Bytes(), nil
 }
 
 // UnmarshalJSON implements stdjson.Unmarshaler.
-func (s *GetAllInterestRequest) UnmarshalJSON(data []byte) error {
+func (s *TokenInfo) UnmarshalJSON(data []byte) error {
 	d := jx.DecodeBytes(data)
 	return s.Decode(d)
 }
 
 // Encode implements json.Marshaler.
-func (s *Interest) Encode(e *jx.Encoder) {
+func (s *TokenRecord) Encode(e *jx.Encoder) {
 	e.ObjStart()
 	s.encodeFields(e)
 	e.ObjEnd()
 }
 
 // encodeFields encodes fields.
-func (s *Interest) encodeFields(e *jx.Encoder) {
+func (s *TokenRecord) encodeFields(e *jx.Encoder) {
 	{
 		e.FieldStart("timestamp")
-		e.Int64(s.Timestamp)
+		e.Str(s.Timestamp)
 	}
 	{
 		e.FieldStart("features")
@@ -348,15 +375,15 @@ func (s *Interest) encodeFields(e *jx.Encoder) {
 	}
 }
 
-var jsonFieldsNameOfInterest = [2]string{
+var jsonFieldsNameOfTokenRecord = [2]string{
 	0: "timestamp",
 	1: "features",
 }
 
-// Decode decodes Interest from json.
-func (s *Interest) Decode(d *jx.Decoder) error {
+// Decode decodes TokenRecord from json.
+func (s *TokenRecord) Decode(d *jx.Decoder) error {
 	if s == nil {
-		return errors.New("invalid: unable to decode Interest to nil")
+		return errors.New("invalid: unable to decode TokenRecord to nil")
 	}
 	var requiredBitSet [1]uint8
 
@@ -365,8 +392,8 @@ func (s *Interest) Decode(d *jx.Decoder) error {
 		case "timestamp":
 			requiredBitSet[0] |= 1 << 0
 			if err := func() error {
-				v, err := d.Int64()
-				s.Timestamp = int64(v)
+				v, err := d.Str()
+				s.Timestamp = string(v)
 				if err != nil {
 					return err
 				}
@@ -389,7 +416,7 @@ func (s *Interest) Decode(d *jx.Decoder) error {
 		}
 		return nil
 	}); err != nil {
-		return errors.Wrap(err, "decode Interest")
+		return errors.Wrap(err, "decode TokenRecord")
 	}
 	// Validate required fields.
 	var failures []validate.FieldError
@@ -406,8 +433,8 @@ func (s *Interest) Decode(d *jx.Decoder) error {
 				bitIdx := bits.TrailingZeros8(result)
 				fieldIdx := i*8 + bitIdx
 				var name string
-				if fieldIdx < len(jsonFieldsNameOfInterest) {
-					name = jsonFieldsNameOfInterest[fieldIdx]
+				if fieldIdx < len(jsonFieldsNameOfTokenRecord) {
+					name = jsonFieldsNameOfTokenRecord[fieldIdx]
 				} else {
 					name = strconv.Itoa(fieldIdx)
 				}
@@ -428,41 +455,46 @@ func (s *Interest) Decode(d *jx.Decoder) error {
 }
 
 // MarshalJSON implements stdjson.Marshaler.
-func (s *Interest) MarshalJSON() ([]byte, error) {
+func (s *TokenRecord) MarshalJSON() ([]byte, error) {
 	e := jx.Encoder{}
 	s.Encode(&e)
 	return e.Bytes(), nil
 }
 
 // UnmarshalJSON implements stdjson.Unmarshaler.
-func (s *Interest) UnmarshalJSON(data []byte) error {
+func (s *TokenRecord) UnmarshalJSON(data []byte) error {
 	d := jx.DecodeBytes(data)
 	return s.Decode(d)
 }
 
 // Encode implements json.Marshaler.
-func (s *InterestFeatures) Encode(e *jx.Encoder) {
+func (s *TokenRecordFeatures) Encode(e *jx.Encoder) {
 	e.ObjStart()
 	s.encodeFields(e)
 	e.ObjEnd()
 }
 
 // encodeFields encodes fields.
-func (s *InterestFeatures) encodeFields(e *jx.Encoder) {
+func (s *TokenRecordFeatures) encodeFields(e *jx.Encoder) {
 	{
 		e.FieldStart("interest")
-		e.Int(s.Interest)
+		e.Int64(s.Interest)
+	}
+	{
+		e.FieldStart("interest_normalized")
+		e.Float64(s.InterestNormalized)
 	}
 }
 
-var jsonFieldsNameOfInterestFeatures = [1]string{
+var jsonFieldsNameOfTokenRecordFeatures = [2]string{
 	0: "interest",
+	1: "interest_normalized",
 }
 
-// Decode decodes InterestFeatures from json.
-func (s *InterestFeatures) Decode(d *jx.Decoder) error {
+// Decode decodes TokenRecordFeatures from json.
+func (s *TokenRecordFeatures) Decode(d *jx.Decoder) error {
 	if s == nil {
-		return errors.New("invalid: unable to decode InterestFeatures to nil")
+		return errors.New("invalid: unable to decode TokenRecordFeatures to nil")
 	}
 	var requiredBitSet [1]uint8
 
@@ -471,8 +503,8 @@ func (s *InterestFeatures) Decode(d *jx.Decoder) error {
 		case "interest":
 			requiredBitSet[0] |= 1 << 0
 			if err := func() error {
-				v, err := d.Int()
-				s.Interest = int(v)
+				v, err := d.Int64()
+				s.Interest = int64(v)
 				if err != nil {
 					return err
 				}
@@ -480,17 +512,29 @@ func (s *InterestFeatures) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"interest\"")
 			}
+		case "interest_normalized":
+			requiredBitSet[0] |= 1 << 1
+			if err := func() error {
+				v, err := d.Float64()
+				s.InterestNormalized = float64(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"interest_normalized\"")
+			}
 		default:
 			return d.Skip()
 		}
 		return nil
 	}); err != nil {
-		return errors.Wrap(err, "decode InterestFeatures")
+		return errors.Wrap(err, "decode TokenRecordFeatures")
 	}
 	// Validate required fields.
 	var failures []validate.FieldError
 	for i, mask := range [1]uint8{
-		0b00000001,
+		0b00000011,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
@@ -502,8 +546,8 @@ func (s *InterestFeatures) Decode(d *jx.Decoder) error {
 				bitIdx := bits.TrailingZeros8(result)
 				fieldIdx := i*8 + bitIdx
 				var name string
-				if fieldIdx < len(jsonFieldsNameOfInterestFeatures) {
-					name = jsonFieldsNameOfInterestFeatures[fieldIdx]
+				if fieldIdx < len(jsonFieldsNameOfTokenRecordFeatures) {
+					name = jsonFieldsNameOfTokenRecordFeatures[fieldIdx]
 				} else {
 					name = strconv.Itoa(fieldIdx)
 				}
@@ -524,14 +568,14 @@ func (s *InterestFeatures) Decode(d *jx.Decoder) error {
 }
 
 // MarshalJSON implements stdjson.Marshaler.
-func (s *InterestFeatures) MarshalJSON() ([]byte, error) {
+func (s *TokenRecordFeatures) MarshalJSON() ([]byte, error) {
 	e := jx.Encoder{}
 	s.Encode(&e)
 	return e.Bytes(), nil
 }
 
 // UnmarshalJSON implements stdjson.Unmarshaler.
-func (s *InterestFeatures) UnmarshalJSON(data []byte) error {
+func (s *TokenRecordFeatures) UnmarshalJSON(data []byte) error {
 	d := jx.DecodeBytes(data)
 	return s.Decode(d)
 }

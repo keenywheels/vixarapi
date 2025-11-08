@@ -4,11 +4,12 @@ import (
 	"context"
 
 	"github.com/keenywheels/backend/internal/vixarapi/models"
+	"github.com/keenywheels/backend/internal/vixarapi/repository"
 )
 
 // IRepository provides interface to communicate with the repository layer
 type IRepository interface {
-	SearchTokenInfo(context.Context, string) ([]models.TokenInfo, error)
+	SearchTokenInfo(context.Context, *repository.SearchTokenParams) ([]models.TokenInfo, error)
 }
 
 // Service provides interest-related business logic

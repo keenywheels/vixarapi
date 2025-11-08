@@ -33,13 +33,13 @@ func (c *codeRecorder) WriteHeader(status int) {
 //
 // Get info for specified token.
 //
-// GET /api/v1/token/search
+// POST /api/v1/token/search
 func (s *Server) handleSearchTokenInfoRequest(args [0]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
 	statusWriter := &codeRecorder{ResponseWriter: w}
 	w = statusWriter
 	otelAttrs := []attribute.KeyValue{
 		otelogen.OperationID("searchTokenInfo"),
-		semconv.HTTPRequestMethodKey.String("GET"),
+		semconv.HTTPRequestMethodKey.String("POST"),
 		semconv.HTTPRouteKey.String("/api/v1/token/search"),
 	}
 
@@ -103,18 +103,23 @@ func (s *Server) handleSearchTokenInfoRequest(args [0]string, argsEscaped bool, 
 			ID:   "searchTokenInfo",
 		}
 	)
-	params, err := decodeSearchTokenInfoParams(args, argsEscaped, r)
+
+	var rawBody []byte
+	request, rawBody, close, err := s.decodeSearchTokenInfoRequest(r)
 	if err != nil {
-		err = &ogenerrors.DecodeParamsError{
+		err = &ogenerrors.DecodeRequestError{
 			OperationContext: opErrContext,
 			Err:              err,
 		}
-		defer recordError("DecodeParams", err)
+		defer recordError("DecodeRequest", err)
 		s.cfg.ErrorHandler(ctx, w, r, err)
 		return
 	}
-
-	var rawBody []byte
+	defer func() {
+		if err := close(); err != nil {
+			recordError("CloseRequest", err)
+		}
+	}()
 
 	var response SearchTokenInfoRes
 	if m := s.cfg.Middleware; m != nil {
@@ -123,20 +128,15 @@ func (s *Server) handleSearchTokenInfoRequest(args [0]string, argsEscaped bool, 
 			OperationName:    SearchTokenInfoOperation,
 			OperationSummary: "Get info for specified token",
 			OperationID:      "searchTokenInfo",
-			Body:             nil,
+			Body:             request,
 			RawBody:          rawBody,
-			Params: middleware.Parameters{
-				{
-					Name: "token",
-					In:   "query",
-				}: params.Token,
-			},
-			Raw: r,
+			Params:           middleware.Parameters{},
+			Raw:              r,
 		}
 
 		type (
-			Request  = struct{}
-			Params   = SearchTokenInfoParams
+			Request  = *SearchTokenInfoRequest
+			Params   = struct{}
 			Response = SearchTokenInfoRes
 		)
 		response, err = middleware.HookMiddleware[
@@ -146,14 +146,14 @@ func (s *Server) handleSearchTokenInfoRequest(args [0]string, argsEscaped bool, 
 		](
 			m,
 			mreq,
-			unpackSearchTokenInfoParams,
+			nil,
 			func(ctx context.Context, request Request, params Params) (response Response, err error) {
-				response, err = s.h.SearchTokenInfo(ctx, params)
+				response, err = s.h.SearchTokenInfo(ctx, request)
 				return response, err
 			},
 		)
 	} else {
-		response, err = s.h.SearchTokenInfo(ctx, params)
+		response, err = s.h.SearchTokenInfo(ctx, request)
 	}
 	if err != nil {
 		defer recordError("Internal", err)

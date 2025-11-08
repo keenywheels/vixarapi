@@ -9,7 +9,6 @@ import (
 	"time"
 
 	"github.com/go-faster/errors"
-	"github.com/ogen-go/ogen/conv"
 	ht "github.com/ogen-go/ogen/http"
 	"github.com/ogen-go/ogen/otelogen"
 	"github.com/ogen-go/ogen/uri"
@@ -31,8 +30,8 @@ type Invoker interface {
 	//
 	// Get info for specified token.
 	//
-	// GET /api/v1/token/search
-	SearchTokenInfo(ctx context.Context, params SearchTokenInfoParams) (SearchTokenInfoRes, error)
+	// POST /api/v1/token/search
+	SearchTokenInfo(ctx context.Context, request *SearchTokenInfoRequest) (SearchTokenInfoRes, error)
 }
 
 // Client implements OAS client.
@@ -82,16 +81,16 @@ func (c *Client) requestURL(ctx context.Context) *url.URL {
 //
 // Get info for specified token.
 //
-// GET /api/v1/token/search
-func (c *Client) SearchTokenInfo(ctx context.Context, params SearchTokenInfoParams) (SearchTokenInfoRes, error) {
-	res, err := c.sendSearchTokenInfo(ctx, params)
+// POST /api/v1/token/search
+func (c *Client) SearchTokenInfo(ctx context.Context, request *SearchTokenInfoRequest) (SearchTokenInfoRes, error) {
+	res, err := c.sendSearchTokenInfo(ctx, request)
 	return res, err
 }
 
-func (c *Client) sendSearchTokenInfo(ctx context.Context, params SearchTokenInfoParams) (res SearchTokenInfoRes, err error) {
+func (c *Client) sendSearchTokenInfo(ctx context.Context, request *SearchTokenInfoRequest) (res SearchTokenInfoRes, err error) {
 	otelAttrs := []attribute.KeyValue{
 		otelogen.OperationID("searchTokenInfo"),
-		semconv.HTTPRequestMethodKey.String("GET"),
+		semconv.HTTPRequestMethodKey.String("POST"),
 		semconv.URLTemplateKey.String("/api/v1/token/search"),
 	}
 	otelAttrs = append(otelAttrs, c.cfg.Attributes...)
@@ -129,28 +128,13 @@ func (c *Client) sendSearchTokenInfo(ctx context.Context, params SearchTokenInfo
 	pathParts[0] = "/api/v1/token/search"
 	uri.AddPathParts(u, pathParts[:]...)
 
-	stage = "EncodeQueryParams"
-	q := uri.NewQueryEncoder()
-	{
-		// Encode "token" parameter.
-		cfg := uri.QueryParameterEncodingConfig{
-			Name:    "token",
-			Style:   uri.QueryStyleForm,
-			Explode: true,
-		}
-
-		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
-			return e.EncodeValue(conv.StringToString(params.Token))
-		}); err != nil {
-			return res, errors.Wrap(err, "encode query")
-		}
-	}
-	u.RawQuery = q.Values().Encode()
-
 	stage = "EncodeRequest"
-	r, err := ht.NewRequest(ctx, "GET", u)
+	r, err := ht.NewRequest(ctx, "POST", u)
 	if err != nil {
 		return res, errors.Wrap(err, "create request")
+	}
+	if err := encodeSearchTokenInfoRequest(request, r); err != nil {
+		return res, errors.Wrap(err, "encode request")
 	}
 
 	stage = "SendRequest"

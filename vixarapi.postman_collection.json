@@ -11,11 +11,8 @@
 			"item": [
 				{
 					"name": "Search token info",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
 					"request": {
-						"method": "GET",
+						"method": "POST",
 						"header": [
 							{
 								"key": "Content-Type",
@@ -36,10 +33,10 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"token\": \"random_token\"\n}"
+							"raw": "{\n    \"token\": \"чип\",\n    \"start\": \"2025-10-15T00:00:00Z\"\n}"
 						},
 						"url": {
-							"raw": "localhost:8000/api/v1/token/search?token=чип",
+							"raw": "localhost:8000/api/v1/token/search",
 							"host": [
 								"localhost"
 							],
@@ -49,12 +46,6 @@
 								"v1",
 								"token",
 								"search"
-							],
-							"query": [
-								{
-									"key": "token",
-									"value": "чип"
-								}
 							]
 						}
 					},

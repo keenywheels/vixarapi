@@ -2,6 +2,9 @@ package service
 
 import (
 	"context"
+	"time"
+
+	"github.com/keenywheels/backend/internal/vixarapi/repository"
 )
 
 const (
@@ -21,11 +24,23 @@ type TokenInfo struct {
 	Records   []Record
 }
 
+type SearchTokenInfoParams struct {
+	Token string
+	Start time.Time
+	End   time.Time
+}
+
 // SearchTokenInfo retrieves all interest records for the specified token
-func (s *Service) SearchTokenInfo(ctx context.Context, token string) ([]TokenInfo, error) {
+func (s *Service) SearchTokenInfo(ctx context.Context, params *SearchTokenInfoParams) ([]TokenInfo, error) {
 	op := "Service.SearchTokenInfo"
 
-	tokensInfo, err := s.repo.SearchTokenInfo(ctx, token)
+	repoParams := &repository.SearchTokenParams{
+		Token: params.Token,
+		Start: params.Start,
+		End:   params.End,
+	}
+
+	tokensInfo, err := s.repo.SearchTokenInfo(ctx, repoParams)
 	if err != nil {
 		return nil, parseServiceError(op, err)
 	}

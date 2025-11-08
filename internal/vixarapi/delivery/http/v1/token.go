@@ -3,6 +3,7 @@ package v1
 import (
 	"context"
 	"errors"
+	"time"
 
 	gen "github.com/keenywheels/backend/internal/api/v1"
 	"github.com/keenywheels/backend/internal/vixarapi/service"
@@ -13,14 +14,23 @@ import (
 // SearchTokenInfo searches for token information based on the provided parameters.
 func (c *Controller) SearchTokenInfo(
 	ctx context.Context,
-	params gen.SearchTokenInfoParams,
+	req *gen.SearchTokenInfoRequest,
 ) (gen.SearchTokenInfoRes, error) {
 	var (
 		op  = "Controller.SearchTokenInfo"
 		log = ctxutils.GetLogger(ctx)
 	)
 
-	tokensInfo, err := c.svc.SearchTokenInfo(ctx, params.Token)
+	end := time.Now().UTC()
+	if req.End.Set {
+		end = req.End.Value.UTC()
+	}
+
+	tokensInfo, err := c.svc.SearchTokenInfo(ctx, &service.SearchTokenInfoParams{
+		Token: req.Token,
+		Start: req.Start.UTC(),
+		End:   end,
+	})
 	if err != nil {
 		log.Errorf("[%s] failed to search token info: %v", op, err)
 

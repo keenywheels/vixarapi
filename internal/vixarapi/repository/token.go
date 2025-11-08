@@ -3,13 +3,24 @@ package repository
 import (
 	"context"
 	"fmt"
+	"time"
 
 	sq "github.com/Masterminds/squirrel"
 	"github.com/keenywheels/backend/internal/vixarapi/models"
+	"github.com/keenywheels/backend/pkg/ctxutils"
 )
 
+type SearchTokenParams struct {
+	Token string
+	Start time.Time
+	End   time.Time
+}
+
 // SearchTokenInfo searches for token information in the repository
-func (r *Repository) SearchTokenInfo(ctx context.Context, token string) ([]models.TokenInfo, error) {
+func (r *Repository) SearchTokenInfo(
+	ctx context.Context,
+	params *SearchTokenParams,
+) ([]models.TokenInfo, error) {
 	op := "Repository.SearchTokenInfo"
 
 	// prepare query
@@ -22,16 +33,23 @@ func (r *Repository) SearchTokenInfo(ctx context.Context, token string) ([]model
 		).
 		From(r.tbl.Name).
 		Where(
-			sq.Expr(fmt.Sprintf("%s %% lower(?)", r.tbl.Fields.TokenName), token),
+			sq.And{
+				sq.Expr(fmt.Sprintf("%s %% lower(?)", r.tbl.Fields.TokenName), params.Token),
+				sq.GtOrEq{r.tbl.Fields.ScrapeDate: params.Start},
+				sq.LtOrEq{r.tbl.Fields.ScrapeDate: params.End},
+			},
 		).
 		OrderBy(
 			fmt.Sprintf("similarity(%s, lower($1)) DESC", r.tbl.Fields.TokenName),
+			fmt.Sprintf("%s ASC", r.tbl.Fields.ScrapeDate),
 		).
 		Limit(searchLimit).
 		ToSql()
 	if err != nil {
 		return nil, parsePostgresError(op, err)
 	}
+
+	ctxutils.GetLogger(ctx).Debugf("[%s] search token info query: %s, args: %v", op, query, args)
 
 	rows, err := r.db.Pool.Query(ctx, query, args...)
 	if err != nil {

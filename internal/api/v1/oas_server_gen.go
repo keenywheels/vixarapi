@@ -12,8 +12,8 @@ type Handler interface {
 	//
 	// Get info for specified token.
 	//
-	// GET /api/v1/token/search
-	SearchTokenInfo(ctx context.Context, params SearchTokenInfoParams) (SearchTokenInfoRes, error)
+	// POST /api/v1/token/search
+	SearchTokenInfo(ctx context.Context, req *SearchTokenInfoRequest) (SearchTokenInfoRes, error)
 }
 
 // Server implements http server based on OpenAPI v3 specification and

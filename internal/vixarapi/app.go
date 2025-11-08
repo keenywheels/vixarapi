@@ -164,6 +164,7 @@ func (app *App) initRouter(interestHandler oas.Handler) (http.Handler, error) {
 	}
 
 	errorHandler := func(_ context.Context, w http.ResponseWriter, r *http.Request, err error) {
+		app.logger.Errorf("API ERROR: %v", err)
 		httputils.BadRequestJSON(w)
 	}
 

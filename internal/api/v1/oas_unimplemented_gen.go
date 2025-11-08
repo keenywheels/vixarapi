@@ -17,7 +17,7 @@ var _ Handler = UnimplementedHandler{}
 //
 // Get info for specified token.
 //
-// GET /api/v1/token/search
-func (UnimplementedHandler) SearchTokenInfo(ctx context.Context, params SearchTokenInfoParams) (r SearchTokenInfoRes, _ error) {
+// POST /api/v1/token/search
+func (UnimplementedHandler) SearchTokenInfo(ctx context.Context, req *SearchTokenInfoRequest) (r SearchTokenInfoRes, _ error) {
 	return r, ht.ErrNotImplemented
 }

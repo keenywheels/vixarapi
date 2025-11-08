@@ -17,6 +17,7 @@ func convertToSearchTokenInfoResp(tokens []service.TokenInfo) []gen.TokenInfo {
 				Features: gen.TokenRecordFeatures{
 					Interest:           r.Interest,
 					InterestNormalized: r.NormalizedInterest,
+					Sentiment:          r.Sentiment,
 				},
 			})
 		}

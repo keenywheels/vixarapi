@@ -30,6 +30,7 @@ func (r *Repository) SearchTokenInfo(
 			r.tbl.Fields.ScrapeDate,
 			r.tbl.Fields.Interest,
 			fmt.Sprintf("1.0 * %s / %s", r.tbl.Fields.Interest, r.tbl.Fields.MaxInterest),
+			r.tbl.Fields.Sentiment,
 		).
 		From(r.tbl.Name).
 		Where(
@@ -72,6 +73,7 @@ func (r *Repository) SearchTokenInfo(
 			&record.ScrapeDate,
 			&record.Interest,
 			&record.NormalizedInterest,
+			&record.Sentiment,
 		); err != nil {
 			return nil, parsePostgresError(op, err)
 		}

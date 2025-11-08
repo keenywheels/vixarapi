@@ -13,6 +13,7 @@ func convertToServiceTokenInfo(tokens []models.TokenInfo) []TokenInfo {
 				ScrapeDate:         r.ScrapeDate.Format(timedateLayout),
 				Interest:           r.Interest,
 				NormalizedInterest: r.NormalizedInterest,
+				Sentiment:          r.Sentiment,
 			})
 		}
 

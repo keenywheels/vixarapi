@@ -3,12 +3,18 @@ package service
 import (
 	"context"
 
+	"github.com/keenywheels/backend/internal/pkg/client/llm"
 	"github.com/keenywheels/backend/internal/pkg/tokenizer"
 	"github.com/keenywheels/backend/internal/pkg/tokenizer/metrics"
 	"github.com/keenywheels/backend/internal/pkg/tokenizer/pkg/stemmer"
 	"github.com/keenywheels/backend/internal/pkg/tokenizer/stages"
 	"github.com/keenywheels/backend/internal/processor/models"
 )
+
+// IClientLLM
+type IClientLLM interface {
+	SentimentAnalysis(ctx context.Context, req *llm.SentimentAnalysisRequest) (*llm.SentimentAnalysisResponse, error)
+}
 
 // IRepository defines the interface for repository layer interactions
 type IRepository interface {
@@ -19,13 +25,15 @@ type IRepository interface {
 type Service struct {
 	repo      IRepository
 	tokenizer *tokenizer.Pipeline
+	llm       IClientLLM
 }
 
 // New creates a new instance of Service
-func New(repo IRepository) *Service {
+func New(repo IRepository, llm IClientLLM) *Service {
 	return &Service{
 		repo:      repo,
 		tokenizer: getTokenizer(),
+		llm:       llm,
 	}
 }
 

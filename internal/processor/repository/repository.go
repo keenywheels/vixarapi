@@ -7,7 +7,7 @@ type TokenDataFields struct {
 	TokenID   string
 	TokenName string
 	Interest  string
-	Context   string
+	Sentiment string
 	SiteName  string
 	Date      string
 }
@@ -32,9 +32,9 @@ func New(db *postgres.Postgres) *Repository {
 			TokenID:   "token_id",
 			TokenName: "token_name",
 			Interest:  "interest",
+			Sentiment: "sentiment",
 			SiteName:  "site_name",
 			Date:      "scrape_date",
-			Context:   "context",
 		},
 	}
 

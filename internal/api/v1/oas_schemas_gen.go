@@ -171,6 +171,7 @@ func (s *TokenRecord) SetFeatures(val TokenRecordFeatures) {
 type TokenRecordFeatures struct {
 	Interest           int64   `json:"interest"`
 	InterestNormalized float64 `json:"interest_normalized"`
+	Sentiment          int16   `json:"sentiment"`
 }
 
 // GetInterest returns the value of Interest.
@@ -183,6 +184,11 @@ func (s *TokenRecordFeatures) GetInterestNormalized() float64 {
 	return s.InterestNormalized
 }
 
+// GetSentiment returns the value of Sentiment.
+func (s *TokenRecordFeatures) GetSentiment() int16 {
+	return s.Sentiment
+}
+
 // SetInterest sets the value of Interest.
 func (s *TokenRecordFeatures) SetInterest(val int64) {
 	s.Interest = val
@@ -191,4 +197,9 @@ func (s *TokenRecordFeatures) SetInterest(val int64) {
 // SetInterestNormalized sets the value of InterestNormalized.
 func (s *TokenRecordFeatures) SetInterestNormalized(val float64) {
 	s.InterestNormalized = val
+}
+
+// SetSentiment sets the value of Sentiment.
+func (s *TokenRecordFeatures) SetSentiment(val int16) {
+	s.Sentiment = val
 }

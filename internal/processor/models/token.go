@@ -6,8 +6,8 @@ import "time"
 type TokenData struct {
 	TokenID   int64
 	TokenName string
-	Interest  int
-	Context   string
+	Interest  int64
+	Sentiment int16
 	SiteName  string
 	Date      time.Time
 }

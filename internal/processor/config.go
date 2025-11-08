@@ -5,8 +5,14 @@ import (
 	"strings"
 	"time"
 
+	"github.com/keenywheels/backend/internal/pkg/client/llm"
 	"github.com/spf13/viper"
 )
+
+// ClientsConfig struct for external clients config
+type ClientsConfig struct {
+	LLM llm.Config `mapstructure:"llm"`
+}
 
 // Config struct for logger config
 type LoggerConfig struct {
@@ -53,6 +59,7 @@ func (pc PostgresConfig) DSN() string {
 
 // AppConfig contains application configuration
 type AppConfig struct {
+	Clients   ClientsConfig   `mapstructure:"clients"`
 	Processor ProcessorConfig `mapstructure:"processor"`
 	Postgres  PostgresConfig  `mapstructure:"postgres"`
 	LoggerCfg LoggerConfig    `mapstructure:"logger"`

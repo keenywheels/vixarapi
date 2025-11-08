@@ -10,7 +10,7 @@ import (
 
 // SentimentAnalysisResponse response from sentiment analysis
 type SentimentAnalysisResponse struct {
-	Sentiment int `json:"sentiment"`
+	Sentiment int16 `json:"sentiment"`
 }
 
 // SentimentAnalysisRequest request for sentiment analysis
@@ -48,7 +48,7 @@ func (c *Client) SentimentAnalysis(ctx context.Context, req *SentimentAnalysisRe
 
 	// TODO: удалить заглушку после реализации LLM сервиса
 	var resp SentimentAnalysisResponse
-	resp.Sentiment = int((2*rand.Float32() - 1.0) * 100)
+	resp.Sentiment = int16((2*rand.Float32() - 1.0) * 100)
 	// TODO: удалить заглушку после реализации LLM сервиса
 
 	return &resp, nil

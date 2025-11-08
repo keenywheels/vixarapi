@@ -56,6 +56,7 @@ func (c *Client) makeRequestJSON(ctx context.Context, method string, path string
 	}
 
 	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("X-Server-Side-Token", c.cfg.Token)
 
 	resp, err := c.client.Do(req)
 	if err != nil {

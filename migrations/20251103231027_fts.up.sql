@@ -5,6 +5,7 @@ SELECT
 	token_name,
   scrape_date,
   SUM(interest) AS interest,
+  ROUND(AVG(sentiment))::SMALLINT AS sentiment,
   MAX(SUM(interest)) OVER () AS max_interest
 FROM token_data
 GROUP BY (token_name, scrape_date);

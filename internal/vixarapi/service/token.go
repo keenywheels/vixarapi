@@ -16,6 +16,7 @@ type Record struct {
 	ScrapeDate         string
 	Interest           int64
 	NormalizedInterest float64
+	Sentiment          int16
 }
 
 // TokenInfo token info in service layer
@@ -24,6 +25,7 @@ type TokenInfo struct {
 	Records   []Record
 }
 
+// SearchTokenInfoParams parameters for searching token info
 type SearchTokenInfoParams struct {
 	Token string
 	Start time.Time

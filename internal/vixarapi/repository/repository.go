@@ -18,6 +18,7 @@ type SearchTokenFields struct {
 	TokenName   string
 	ScrapeDate  string
 	Interest    string
+	Sentiment   string
 	MaxInterest string
 }
 
@@ -49,6 +50,7 @@ func New(db *postgres.Postgres) (*Repository, error) {
 				TokenName:   "token_name",
 				ScrapeDate:  "scrape_date",
 				Interest:    "interest",
+				Sentiment:   "sentiment",
 				MaxInterest: "max_interest",
 			},
 		},

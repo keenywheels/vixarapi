@@ -7,6 +7,7 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/keenywheels/backend/internal/pkg/client/llm"
 	"github.com/keenywheels/backend/internal/pkg/consumer/kafka"
 	"github.com/keenywheels/backend/internal/processor/delivery/broker"
 	"github.com/keenywheels/backend/internal/processor/repository"
@@ -61,9 +62,12 @@ func (app *App) Run() error {
 	}
 	defer db.Close()
 
+	// create llm client
+	llm := llm.NewClient(&cfg.App.Clients.LLM)
+
 	// create service layer
 	repo := repository.New(db)
-	service := service.New(repo)
+	service := service.New(repo, llm)
 
 	// create broker
 	brokerOpts := []broker.Option{

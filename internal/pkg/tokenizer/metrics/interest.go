@@ -9,13 +9,13 @@ import (
 // InterestMetric tracks the number of times tokens target specific entities.
 type InterestMetric struct {
 	mu     sync.RWMutex
-	counts map[string]int
+	counts map[string]int64
 }
 
 // NewInterestMetric creates a new instance of InterestMetric.
 func NewInterestMetric() *InterestMetric {
 	return &InterestMetric{
-		counts: make(map[string]int),
+		counts: make(map[string]int64),
 	}
 }
 

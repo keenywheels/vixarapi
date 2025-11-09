@@ -55,6 +55,12 @@ services:
       - ../migrations:/migrations:ro
     command: ["-path", "/migrations/", "-database", "postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:${POSTGRES_PORT}/${POSTGRES_DB}?sslmode=disable", "up"]
 
+  sntmnt:
+    image: daronenko/sntmnt
+    container_name: sntmnt
+    ports:
+      - 9999:9999
+
   # standalone kafka setup; should be replaced with a proper cluster if needed
   kafka:
     container_name: kafka

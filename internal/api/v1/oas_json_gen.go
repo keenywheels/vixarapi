@@ -651,11 +651,16 @@ func (s *TokenRecordFeatures) encodeFields(e *jx.Encoder) {
 		e.FieldStart("interest_normalized")
 		e.Float64(s.InterestNormalized)
 	}
+	{
+		e.FieldStart("sentiment")
+		e.Int16(s.Sentiment)
+	}
 }
 
-var jsonFieldsNameOfTokenRecordFeatures = [2]string{
+var jsonFieldsNameOfTokenRecordFeatures = [3]string{
 	0: "interest",
 	1: "interest_normalized",
+	2: "sentiment",
 }
 
 // Decode decodes TokenRecordFeatures from json.
@@ -691,6 +696,18 @@ func (s *TokenRecordFeatures) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"interest_normalized\"")
 			}
+		case "sentiment":
+			requiredBitSet[0] |= 1 << 2
+			if err := func() error {
+				v, err := d.Int16()
+				s.Sentiment = int16(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"sentiment\"")
+			}
 		default:
 			return d.Skip()
 		}
@@ -701,7 +718,7 @@ func (s *TokenRecordFeatures) Decode(d *jx.Decoder) error {
 	// Validate required fields.
 	var failures []validate.FieldError
 	for i, mask := range [1]uint8{
-		0b00000011,
+		0b00000111,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.

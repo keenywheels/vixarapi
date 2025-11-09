@@ -59,9 +59,9 @@ func (r *Repository) insertBatch(ctx context.Context, tokens []*models.TokenData
 				r.tbl.Fields.Interest,
 				r.tbl.Fields.SiteName,
 				r.tbl.Fields.Date,
-				r.tbl.Fields.Context,
+				r.tbl.Fields.Sentiment,
 			).
-			Values(token.TokenName, token.Interest, token.SiteName, token.Date, token.Context).
+			Values(token.TokenName, token.Interest, token.SiteName, token.Date, token.Sentiment).
 			ToSql()
 		if err != nil {
 			return fmt.Errorf("[%s] failed to build insert query: %w", op, err)

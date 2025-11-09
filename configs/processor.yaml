@@ -1,4 +1,9 @@
 app:
+  clients:
+    llm:
+      token: "llm_api_token"
+      url: "http://sntmnt:9999"
+      timeout: 1m
   processor:
     workers_count: 10
     max_retries: 2

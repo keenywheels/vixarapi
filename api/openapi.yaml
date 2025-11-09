@@ -79,7 +79,10 @@ components:
             interest_normalized:
               type: number
               format: float64
-          required: [interest, interest_normalized]
+            sentiment:
+              type: integer
+              format: int16
+          required: [interest, interest_normalized, sentiment]
       required: [timestamp, features]
 
     Error:

@@ -2,7 +2,7 @@ app:
   clients:
     llm:
       token: "llm_api_token"
-      url: "http://localhost:9999"
+      url: "http://sntmnt:9999"
       timeout: 1m
   processor:
     workers_count: 10

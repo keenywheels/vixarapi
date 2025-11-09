@@ -2,9 +2,10 @@ package llm
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
-	"math/rand/v2"
+	"net/http"
 	"strings"
 )
 
@@ -35,21 +36,15 @@ func (c *Client) SentimentAnalysis(ctx context.Context, req *SentimentAnalysisRe
 		return nil, fmt.Errorf("wrong request: %w", err)
 	}
 
-	// TODO: раскомментировать после реализации LLM сервиса
-	// llmResp, err := c.makeRequestJSON(ctx, http.MethodPost, c.endpoints.SentimentAnalysis, req)
-	// if err != nil {
-	// 	return nil, fmt.Errorf("failed to send request to %s: %w", c.endpoints.SentimentAnalysis, err)
-	// }
+	llmResp, err := c.makeRequestJSON(ctx, http.MethodPost, c.endpoints.SentimentAnalysis, req)
+	if err != nil {
+		return nil, fmt.Errorf("failed to send request to %s: %w", c.endpoints.SentimentAnalysis, err)
+	}
 
-	// var resp SentimentAnalysisResponse
-	// if err := json.Unmarshal(llmResp, &resp); err != nil {
-	// 	return nil, fmt.Errorf("failed to unmarshal response body: %w", err)
-	// }
-
-	// TODO: удалить заглушку после реализации LLM сервиса
 	var resp SentimentAnalysisResponse
-	resp.Sentiment = int16((2*rand.Float32() - 1.0) * 100)
-	// TODO: удалить заглушку после реализации LLM сервиса
+	if err := json.Unmarshal(llmResp, &resp); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal response body: %w", err)
+	}
 
 	return &resp, nil
 }

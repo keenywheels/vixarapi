@@ -29,7 +29,7 @@ func NewClient(cfg *Config) *Client {
 	client := httpclient.DefaultClient(cfg.Timeout)
 
 	endpoints := endpoints{
-		SentimentAnalysis: "/v1/sentiment", // TODO: согласовать
+		SentimentAnalysis: "/analyze-sentiment",
 	}
 
 	return &Client{

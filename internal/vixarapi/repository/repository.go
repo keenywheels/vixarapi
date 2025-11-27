@@ -15,11 +15,11 @@ const (
 
 // SearchTokenFields represents the fields of the search token table
 type SearchTokenFields struct {
-	TokenName   string
-	ScrapeDate  string
-	Interest    string
-	Sentiment   string
-	MaxInterest string
+	TokenName      string
+	ScrapeDate     string
+	Interest       string
+	Sentiment      string
+	MedianInterest string
 }
 
 // SearchTokenTable represents the structure of the search token table
@@ -47,11 +47,11 @@ func New(db *postgres.Postgres) (*Repository, error) {
 		tbl: SearchTokenTable{
 			Name: "mv_token_search",
 			Fields: SearchTokenFields{
-				TokenName:   "token_name",
-				ScrapeDate:  "scrape_date",
-				Interest:    "interest",
-				Sentiment:   "sentiment",
-				MaxInterest: "max_interest",
+				TokenName:      "token_name",
+				ScrapeDate:     "scrape_date",
+				Interest:       "interest",
+				Sentiment:      "sentiment",
+				MedianInterest: "median_interest",
 			},
 		},
 		db:        db,

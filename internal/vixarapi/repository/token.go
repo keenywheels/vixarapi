@@ -29,7 +29,7 @@ func (r *Repository) SearchTokenInfo(
 			r.tbl.Fields.TokenName,
 			r.tbl.Fields.ScrapeDate,
 			r.tbl.Fields.Interest,
-			fmt.Sprintf("1.0 * %s / %s", r.tbl.Fields.Interest, r.tbl.Fields.MaxInterest),
+			fmt.Sprintf("1.0 * %s / %s", r.tbl.Fields.Interest, r.tbl.Fields.MedianInterest),
 			r.tbl.Fields.Sentiment,
 		).
 		From(r.tbl.Name).

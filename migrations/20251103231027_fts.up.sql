@@ -15,7 +15,11 @@ SELECT
   scrape_date,
   interest,
   sentiment,
-  (SELECT PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY interest) FROM aggr) AS median_interest
+  (SELECT
+    PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY interest)
+    FROM aggr aggr2
+    WHERE aggr2.scrape_date = aggr.scrape_date
+  ) AS median_interest
 FROM aggr;
 
 CREATE UNIQUE INDEX mv_token_search_pk ON mv_token_search (token_name, scrape_date);

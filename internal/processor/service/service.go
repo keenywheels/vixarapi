@@ -11,6 +11,10 @@ import (
 	"github.com/keenywheels/backend/internal/processor/models"
 )
 
+const (
+	interestMetricKey = "interest"
+)
+
 // IClientLLM
 type IClientLLM interface {
 	SentimentAnalysis(ctx context.Context, req *llm.SentimentAnalysisRequest) (*llm.SentimentAnalysisResponse, error)
@@ -23,28 +27,38 @@ type IRepository interface {
 
 // Service struct for service layer logic
 type Service struct {
-	repo      IRepository
-	tokenizer *tokenizer.Pipeline
-	llm       IClientLLM
+	repo IRepository
+	llm  IClientLLM
 }
 
 // New creates a new instance of Service
 func New(repo IRepository, llm IClientLLM) *Service {
 	return &Service{
-		repo:      repo,
-		tokenizer: getTokenizer(),
-		llm:       llm,
+		repo: repo,
+		llm:  llm,
 	}
 }
 
-// getTokenizer initializes and returns a tokenizer pipeline
-func getTokenizer() *tokenizer.Pipeline {
+// metricsRegistry is a type alias for a map of metric names to Metric instances
+type metricsRegistry map[string]metrics.Metric
+
+// getTokenizer initializes and returns a tokenizer pipeline with metrics registry
+func getTokenizer() (*tokenizer.Pipeline, metricsRegistry) {
+	interest := metrics.NewInterestMetric()
+
+	registry := metricsRegistry{
+		interestMetricKey: interest,
+		// add more metrics here if needed
+	}
+
 	stgs := []tokenizer.PipelineStage{
 		stages.NewNormalizerStage(),
 		stages.NewFilterStage(stages.DefaultTokenMinLength),
 		stages.NewStemmerStage(stemmer.DefaultStemmer),
-		stages.NewMetricStage(metrics.Registry...),
+		stages.NewMetricStage([]metrics.Metric{
+			interest,
+		}...),
 	}
 
-	return tokenizer.NewPipelineBuilder().AddStages(stgs...).Build()
+	return tokenizer.NewPipelineBuilder().AddStages(stgs...).Build(), registry
 }

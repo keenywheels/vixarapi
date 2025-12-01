@@ -3,6 +3,7 @@ package redis
 import (
 	"context"
 	"errors"
+	"fmt"
 	"time"
 
 	"github.com/redis/go-redis/v9"
@@ -14,14 +15,28 @@ type Redis struct {
 }
 
 // New creates a new Redis client
-func New(cfg *Config) *Redis {
+func New(cfg *Config) (*Redis, error) {
+	fixConfig(cfg)
+
 	client := redis.NewClient(&redis.Options{
-		Addr:     cfg.Addr,
-		Password: cfg.Password,
-		DB:       cfg.DB,
+		Addr:         cfg.Addr,
+		Password:     cfg.Password,
+		DB:           cfg.DB,
+		DialTimeout:  cfg.DialTimeout,
+		ReadTimeout:  cfg.ReadTimeout,
+		WriteTimeout: cfg.WriteTimeout,
+		PoolSize:     cfg.PoolSize,
+		MaxRetries:   cfg.MaxRetries,
 	})
 
-	return &Redis{client: client}
+	ctx, cancel := context.WithTimeout(context.Background(), cfg.PingTimeout)
+	defer cancel()
+
+	if _, err := client.Ping(ctx).Result(); err != nil {
+		return nil, fmt.Errorf("failed to ping redis: %w", err)
+	}
+
+	return &Redis{client: client}, nil
 }
 
 // Close closes the Redis client connection

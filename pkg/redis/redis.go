@@ -14,8 +14,14 @@ type Redis struct {
 }
 
 // New creates a new Redis client
-func New(client *redis.Client) *Redis {
-	return &Redis{}
+func New(cfg *Config) *Redis {
+	client := redis.NewClient(&redis.Options{
+		Addr:     cfg.Addr,
+		Password: cfg.Password,
+		DB:       cfg.DB,
+	})
+
+	return &Redis{client: client}
 }
 
 // Close closes the Redis client connection

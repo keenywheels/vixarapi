@@ -22,6 +22,13 @@ func BadRequestJSON(w http.ResponseWriter) {
 	fmt.Fprintf(w, `{ "error": "BAD_REQUEST" }`)
 }
 
+// UnauthorizedJSON template for unauthorized status response
+func UnauthorizedJSON(w http.ResponseWriter) {
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	w.WriteHeader(http.StatusUnauthorized)
+	fmt.Fprintf(w, `{ "error": "UNAUTHORIZED" }`)
+}
+
 // ForbiddenJSON template for forbidden status response
 func ForbiddenJSON(w http.ResponseWriter) {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")

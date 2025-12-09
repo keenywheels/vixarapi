@@ -171,7 +171,7 @@ components:
       properties:
         token:
           type: string
-          minLength: 4
+          minLength: 1
           maxLength: 255
         start:
           type: string

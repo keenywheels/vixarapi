@@ -76,15 +76,14 @@ func (c *Client) makeRequest(
 	}
 	defer resp.Body.Close()
 
-	// parse response
-	if resp.ContentLength <= 0 {
-		return nil, fmt.Errorf("request to %s failed, code=%d: %w",
-			url, resp.StatusCode, ErrGotEmptyResponse)
-	}
-
 	bytes, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, fmt.Errorf("failed to read response body: %w", err)
+	}
+
+	if len(bytes) == 0 {
+		return nil, fmt.Errorf("request to %s failed, code=%d: %w",
+			url, resp.StatusCode, ErrGotEmptyResponse)
 	}
 
 	if resp.StatusCode < 200 || resp.StatusCode > 299 {

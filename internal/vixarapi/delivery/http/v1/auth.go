@@ -37,7 +37,7 @@ func (c *Controller) VkAuthCallback(
 		}, nil
 	}
 
-	cookie := fmt.Sprintf("session_id=%s; Path=/; HttpOnly", res.Session)
+	cookie := fmt.Sprintf("session_id=%s; Path=/; SameSite=Lax; HttpOnly", res.Session)
 
 	return &gen.VkAuthCallbackResponseHeaders{
 		Response: gen.VkAuthCallbackResponse{
@@ -66,6 +66,7 @@ func (c *Controller) VkAuthRegister(
 	if err := c.svc.RegisterVkUser(ctx, &service.RegisterVkUserParams{
 		Email:    req.Email,
 		Username: req.Username,
+		VKID:     req.Vkid,
 	}); err != nil {
 		log.Errorf("[%s] failed to register VK user: %v", op, err)
 
@@ -108,7 +109,7 @@ func (c *Controller) LogoutUser(ctx context.Context) (gen.LogoutUserRes, error) 
 		}, nil
 	}
 
-	cookie := "session_id=; Path=/; HttpOnly"
+	cookie := "session_id=; Path=/; SameSite=Lax; HttpOnly"
 
 	return &gen.LogoutUserOK{
 		SetCookie: gen.OptString{

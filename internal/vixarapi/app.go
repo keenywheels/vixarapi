@@ -184,8 +184,13 @@ func (app *App) initRouter(handler oas.Handler, securityHandler oas.SecurityHand
 	}
 
 	errorHandler := func(_ context.Context, w http.ResponseWriter, r *http.Request, err error) {
-		app.logger.Errorf("API ERROR: %v", err)
-		httputils.BadRequestJSON(w)
+		switch {
+		case securityApi.IsSecurityError(err):
+			httputils.UnauthorizedJSON(w)
+		default:
+			app.logger.Errorf("API ERROR: %v", err)
+			httputils.BadRequestJSON(w)
+		}
 	}
 
 	// create ogen http server

@@ -9,6 +9,8 @@ import (
 	"net/url"
 	"strings"
 	"time"
+
+	"github.com/keenywheels/backend/pkg/ctxutils"
 )
 
 var (
@@ -40,6 +42,8 @@ func (c *Client) ExchangeCodeToTokens(
 		"state":         []string{params.State},
 	}
 
+	ctxutils.GetLogger(ctx).Debugf("[VkClient.ExchangeCodeToTokens] got request to with params=%v", vals.Encode())
+
 	respRaw, err := c.makeRequest(
 		ctx,
 		http.MethodPost,
@@ -56,6 +60,11 @@ func (c *Client) ExchangeCodeToTokens(
 	var resp ExchangeCodeToTokensResponse
 	if err := json.Unmarshal(respRaw, &resp); err != nil {
 		return nil, fmt.Errorf("failed to unmarshal response body: %w", err)
+	}
+
+	// check for error
+	if resp.Error != "" {
+		return nil, fmt.Errorf("error from vk %s: description=%s", resp.Error, resp.ErrorDescription)
 	}
 
 	// validate state
@@ -88,6 +97,8 @@ func (c *Client) RefreshTokens(
 		"state":         []string{state},
 	}
 
+	ctxutils.GetLogger(ctx).Debugf("[VkClient.RefreshTokens] got request to with params=%v", vals.Encode())
+
 	respRaw, err := c.makeRequest(
 		ctx,
 		http.MethodPost,
@@ -104,6 +115,11 @@ func (c *Client) RefreshTokens(
 	var resp RefreshTokensResponse
 	if err := json.Unmarshal(respRaw, &resp); err != nil {
 		return nil, fmt.Errorf("failed to unmarshal response body: %w", err)
+	}
+
+	// check for error
+	if resp.Error != "" {
+		return nil, fmt.Errorf("error from vk %s: description=%s", resp.Error, resp.ErrorDescription)
 	}
 
 	// validate state

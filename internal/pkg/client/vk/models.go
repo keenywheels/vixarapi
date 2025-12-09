@@ -2,6 +2,7 @@ package vk
 
 // ExchangeCodeToTokensResponse response from ExchangeCodeToTokens
 type ExchangeCodeToTokensResponse struct {
+	ErrorResponse
 	RefreshToken string `json:"refresh_token"`
 	AccessToken  string `json:"access_token"`
 	IDToken      string `json:"id_token"`
@@ -14,6 +15,7 @@ type ExchangeCodeToTokensResponse struct {
 
 // RefreshTokensResponse response from RefreshTokens
 type RefreshTokensResponse struct {
+	ErrorResponse
 	RefreshToken string `json:"refresh_token"`
 	AccessToken  string `json:"access_token"`
 	TokenType    string `json:"token_type"`
@@ -25,6 +27,7 @@ type RefreshTokensResponse struct {
 
 // UserInfoResponse response from GetUserInfo
 type UserInfoResponse struct {
+	ErrorResponse
 	User struct {
 		UserID    string `json:"user_id"`
 		FirstName string `json:"first_name"`
@@ -32,8 +35,15 @@ type UserInfoResponse struct {
 		Phone     string `json:"phone"`
 		Avatar    string `json:"avatar"`
 		Email     string `json:"email"`
-		Sex       string `json:"sex"`
+		Sex       int    `json:"sex"`
 		Verified  bool   `json:"verified"`
 		Birthday  string `json:"birthday"`
 	} `json:"user"`
+}
+
+// ErrorResponse VK API error response
+type ErrorResponse struct {
+	Error            string `json:"error"`
+	ErrorDescription string `json:"error_description"`
+	State            string `json:"state"`
 }

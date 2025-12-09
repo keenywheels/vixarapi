@@ -42,7 +42,7 @@ func (s *SearchTokenInfoRequest) Validate() error {
 	var failures []validate.FieldError
 	if err := func() error {
 		if err := (validate.String{
-			MinLength:    4,
+			MinLength:    1,
 			MinLengthSet: true,
 			MaxLength:    255,
 			MaxLengthSet: true,

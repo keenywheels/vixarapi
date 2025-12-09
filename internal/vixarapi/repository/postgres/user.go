@@ -2,6 +2,7 @@ package postgres
 
 import (
 	"context"
+	"fmt"
 
 	sq "github.com/Masterminds/squirrel"
 	"github.com/keenywheels/backend/internal/vixarapi/models"
@@ -61,14 +62,14 @@ func (r *Repository) RegisterVKUser(ctx context.Context, user *models.User) (*mo
 			user.TgUser,
 			user.VKID,
 		).
-		Suffix("RETURNING %s %s %s %s %s %s",
+		Suffix(fmt.Sprintf("RETURNING %s, %s, %s, %s, %s, %s",
 			r.tbls.user.Fields.ID,
 			r.tbls.user.Fields.Username,
 			r.tbls.user.Fields.Email,
 			r.tbls.user.Fields.TgUser,
 			r.tbls.user.Fields.VKID,
 			r.tbls.user.Fields.CreatedAt,
-		).
+		)).
 		ToSql()
 	if err != nil {
 		return nil, parsePostgresError(op, err)

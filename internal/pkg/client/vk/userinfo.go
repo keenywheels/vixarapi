@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+
+	"github.com/keenywheels/backend/pkg/ctxutils"
 )
 
 func (c *Client) GetUserInfo(
@@ -17,6 +19,8 @@ func (c *Client) GetUserInfo(
 		"client_id":    []string{c.cfg.Auth.ClientID},
 		"access_token": []string{accessToken},
 	}
+
+	ctxutils.GetLogger(ctx).Debugf("[VkClient.GetUserInfo] got request to with params=%v", vals.Encode())
 
 	respRaw, err := c.makeRequest(
 		ctx,
@@ -34,6 +38,11 @@ func (c *Client) GetUserInfo(
 	var resp UserInfoResponse
 	if err := json.Unmarshal(respRaw, &resp); err != nil {
 		return nil, fmt.Errorf("failed to unmarshal response body: %w", err)
+	}
+
+	// check for error
+	if resp.Error != "" {
+		return nil, fmt.Errorf("error from vk %s: description=%s", resp.Error, resp.ErrorDescription)
 	}
 
 	return &resp, nil

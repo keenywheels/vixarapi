@@ -2,16 +2,10 @@ package security
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"strings"
 
 	gen "github.com/keenywheels/backend/internal/api/v1"
-)
-
-var (
-	ErrEmptyToken   = errors.New("empty token")
-	ErrInvalidToken = errors.New("invalid token")
 )
 
 // HandleCookieAuth handles cookie-based authentication
@@ -34,6 +28,9 @@ func (c *Controller) HandleCookieAuth(
 	if !valid {
 		return ctx, fmt.Errorf("failed to validate session: %w", ErrInvalidToken)
 	}
+
+	// set session ID in context
+	ctx = SetSessionID(ctx, session)
 
 	return ctx, nil
 }

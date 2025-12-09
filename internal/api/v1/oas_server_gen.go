@@ -8,29 +8,49 @@ import (
 
 // Handler handles operations described by OpenAPI v3 specification.
 type Handler interface {
+	// LogoutUser implements logoutUser operation.
+	//
+	// Logout user.
+	//
+	// POST /api/v1/auth/logout
+	LogoutUser(ctx context.Context) (LogoutUserRes, error)
 	// SearchTokenInfo implements searchTokenInfo operation.
 	//
 	// Get info for specified token.
 	//
 	// POST /api/v1/token/search
 	SearchTokenInfo(ctx context.Context, req *SearchTokenInfoRequest) (SearchTokenInfoRes, error)
+	// VkAuthCallback implements vkAuthCallback operation.
+	//
+	// VK oauth callback, used to get tokens and user info from vk.
+	//
+	// POST /api/v1/auth/vk/callback
+	VkAuthCallback(ctx context.Context, req *VkAuthCallbackRequest) (VkAuthCallbackRes, error)
+	// VkAuthRegister implements vkAuthRegister operation.
+	//
+	// VK oauth register, used to register new users via vk.
+	//
+	// POST /api/v1/auth/vk/register
+	VkAuthRegister(ctx context.Context, req *VkAuthRegisterRequest) (VkAuthRegisterRes, error)
 }
 
 // Server implements http server based on OpenAPI v3 specification and
 // calls Handler to handle requests.
 type Server struct {
-	h Handler
+	h   Handler
+	sec SecurityHandler
 	baseServer
 }
 
 // NewServer creates new Server.
-func NewServer(h Handler, opts ...ServerOption) (*Server, error) {
+func NewServer(h Handler, sec SecurityHandler, opts ...ServerOption) (*Server, error) {
 	s, err := newServerConfig(opts...).baseServer()
 	if err != nil {
 		return nil, err
 	}
 	return &Server{
 		h:          h,
+		sec:        sec,
 		baseServer: s,
 	}, nil
 }

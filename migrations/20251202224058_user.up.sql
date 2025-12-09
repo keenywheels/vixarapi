@@ -2,8 +2,9 @@ CREATE TABLE users (
   id UUID DEFAULT gen_random_uuid(),
   username TEXT NOT NULL,
   email TEXT UNIQUE NOT NULL,
+  tguser TEXT UNIQUE,
   vkid INTEGER UNIQUE,
-  created_at TIMESTAMPTZ DEFAULT NOW(),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
 
   CONSTRAINT id_pkey PRIMARY KEY(id)
 );

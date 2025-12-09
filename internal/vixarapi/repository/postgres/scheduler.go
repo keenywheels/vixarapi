@@ -1,4 +1,4 @@
-package repository
+package postgres
 
 import (
 	"context"
@@ -48,7 +48,7 @@ func (r *Repository) initScheduler(ctx context.Context, log logger.Logger, cfg *
 func (r *Repository) updateSearchTable(ctx context.Context) error {
 	var (
 		op    = "Repository.updateSearchTable"
-		query = fmt.Sprintf("REFRESH MATERIALIZED VIEW CONCURRENTLY %s;", r.tbl.Name)
+		query = fmt.Sprintf("REFRESH MATERIALIZED VIEW CONCURRENTLY %s;", r.tbls.search.Name)
 	)
 
 	if _, err := r.db.Pool.Exec(ctx, query); err != nil {

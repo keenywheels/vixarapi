@@ -6,6 +6,31 @@ import (
 	"time"
 )
 
+type CookieAuth struct {
+	APIKey string
+	Roles  []string
+}
+
+// GetAPIKey returns the value of APIKey.
+func (s *CookieAuth) GetAPIKey() string {
+	return s.APIKey
+}
+
+// GetRoles returns the value of Roles.
+func (s *CookieAuth) GetRoles() []string {
+	return s.Roles
+}
+
+// SetAPIKey sets the value of APIKey.
+func (s *CookieAuth) SetAPIKey(val string) {
+	s.APIKey = val
+}
+
+// SetRoles sets the value of Roles.
+func (s *CookieAuth) SetRoles(val []string) {
+	s.Roles = val
+}
+
 // Ref: #/components/schemas/Error
 type Error struct {
 	Error string `json:"error"`
@@ -20,6 +45,31 @@ func (s *Error) GetError() string {
 func (s *Error) SetError(val string) {
 	s.Error = val
 }
+
+type LogoutUserInternalServerError Error
+
+func (*LogoutUserInternalServerError) logoutUserRes() {}
+
+// LogoutUserOK is response for LogoutUser operation.
+type LogoutUserOK struct {
+	SetCookie OptString
+}
+
+// GetSetCookie returns the value of SetCookie.
+func (s *LogoutUserOK) GetSetCookie() OptString {
+	return s.SetCookie
+}
+
+// SetSetCookie sets the value of SetCookie.
+func (s *LogoutUserOK) SetSetCookie(val OptString) {
+	s.SetCookie = val
+}
+
+func (*LogoutUserOK) logoutUserRes() {}
+
+type LogoutUserUnauthorized Error
+
+func (*LogoutUserUnauthorized) logoutUserRes() {}
 
 // NewOptDateTime returns new OptDateTime with value set to v.
 func NewOptDateTime(v time.Time) OptDateTime {
@@ -61,6 +111,52 @@ func (o OptDateTime) Get() (v time.Time, ok bool) {
 
 // Or returns value if set, or given parameter if does not.
 func (o OptDateTime) Or(d time.Time) time.Time {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptString returns new OptString with value set to v.
+func NewOptString(v string) OptString {
+	return OptString{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptString is optional string.
+type OptString struct {
+	Value string
+	Set   bool
+}
+
+// IsSet returns true if OptString was set.
+func (o OptString) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptString) Reset() {
+	var v string
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptString) SetTo(v string) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptString) Get() (v string, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptString) Or(d string) string {
 	if v, ok := o.Get(); ok {
 		return v
 	}
@@ -115,6 +211,10 @@ func (s *SearchTokenInfoRequest) SetStart(val time.Time) {
 func (s *SearchTokenInfoRequest) SetEnd(val OptDateTime) {
 	s.End = val
 }
+
+type SearchTokenInfoUnauthorized Error
+
+func (*SearchTokenInfoUnauthorized) searchTokenInfoRes() {}
 
 // Ref: #/components/schemas/TokenInfo
 type TokenInfo struct {
@@ -203,3 +303,208 @@ func (s *TokenRecordFeatures) SetInterestNormalized(val float64) {
 func (s *TokenRecordFeatures) SetSentiment(val int16) {
 	s.Sentiment = val
 }
+
+type VkAuthCallbackBadRequest Error
+
+func (*VkAuthCallbackBadRequest) vkAuthCallbackRes() {}
+
+type VkAuthCallbackInternalServerError Error
+
+func (*VkAuthCallbackInternalServerError) vkAuthCallbackRes() {}
+
+type VkAuthCallbackNotAcceptable Error
+
+func (*VkAuthCallbackNotAcceptable) vkAuthCallbackRes() {}
+
+// Ref: #/components/schemas/VkAuthCallbackRequest
+type VkAuthCallbackRequest struct {
+	Code         string `json:"code"`
+	State        string `json:"state"`
+	CodeVerifier string `json:"code_verifier"`
+	DeviceID     string `json:"device_id"`
+	RedirectURI  string `json:"redirect_uri"`
+}
+
+// GetCode returns the value of Code.
+func (s *VkAuthCallbackRequest) GetCode() string {
+	return s.Code
+}
+
+// GetState returns the value of State.
+func (s *VkAuthCallbackRequest) GetState() string {
+	return s.State
+}
+
+// GetCodeVerifier returns the value of CodeVerifier.
+func (s *VkAuthCallbackRequest) GetCodeVerifier() string {
+	return s.CodeVerifier
+}
+
+// GetDeviceID returns the value of DeviceID.
+func (s *VkAuthCallbackRequest) GetDeviceID() string {
+	return s.DeviceID
+}
+
+// GetRedirectURI returns the value of RedirectURI.
+func (s *VkAuthCallbackRequest) GetRedirectURI() string {
+	return s.RedirectURI
+}
+
+// SetCode sets the value of Code.
+func (s *VkAuthCallbackRequest) SetCode(val string) {
+	s.Code = val
+}
+
+// SetState sets the value of State.
+func (s *VkAuthCallbackRequest) SetState(val string) {
+	s.State = val
+}
+
+// SetCodeVerifier sets the value of CodeVerifier.
+func (s *VkAuthCallbackRequest) SetCodeVerifier(val string) {
+	s.CodeVerifier = val
+}
+
+// SetDeviceID sets the value of DeviceID.
+func (s *VkAuthCallbackRequest) SetDeviceID(val string) {
+	s.DeviceID = val
+}
+
+// SetRedirectURI sets the value of RedirectURI.
+func (s *VkAuthCallbackRequest) SetRedirectURI(val string) {
+	s.RedirectURI = val
+}
+
+// Ref: #/components/schemas/VkAuthCallbackResponse
+type VkAuthCallbackResponse struct {
+	UserExists bool   `json:"user_exists"`
+	Username   string `json:"username"`
+	Email      string `json:"email"`
+	Vkid       int64  `json:"vkid"`
+}
+
+// GetUserExists returns the value of UserExists.
+func (s *VkAuthCallbackResponse) GetUserExists() bool {
+	return s.UserExists
+}
+
+// GetUsername returns the value of Username.
+func (s *VkAuthCallbackResponse) GetUsername() string {
+	return s.Username
+}
+
+// GetEmail returns the value of Email.
+func (s *VkAuthCallbackResponse) GetEmail() string {
+	return s.Email
+}
+
+// GetVkid returns the value of Vkid.
+func (s *VkAuthCallbackResponse) GetVkid() int64 {
+	return s.Vkid
+}
+
+// SetUserExists sets the value of UserExists.
+func (s *VkAuthCallbackResponse) SetUserExists(val bool) {
+	s.UserExists = val
+}
+
+// SetUsername sets the value of Username.
+func (s *VkAuthCallbackResponse) SetUsername(val string) {
+	s.Username = val
+}
+
+// SetEmail sets the value of Email.
+func (s *VkAuthCallbackResponse) SetEmail(val string) {
+	s.Email = val
+}
+
+// SetVkid sets the value of Vkid.
+func (s *VkAuthCallbackResponse) SetVkid(val int64) {
+	s.Vkid = val
+}
+
+// VkAuthCallbackResponseHeaders wraps VkAuthCallbackResponse with response headers.
+type VkAuthCallbackResponseHeaders struct {
+	SetCookie OptString
+	Response  VkAuthCallbackResponse
+}
+
+// GetSetCookie returns the value of SetCookie.
+func (s *VkAuthCallbackResponseHeaders) GetSetCookie() OptString {
+	return s.SetCookie
+}
+
+// GetResponse returns the value of Response.
+func (s *VkAuthCallbackResponseHeaders) GetResponse() VkAuthCallbackResponse {
+	return s.Response
+}
+
+// SetSetCookie sets the value of SetCookie.
+func (s *VkAuthCallbackResponseHeaders) SetSetCookie(val OptString) {
+	s.SetCookie = val
+}
+
+// SetResponse sets the value of Response.
+func (s *VkAuthCallbackResponseHeaders) SetResponse(val VkAuthCallbackResponse) {
+	s.Response = val
+}
+
+func (*VkAuthCallbackResponseHeaders) vkAuthCallbackRes() {}
+
+type VkAuthRegisterBadRequest Error
+
+func (*VkAuthRegisterBadRequest) vkAuthRegisterRes() {}
+
+type VkAuthRegisterConflict Error
+
+func (*VkAuthRegisterConflict) vkAuthRegisterRes() {}
+
+type VkAuthRegisterInternalServerError Error
+
+func (*VkAuthRegisterInternalServerError) vkAuthRegisterRes() {}
+
+// VkAuthRegisterOK is response for VkAuthRegister operation.
+type VkAuthRegisterOK struct{}
+
+func (*VkAuthRegisterOK) vkAuthRegisterRes() {}
+
+// Ref: #/components/schemas/VkAuthRegisterRequest
+type VkAuthRegisterRequest struct {
+	Email    string `json:"email"`
+	Username string `json:"username"`
+	Vkid     int64  `json:"vkid"`
+}
+
+// GetEmail returns the value of Email.
+func (s *VkAuthRegisterRequest) GetEmail() string {
+	return s.Email
+}
+
+// GetUsername returns the value of Username.
+func (s *VkAuthRegisterRequest) GetUsername() string {
+	return s.Username
+}
+
+// GetVkid returns the value of Vkid.
+func (s *VkAuthRegisterRequest) GetVkid() int64 {
+	return s.Vkid
+}
+
+// SetEmail sets the value of Email.
+func (s *VkAuthRegisterRequest) SetEmail(val string) {
+	s.Email = val
+}
+
+// SetUsername sets the value of Username.
+func (s *VkAuthRegisterRequest) SetUsername(val string) {
+	s.Username = val
+}
+
+// SetVkid sets the value of Vkid.
+func (s *VkAuthRegisterRequest) SetVkid(val int64) {
+	s.Vkid = val
+}
+
+type VkAuthRegisterUnauthorized Error
+
+func (*VkAuthRegisterUnauthorized) vkAuthRegisterRes() {}

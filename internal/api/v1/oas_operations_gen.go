@@ -6,5 +6,8 @@ package api
 type OperationName = string
 
 const (
+	LogoutUserOperation      OperationName = "LogoutUser"
 	SearchTokenInfoOperation OperationName = "SearchTokenInfo"
+	VkAuthCallbackOperation  OperationName = "VkAuthCallback"
+	VkAuthRegisterOperation  OperationName = "VkAuthRegister"
 )

@@ -12,6 +12,9 @@ var _ gen.Handler = (*Controller)(nil)
 // IService provides interest-related services
 type IService interface {
 	SearchTokenInfo(context.Context, *service.SearchTokenInfoParams) ([]service.TokenInfo, error)
+	HandleVkAuthCallback(context.Context, *service.VkAuthCallbackParams) (*service.VkAuthCallbackResult, error)
+	RegisterVkUser(context.Context, *service.RegisterVkUserParams) error
+	LogoutUser(context.Context, string) error
 }
 
 // Controller contains handlers for interest-related endpoints

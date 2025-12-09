@@ -1,4 +1,4 @@
-package repository
+package postgres
 
 import (
 	"context"
@@ -13,25 +13,10 @@ const (
 	searchLimit = 5 * 365 * 10
 )
 
-// SearchTokenFields represents the fields of the search token table
-type SearchTokenFields struct {
-	TokenName      string
-	ScrapeDate     string
-	Interest       string
-	Sentiment      string
-	MedianInterest string
-}
-
-// SearchTokenTable represents the structure of the search token table
-type SearchTokenTable struct {
-	Name   string
-	Fields SearchTokenFields
-}
-
 // Repository provides interest-related data access logic
 type Repository struct {
-	tbl SearchTokenTable
-	db  *postgres.Postgres
+	tbls Tables
+	db   *postgres.Postgres
 
 	scheduler gocron.Scheduler
 }
@@ -44,14 +29,27 @@ func New(db *postgres.Postgres) (*Repository, error) {
 	}
 
 	repo := Repository{
-		tbl: SearchTokenTable{
-			Name: "mv_token_search",
-			Fields: SearchTokenFields{
-				TokenName:      "token_name",
-				ScrapeDate:     "scrape_date",
-				Interest:       "interest",
-				Sentiment:      "sentiment",
-				MedianInterest: "median_interest",
+		tbls: Tables{
+			search: SearchTokenTable{
+				Name: "mv_token_search",
+				Fields: SearchTokenFields{
+					TokenName:      "token_name",
+					ScrapeDate:     "scrape_date",
+					Interest:       "interest",
+					Sentiment:      "sentiment",
+					MedianInterest: "median_interest",
+				},
+			},
+			user: UserTable{
+				Name: "users",
+				Fields: UserFields{
+					ID:        "id",
+					Username:  "username",
+					Email:     "email",
+					TgUser:    "tguser",
+					VKID:      "vkid",
+					CreatedAt: "created_at",
+				},
 			},
 		},
 		db:        db,

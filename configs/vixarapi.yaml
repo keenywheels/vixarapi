@@ -1,4 +1,6 @@
 app:
+  service:
+    session_secret: "dev_session_secret"
   http:
     port: "8000"
   cors:
@@ -11,6 +13,13 @@ app:
     encoding: json
   scheduler:
     refresh_search_table_pattern: "*/1 * * * *"  # for testing, every minute
+  vk:
+    http:
+      timeout: 5s
+    auth:
+      url: "https://id.vk.ru"
+      client_id: "54376847"
+    secret: "dev_secret"
 
 postgres:
   host: postgres
@@ -19,3 +28,8 @@ postgres:
   password: password
   dbname: db
   sslmode: disable
+
+redis:
+  addr: localhost:6379
+  password: ""
+  db: 0

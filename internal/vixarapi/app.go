@@ -9,8 +9,11 @@ import (
 	"syscall"
 
 	oas "github.com/keenywheels/backend/internal/api/v1"
+	"github.com/keenywheels/backend/internal/pkg/client/vk"
+	securityApi "github.com/keenywheels/backend/internal/vixarapi/delivery/http/security"
 	api "github.com/keenywheels/backend/internal/vixarapi/delivery/http/v1"
-	repo "github.com/keenywheels/backend/internal/vixarapi/repository"
+	pgRepository "github.com/keenywheels/backend/internal/vixarapi/repository/postgres"
+	redisRepository "github.com/keenywheels/backend/internal/vixarapi/repository/redis"
 	"github.com/keenywheels/backend/internal/vixarapi/service"
 	"github.com/keenywheels/backend/pkg/cors"
 	"github.com/keenywheels/backend/pkg/httpserver"
@@ -19,6 +22,7 @@ import (
 	"github.com/keenywheels/backend/pkg/logger/zap"
 	mw "github.com/keenywheels/backend/pkg/middleware"
 	"github.com/keenywheels/backend/pkg/postgres"
+	"github.com/keenywheels/backend/pkg/redis"
 	"golang.org/x/sync/errgroup"
 )
 
@@ -67,17 +71,33 @@ func (app *App) Run() error {
 	}
 	defer db.Close()
 
-	// create 3 layers
-	interestRepo, err := repo.New(db)
+	// create postgres repository
+	pgRepo, err := pgRepository.New(db)
 	if err != nil {
 		return fmt.Errorf("failed to create interest repository: %w", err)
 	}
 
-	interestSvc := service.New(interestRepo)
-	tokenHandler := api.New(interestSvc)
+	// create redis repository
+	redisClient, err := redis.New(&app.cfg.RedisCfg)
+	if err != nil {
+		return fmt.Errorf("failed to create redis client: %w", err)
+	}
+
+	redisRepo, err := redisRepository.New(redisClient)
+	if err != nil {
+		return fmt.Errorf("failed to create redis repository: %w", err)
+	}
+
+	// create service
+	vkClient := vk.New(&cfg.AppCfg.VKConfig)
+	svc := service.New(pgRepo, redisRepo, vkClient, &cfg.AppCfg.Service)
+
+	// create handlers
+	tokenHandler := api.New(svc)
+	securityHandler := securityApi.New(svc)
 
 	// create router
-	mux, err := app.initRouter(tokenHandler)
+	mux, err := app.initRouter(tokenHandler, securityHandler)
 	if err != nil {
 		return fmt.Errorf("failed to create http ogen server: %v", err)
 	}
@@ -93,14 +113,14 @@ func (app *App) Run() error {
 	// run repository scheduler
 	app.logger.Infof("starting repository scheduler with cfg=%+v", app.cfg.AppCfg.SchedulerConfig)
 
-	if err := interestRepo.StartScheduler(ctx, app.logger, &app.cfg.AppCfg.SchedulerConfig); err != nil {
+	if err := pgRepo.StartScheduler(ctx, app.logger, &app.cfg.AppCfg.SchedulerConfig); err != nil {
 		return fmt.Errorf("failed to start repository scheduler: %w", err)
 	}
 
 	g.Go(func() error {
 		<-ctx.Done()
 		app.logger.Infof("shutting down repository scheduler...")
-		return interestRepo.CloseScheduler()
+		return pgRepo.CloseScheduler()
 	})
 
 	// run http server
@@ -157,7 +177,7 @@ func (app *App) initLogger() {
 }
 
 // initRouter creates router using ogen
-func (app *App) initRouter(interestHandler oas.Handler) (http.Handler, error) {
+func (app *App) initRouter(handler oas.Handler, securityHandler oas.SecurityHandler) (http.Handler, error) {
 	// create custom handlers
 	notFoundHandler := func(w http.ResponseWriter, r *http.Request) {
 		httputils.NotFoundJSON(w)
@@ -169,7 +189,9 @@ func (app *App) initRouter(interestHandler oas.Handler) (http.Handler, error) {
 	}
 
 	// create ogen http server
-	srv, err := oas.NewServer(interestHandler,
+	srv, err := oas.NewServer(
+		handler,
+		securityHandler,
 		oas.WithNotFound(notFoundHandler),
 		oas.WithErrorHandler(errorHandler),
 	)

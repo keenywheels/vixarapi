@@ -9,9 +9,8 @@ type HTTPConfig struct {
 
 // AuthConfig config for auth
 type AuthConfig struct {
-	BaseURL     string `mapstructure:"url"`
-	RedirectURI string `mapstructure:"redirect_uri"`
-	ClientID    string `mapstructure:"client_id"`
+	BaseURL  string `mapstructure:"url"`
+	ClientID string `mapstructure:"client_id"`
 }
 
 // Config VK client configuration

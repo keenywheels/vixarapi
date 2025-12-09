@@ -13,11 +13,38 @@ type UnimplementedHandler struct{}
 
 var _ Handler = UnimplementedHandler{}
 
+// LogoutUser implements logoutUser operation.
+//
+// Logout user.
+//
+// POST /api/v1/auth/logout
+func (UnimplementedHandler) LogoutUser(ctx context.Context) (r LogoutUserRes, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
 // SearchTokenInfo implements searchTokenInfo operation.
 //
 // Get info for specified token.
 //
 // POST /api/v1/token/search
 func (UnimplementedHandler) SearchTokenInfo(ctx context.Context, req *SearchTokenInfoRequest) (r SearchTokenInfoRes, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
+// VkAuthCallback implements vkAuthCallback operation.
+//
+// VK oauth callback, used to get tokens and user info from vk.
+//
+// POST /api/v1/auth/vk/callback
+func (UnimplementedHandler) VkAuthCallback(ctx context.Context, req *VkAuthCallbackRequest) (r VkAuthCallbackRes, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
+// VkAuthRegister implements vkAuthRegister operation.
+//
+// VK oauth register, used to register new users via vk.
+//
+// POST /api/v1/auth/vk/register
+func (UnimplementedHandler) VkAuthRegister(ctx context.Context, req *VkAuthRegisterRequest) (r VkAuthRegisterRes, _ error) {
 	return r, ht.ErrNotImplemented
 }

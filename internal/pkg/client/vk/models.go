@@ -22,3 +22,18 @@ type RefreshTokensResponse struct {
 	State        string `json:"state"`
 	Scope        string `json:"scope"`
 }
+
+// UserInfoResponse response from GetUserInfo
+type UserInfoResponse struct {
+	User struct {
+		UserID    string `json:"user_id"`
+		FirstName string `json:"first_name"`
+		LastName  string `json:"last_name"`
+		Phone     string `json:"phone"`
+		Avatar    string `json:"avatar"`
+		Email     string `json:"email"`
+		Sex       string `json:"sex"`
+		Verified  bool   `json:"verified"`
+		Birthday  string `json:"birthday"`
+	} `json:"user"`
+}

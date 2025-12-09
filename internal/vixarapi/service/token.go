@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/keenywheels/backend/internal/vixarapi/repository"
+	"github.com/keenywheels/backend/internal/vixarapi/repository/postgres"
 )
 
 const (
@@ -36,7 +36,7 @@ type SearchTokenInfoParams struct {
 func (s *Service) SearchTokenInfo(ctx context.Context, params *SearchTokenInfoParams) ([]TokenInfo, error) {
 	op := "Service.SearchTokenInfo"
 
-	repoParams := &repository.SearchTokenParams{
+	repoParams := &postgres.SearchTokenParams{
 		Token: params.Token,
 		Start: params.Start,
 		End:   params.End,
@@ -44,7 +44,7 @@ func (s *Service) SearchTokenInfo(ctx context.Context, params *SearchTokenInfoPa
 
 	tokensInfo, err := s.repo.SearchTokenInfo(ctx, repoParams)
 	if err != nil {
-		return nil, parseServiceError(op, err)
+		return nil, parseRepositoryError(op, err)
 	}
 
 	return convertToServiceTokenInfo(tokensInfo), nil

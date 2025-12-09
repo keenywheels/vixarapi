@@ -5,7 +5,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/keenywheels/backend/internal/vixarapi/repository"
+	"github.com/keenywheels/backend/internal/pkg/client/vk"
+	pgRepo "github.com/keenywheels/backend/internal/vixarapi/repository/postgres"
+	"github.com/keenywheels/backend/internal/vixarapi/service"
+	"github.com/keenywheels/backend/pkg/redis"
 	"github.com/spf13/viper"
 )
 
@@ -40,10 +43,12 @@ type CORSConfig struct {
 
 // AppConfig contains all configs which connected to main app
 type AppConfig struct {
-	HttpCfg         HttpConfig                 `mapstructure:"http"`
-	LoggerCfg       LoggerConfig               `mapstructure:"logger"`
-	CORSConfig      CORSConfig                 `mapstructure:"cors"`
-	SchedulerConfig repository.SchedulerConfig `mapstructure:"scheduler"`
+	HttpCfg         HttpConfig             `mapstructure:"http"`
+	LoggerCfg       LoggerConfig           `mapstructure:"logger"`
+	CORSConfig      CORSConfig             `mapstructure:"cors"`
+	SchedulerConfig pgRepo.SchedulerConfig `mapstructure:"scheduler"`
+	VKConfig        vk.Config              `mapstructure:"vk"`
+	Service         service.Config         `mapstructure:"service"`
 }
 
 // PostgresConfig config for postgres
@@ -69,6 +74,7 @@ func (cfg *PostgresConfig) DSN() string {
 type Config struct {
 	AppCfg      AppConfig      `mapstructure:"app"`
 	PostgresCfg PostgresConfig `mapstructure:"postgres"`
+	RedisCfg    redis.Config   `mapstructure:"redis"`
 }
 
 // LoadConfig function which reads config file and return Config instance

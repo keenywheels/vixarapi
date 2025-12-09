@@ -21,6 +21,7 @@ type ExchangeCodeToTokensParams struct {
 	State        string
 	CodeVerifier string
 	DeviceID     string
+	RedirectURI  string
 }
 
 // ExchangeCodeToTokens exchange authorization code to tokens
@@ -32,7 +33,7 @@ func (c *Client) ExchangeCodeToTokens(
 	vals := url.Values{
 		"grant_type":    []string{"authorization_code"},
 		"code_verifier": []string{params.CodeVerifier},
-		"redirect_uri":  []string{c.cfg.Auth.RedirectURI}, // TODO: мб пусть фронт сам шлет redirect_uri?
+		"redirect_uri":  []string{params.RedirectURI},
 		"code":          []string{params.Code},
 		"client_id":     []string{c.cfg.Auth.ClientID},
 		"device_id":     []string{params.DeviceID},

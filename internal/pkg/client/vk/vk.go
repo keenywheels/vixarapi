@@ -19,6 +19,7 @@ var (
 // endpoints VK API endpoints
 type endpoints struct {
 	getTokenByGrantType string
+	getUserInfo         string
 }
 
 // Client represents a VK API client
@@ -39,6 +40,7 @@ func New(cfg *Config) *Client {
 
 	endpoints := endpoints{
 		getTokenByGrantType: fmt.Sprintf("%s%s", cfg.Auth.BaseURL, "/oauth2/auth"),
+		getUserInfo:         fmt.Sprintf("%s%s", cfg.Auth.BaseURL, "/oauth2/user_info"),
 	}
 
 	return &Client{

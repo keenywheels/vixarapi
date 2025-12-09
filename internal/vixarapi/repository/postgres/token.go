@@ -1,4 +1,4 @@
-package repository
+package postgres
 
 import (
 	"context"
@@ -26,23 +26,23 @@ func (r *Repository) SearchTokenInfo(
 	// prepare query
 	query, args, err := r.db.Builder.
 		Select(
-			r.tbl.Fields.TokenName,
-			r.tbl.Fields.ScrapeDate,
-			r.tbl.Fields.Interest,
-			fmt.Sprintf("1.0 * %s / %s", r.tbl.Fields.Interest, r.tbl.Fields.MedianInterest),
-			r.tbl.Fields.Sentiment,
+			r.tbls.search.Fields.TokenName,
+			r.tbls.search.Fields.ScrapeDate,
+			r.tbls.search.Fields.Interest,
+			fmt.Sprintf("1.0 * %s / %s", r.tbls.search.Fields.Interest, r.tbls.search.Fields.MedianInterest),
+			r.tbls.search.Fields.Sentiment,
 		).
-		From(r.tbl.Name).
+		From(r.tbls.search.Name).
 		Where(
 			sq.And{
-				sq.Expr(fmt.Sprintf("%s %% lower(?)", r.tbl.Fields.TokenName), params.Token),
-				sq.GtOrEq{r.tbl.Fields.ScrapeDate: params.Start},
-				sq.LtOrEq{r.tbl.Fields.ScrapeDate: params.End},
+				sq.Expr(fmt.Sprintf("%s %% lower(?)", r.tbls.search.Fields.TokenName), params.Token),
+				sq.GtOrEq{r.tbls.search.Fields.ScrapeDate: params.Start},
+				sq.LtOrEq{r.tbls.search.Fields.ScrapeDate: params.End},
 			},
 		).
 		OrderBy(
-			fmt.Sprintf("similarity(%s, lower($1)) DESC", r.tbl.Fields.TokenName),
-			fmt.Sprintf("%s ASC", r.tbl.Fields.ScrapeDate),
+			fmt.Sprintf("similarity(%s, lower($1)) DESC", r.tbls.search.Fields.TokenName),
+			fmt.Sprintf("%s ASC", r.tbls.search.Fields.ScrapeDate),
 		).
 		Limit(searchLimit).
 		ToSql()

@@ -50,38 +50,12 @@ func (s *Service) HandleVkAuthCallback(
 	ctx context.Context,
 	params *VkAuthCallbackParams,
 ) (*VkAuthCallbackResult, error) {
-	var (
-		op     = "Service.HandleVkAuthCallback"
-		tokens = vkTokens{}
-	)
+	op := "Service.HandleVkAuthCallback"
 
-	if tokensCached, err := s.redis.GetVkTokens(ctx, params.DeviceID); err != nil {
-		// handle unexpected redis errors
-		if !errors.Is(err, redis.ErrNotFound) {
-			return nil, fmt.Errorf("%s: failed to get vk tokens from redis: %w", op, err)
-		}
-
-		// did not find tokens in redis, exchange code for tokens
-		tokensResp, err := s.vk.ExchangeCodeToTokens(ctx, &vk.ExchangeCodeToTokensParams{
-			Code:         params.Code,
-			State:        params.State,
-			CodeVerifier: params.CodeVerifier,
-			DeviceID:     params.DeviceID,
-			RedirectURI:  params.RedirectURI,
-		})
-		if err != nil {
-			return nil, fmt.Errorf("failed to exchange code to tokens: %w", err)
-		}
-
-		tokens.VKID = tokensResp.UserID
-		tokens.AccessToken = tokensResp.AccessToken
-		tokens.RefreshToken = tokensResp.RefreshToken
-		tokens.ExpiresIn = tokensResp.ExpiresIn
-	} else {
-		tokens.VKID = tokensCached.VKID
-		tokens.AccessToken = tokensCached.AccessToken
-		tokens.RefreshToken = tokensCached.RefreshToken
-		tokens.ExpiresIn = tokensCached.ExpiresIn
+	// get vk tokens
+	tokens, err := s.exchangeCode(ctx, params)
+	if err != nil {
+		return nil, fmt.Errorf("%s: failed to exchange code: %w", op, err)
 	}
 
 	// try to get user from db
@@ -93,7 +67,7 @@ func (s *Service) HandleVkAuthCallback(
 			return nil, fmt.Errorf("%s: failed to save session: %w", op, err)
 		}
 
-		if err := s.saveVkTokens(ctx, params.DeviceID, &tokens); err != nil {
+		if err := s.saveVkTokens(ctx, tokens); err != nil {
 			return nil, fmt.Errorf("%s: failed to save vk tokens: %w", op, err)
 		}
 
@@ -113,7 +87,7 @@ func (s *Service) HandleVkAuthCallback(
 	}
 
 	// saves vk tokens for new user
-	if err := s.saveVkTokens(ctx, params.DeviceID, &tokens); err != nil {
+	if err := s.saveVkTokens(ctx, tokens); err != nil {
 		return nil, fmt.Errorf("%s: failed to save vk tokens: %w", op, err)
 	}
 
@@ -214,6 +188,31 @@ func (s *Service) ValidateSession(ctx context.Context, session string) (bool, er
 	return true, nil
 }
 
+// exchangeCode exchanges the authorization code for VK OAuth tokens
+func (s *Service) exchangeCode(ctx context.Context, params *VkAuthCallbackParams) (*vkTokens, error) {
+	var tokens vkTokens
+
+	// make request using vk client to exchange code to tokens
+	tokensResp, err := s.vk.ExchangeCodeToTokens(ctx, &vk.ExchangeCodeToTokensParams{
+		Code:         params.Code,
+		State:        params.State,
+		CodeVerifier: params.CodeVerifier,
+		DeviceID:     params.DeviceID,
+		RedirectURI:  params.RedirectURI,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("failed to exchange code to tokens: %w", err)
+	}
+
+	tokens.VKID = tokensResp.UserID
+	tokens.AccessToken = tokensResp.AccessToken
+	tokens.RefreshToken = tokensResp.RefreshToken
+	tokens.ExpiresIn = tokensResp.ExpiresIn
+	tokens.DeviceID = params.DeviceID
+
+	return &tokens, nil
+}
+
 // saveSession saves the user session in Redis
 func (s *Service) saveSession(
 	ctx context.Context,
@@ -256,29 +255,15 @@ func (s *Service) saveSession(
 }
 
 // saveVkTokens saves VK OAuth tokens in Redis
-func (s *Service) saveVkTokens(
-	ctx context.Context,
-	deviceID string,
-	tokens *vkTokens,
-) error {
+func (s *Service) saveVkTokens(ctx context.Context, tokens *vkTokens) error {
 	// save vk tokens by vkid for long term access
 	if err := s.redis.SaveVkTokens(ctx, fmt.Sprintf("%d", tokens.VKID), &redis.VkTokens{
 		AccessToken:  tokens.AccessToken,
 		RefreshToken: tokens.RefreshToken,
-		DeviceID:     deviceID,
+		DeviceID:     tokens.DeviceID,
 		ExpiresIn:    tokens.ExpiresIn,
 	}); err != nil {
 		return fmt.Errorf("failed to save vk tokens: %w", err)
-	}
-
-	// save vk tokens by deviceID for short term access
-	if err := s.redis.SaveVkTokens(ctx, deviceID, &redis.VkTokens{
-		VKID:         tokens.VKID,
-		AccessToken:  tokens.AccessToken,
-		RefreshToken: tokens.RefreshToken,
-		ExpiresIn:    tokens.ExpiresIn,
-	}); err != nil {
-		return fmt.Errorf("failed to save vk tokens by deviceID: %w", err)
 	}
 
 	return nil

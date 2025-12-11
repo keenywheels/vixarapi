@@ -10,7 +10,7 @@
 			"name": "token",
 			"item": [
 				{
-					"name": "Search token info",
+					"name": "search",
 					"request": {
 						"method": "POST",
 						"header": [
@@ -33,10 +33,11 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"token\": \"чип\",\n    \"start\": \"2025-10-15T00:00:00Z\"\n}"
+							"raw": "{\n    \"token\": \"информация\",\n    \"start\": \"2025-10-15T00:00:00Z\"\n}"
 						},
 						"url": {
-							"raw": "localhost:8000/api/v1/token/search",
+							"raw": "http://localhost:8000/api/v1/token/search",
+							"protocol": "http",
 							"host": [
 								"localhost"
 							],
@@ -46,6 +47,114 @@
 								"v1",
 								"token",
 								"search"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "auth",
+			"item": [
+				{
+					"name": "vk",
+					"item": [
+						{
+							"name": "callback",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Accept-Encoding",
+										"value": "",
+										"type": "text"
+									},
+									{
+										"key": "Content-Encoding",
+										"value": "gzip",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"code\": \"string\",\n  \"state\": \"string\",\n  \"code_verifier\": \"string\",\n  \"device_id\": \"string\",\n  \"redirect_uri\": \"string\"\n}"
+								},
+								"url": {
+									"raw": "http://localhost:8000/api/v1/auth/vk/callback",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8000",
+									"path": [
+										"api",
+										"v1",
+										"auth",
+										"vk",
+										"callback"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "register",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"email\": \"test_email@mail.ru\",\n  \"username\": \"user_1234567\",\n  \"vkid\": 167642598\n}\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8000/api/v1/auth/vk/register",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8000",
+									"path": [
+										"api",
+										"v1",
+										"auth",
+										"vk",
+										"register"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "logout",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8000/api/v1/auth/logout",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"logout"
 							]
 						}
 					},

@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/keenywheels/backend/internal/vixarapi/repository"
+	"github.com/keenywheels/backend/pkg/mailer"
 	"github.com/spf13/viper"
 )
 
@@ -44,6 +45,7 @@ type AppConfig struct {
 	LoggerCfg       LoggerConfig               `mapstructure:"logger"`
 	CORSConfig      CORSConfig                 `mapstructure:"cors"`
 	SchedulerConfig repository.SchedulerConfig `mapstructure:"scheduler"`
+	SMTPConfig      mailer.SMTPConfig          `mapstructure:"smtp"`
 }
 
 // PostgresConfig config for postgres

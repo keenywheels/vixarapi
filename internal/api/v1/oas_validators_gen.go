@@ -9,6 +9,45 @@ import (
 	"github.com/ogen-go/ogen/validate"
 )
 
+func (s GetUserSearchQueriesOKApplicationJSON) Validate() error {
+	alias := ([]UserSearchQuery)(s)
+	if alias == nil {
+		return errors.New("nil is invalid value")
+	}
+	return nil
+}
+
+func (s *SaveUserQueryRequest) Validate() error {
+	if s == nil {
+		return validate.ErrNilPointer
+	}
+
+	var failures []validate.FieldError
+	if err := func() error {
+		if err := (validate.String{
+			MinLength:    1,
+			MinLengthSet: true,
+			MaxLength:    1024,
+			MaxLengthSet: true,
+			Email:        false,
+			Hostname:     false,
+			Regex:        nil,
+		}).Validate(string(s.Query)); err != nil {
+			return errors.Wrap(err, "string")
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "query",
+			Error: err,
+		})
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+	return nil
+}
+
 func (s SearchTokenInfoOKApplicationJSON) Validate() error {
 	alias := ([]TokenInfo)(s)
 	if alias == nil {
@@ -270,7 +309,7 @@ func (s *VkAuthRegisterRequest) Validate() error {
 			MinLengthSet: true,
 			MaxLength:    64,
 			MaxLengthSet: true,
-			Email:        false,
+			Email:        true,
 			Hostname:     false,
 			Regex:        nil,
 		}).Validate(string(s.Email)); err != nil {

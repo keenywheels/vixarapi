@@ -13,12 +13,39 @@ type UnimplementedHandler struct{}
 
 var _ Handler = UnimplementedHandler{}
 
+// DeleteUserSearchQuery implements deleteUserSearchQuery operation.
+//
+// Delete user search query.
+//
+// DELETE /api/v1/user/query
+func (UnimplementedHandler) DeleteUserSearchQuery(ctx context.Context, params DeleteUserSearchQueryParams) (r DeleteUserSearchQueryRes, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
+// GetUserSearchQueries implements getUserSearchQueries operation.
+//
+// Get user search queries.
+//
+// GET /api/v1/user/query
+func (UnimplementedHandler) GetUserSearchQueries(ctx context.Context, params GetUserSearchQueriesParams) (r GetUserSearchQueriesRes, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
 // LogoutUser implements logoutUser operation.
 //
 // Logout user.
 //
 // POST /api/v1/auth/logout
 func (UnimplementedHandler) LogoutUser(ctx context.Context) (r LogoutUserRes, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
+// SaveUserQuery implements saveUserQuery operation.
+//
+// Save user search query.
+//
+// POST /api/v1/user/query
+func (UnimplementedHandler) SaveUserQuery(ctx context.Context, req *SaveUserQueryRequest) (r SaveUserQueryRes, _ error) {
 	return r, ht.ErrNotImplemented
 }
 

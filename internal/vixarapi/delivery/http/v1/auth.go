@@ -8,6 +8,7 @@ import (
 	gen "github.com/keenywheels/backend/internal/api/v1"
 	"github.com/keenywheels/backend/internal/vixarapi/delivery/http/security"
 	"github.com/keenywheels/backend/internal/vixarapi/service"
+	userSvc "github.com/keenywheels/backend/internal/vixarapi/service/user"
 	"github.com/keenywheels/backend/pkg/ctxutils"
 	"github.com/keenywheels/backend/pkg/httputils"
 )
@@ -22,7 +23,15 @@ func (c *Controller) VkAuthCallback(
 		log = ctxutils.GetLogger(ctx)
 	)
 
-	res, err := c.svc.HandleVkAuthCallback(ctx, &service.VkAuthCallbackParams{
+	if err := req.Validate(); err != nil {
+		log.Errorf("[%s] invalid request: %v", op, err)
+
+		return &gen.VkAuthCallbackBadRequest{
+			Error: httputils.ErrorBadRequest,
+		}, nil
+	}
+
+	res, err := c.userSvc.HandleVkAuthCallback(ctx, &userSvc.VkAuthCallbackParams{
 		Code:         req.Code,
 		State:        req.State,
 		CodeVerifier: req.CodeVerifier,
@@ -63,19 +72,37 @@ func (c *Controller) VkAuthRegister(
 		log = ctxutils.GetLogger(ctx)
 	)
 
-	if err := c.svc.RegisterVkUser(ctx, &service.RegisterVkUserParams{
-		Email:    req.Email,
-		Username: req.Username,
-		VKID:     req.Vkid,
-	}); err != nil {
-		log.Errorf("[%s] failed to register VK user: %v", op, err)
+	if err := req.Validate(); err != nil {
+		log.Errorf("[%s] invalid request: %v", op, err)
 
+		return &gen.VkAuthRegisterBadRequest{
+			Error: httputils.ErrorBadRequest,
+		}, nil
+	}
+
+	sessionID, ok := security.GetSessionID(ctx)
+	if !ok {
+		log.Errorf("[%s] session ID not found in context", op)
+
+		return &gen.VkAuthRegisterInternalServerError{
+			Error: httputils.ErrorInternalError,
+		}, nil
+	}
+
+	if err := c.userSvc.RegisterVkUser(ctx, &userSvc.RegisterVkUserParams{
+		SessionID: sessionID,
+		Email:     req.Email,
+		Username:  req.Username,
+		VKID:      req.Vkid,
+	}); err != nil {
 		switch {
 		case errors.Is(err, service.ErrAlreadyExists):
 			return &gen.VkAuthRegisterConflict{
 				Error: httputils.ErrorConflict,
 			}, nil
 		}
+
+		log.Errorf("[%s] failed to register VK user: %v", op, err)
 
 		return &gen.VkAuthRegisterInternalServerError{
 			Error: httputils.ErrorInternalError,
@@ -101,7 +128,7 @@ func (c *Controller) LogoutUser(ctx context.Context) (gen.LogoutUserRes, error) 
 		}, nil
 	}
 
-	if err := c.svc.LogoutUser(ctx, sessionID); err != nil {
+	if err := c.userSvc.LogoutUser(ctx, sessionID); err != nil {
 		log.Errorf("[%s] failed to logout user: %v", op, err)
 
 		return &gen.LogoutUserInternalServerError{

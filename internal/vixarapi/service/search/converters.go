@@ -1,4 +1,4 @@
-package service
+package search
 
 import "github.com/keenywheels/backend/internal/vixarapi/models"
 

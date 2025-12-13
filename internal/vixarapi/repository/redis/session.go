@@ -16,7 +16,7 @@ type UserInfo struct {
 }
 
 // SaveUserSession saves a user session in Redis
-func (r *Repository) SaveUserSession(ctx context.Context, userID string, userInfo *UserInfo) error {
+func (r *Repository) SaveUserSession(ctx context.Context, key string, userInfo *UserInfo) error {
 	if userInfo == nil {
 		return fmt.Errorf("failed to save session: %w", ErrNilUserInfo)
 	}
@@ -26,7 +26,7 @@ func (r *Repository) SaveUserSession(ctx context.Context, userID string, userInf
 		return fmt.Errorf("failed to marshal user info: %w", err)
 	}
 
-	if err := r.redis.Set(ctx, userID, data, r.ttl); err != nil {
+	if err := r.redis.Set(ctx, key, data, r.ttl); err != nil {
 		return fmt.Errorf("failed to save session in redis: %w", err)
 	}
 
@@ -34,8 +34,8 @@ func (r *Repository) SaveUserSession(ctx context.Context, userID string, userInf
 }
 
 // GetUserSession retrieves a user session from Redis
-func (r *Repository) GetUserSession(ctx context.Context, userID string) (*UserInfo, error) {
-	data, ok, err := r.redis.Get(ctx, userID)
+func (r *Repository) GetUserSession(ctx context.Context, key string) (*UserInfo, error) {
+	data, ok, err := r.redis.Get(ctx, key)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get session from redis: %w", err)
 	}

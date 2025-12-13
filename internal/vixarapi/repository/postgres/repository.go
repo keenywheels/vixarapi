@@ -51,6 +51,15 @@ func New(db *postgres.Postgres) (*Repository, error) {
 					CreatedAt: "created_at",
 				},
 			},
+			userQuery: UserQueryTable{
+				Name: "user_query",
+				Fields: UserQueryFields{
+					ID:        "id",
+					UserID:    "user_id",
+					Query:     "query",
+					CreatedAt: "created_at",
+				},
+			},
 		},
 		db:        db,
 		scheduler: scheduler,

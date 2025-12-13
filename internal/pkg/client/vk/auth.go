@@ -9,8 +9,6 @@ import (
 	"net/url"
 	"strings"
 	"time"
-
-	"github.com/keenywheels/backend/pkg/ctxutils"
 )
 
 var (
@@ -41,8 +39,6 @@ func (c *Client) ExchangeCodeToTokens(
 		"device_id":     []string{params.DeviceID},
 		"state":         []string{params.State},
 	}
-
-	ctxutils.GetLogger(ctx).Debugf("[VkClient.ExchangeCodeToTokens] got request to with params=%v", vals.Encode())
 
 	respRaw, err := c.makeRequest(
 		ctx,
@@ -96,8 +92,6 @@ func (c *Client) RefreshTokens(
 		"device_id":     []string{params.DeviceID},
 		"state":         []string{state},
 	}
-
-	ctxutils.GetLogger(ctx).Debugf("[VkClient.RefreshTokens] got request to with params=%v", vals.Encode())
 
 	respRaw, err := c.makeRequest(
 		ctx,

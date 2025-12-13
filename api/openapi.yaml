@@ -157,6 +157,127 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+  /api/v1/user/query:
+    post:
+      tags: [user]
+      summary: Save user search query
+      operationId: saveUserQuery
+      security:
+        - cookieAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SaveUserQueryRequest'
+      responses:
+        '200':
+          description: Successfully saved user search query
+          content:
+            application/json:
+                schema:
+                  $ref: '#/components/schemas/SaveUserQueryResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    get:
+      tags: [user]
+      summary: Get user search queries
+      operationId: getUserSearchQueries
+      security:
+        - cookieAuth: []
+      parameters:
+        - in: query
+          name: offset
+          schema:
+            type: integer
+            format: uint64
+            default: 0
+          required: false
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            format: uint64
+            default: 20
+          required: false
+      responses:
+        '200':
+          description: Successfully retrieved user search queries
+          content:
+            application/json:
+                schema:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/UserSearchQuery'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      tags: [user]
+      summary: Delete user search query
+      operationId: deleteUserSearchQuery
+      security:
+        - cookieAuth: []
+      parameters:
+        - in: query
+          name: id
+          schema:
+            type: string
+            minLength: 16
+            maxLength: 128
+          required: true
+      responses:
+        '200':
+          description: Successfully deleted user search query
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 
 components:
   securitySchemes:
@@ -262,6 +383,31 @@ components:
           type: integer
           format: int64
       required: [email, username, vkid]
+    SaveUserQueryRequest:
+      type: object
+      properties:
+        query:
+          type: string
+          minLength: 1
+          maxLength: 1024
+      required: [query]
+    SaveUserQueryResponse:
+      type: object
+      properties:
+        id:
+          type: string
+      required: [id]
+    UserSearchQuery:
+      type: object
+      properties:
+        id:
+          type: string
+        query:
+          type: string
+        searchDate:
+          type: string
+          format: date-time
+      required: [id, query, searchDate]
 
     Error:
       type: object

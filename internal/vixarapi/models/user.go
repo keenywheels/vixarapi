@@ -15,3 +15,11 @@ type User struct {
 	VKID      pgtype.Int8
 	CreatedAt time.Time
 }
+
+// UserQuery represents a user search query in database
+type UserQuery struct {
+	ID        string
+	UserID    string
+	Query     string
+	CreatedAt time.Time
+}

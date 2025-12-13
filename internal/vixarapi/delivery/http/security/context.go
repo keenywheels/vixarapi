@@ -1,6 +1,10 @@
 package security
 
-import "context"
+import (
+	"context"
+
+	userSvc "github.com/keenywheels/backend/internal/vixarapi/service/user"
+)
 
 // ctxKeySessionID is a type for the session ID context key
 type ctxKeySessionID int
@@ -20,4 +24,24 @@ func GetSessionID(ctx context.Context) (string, bool) {
 	}
 
 	return "", false
+}
+
+// ctxKeyUserInfo is a type for the user info context key
+type ctxKeyUserInfo int
+
+// key to get/set user info in context
+const userInfoKey ctxKeyUserInfo = 0
+
+// SetUserInfo sets the user info in the context
+func SetUserInfo(ctx context.Context, userInfo userSvc.UserSessionInfo) context.Context {
+	return context.WithValue(ctx, userInfoKey, userInfo)
+}
+
+// GetUserInfo retrieves the user info from the context
+func GetUserInfo(ctx context.Context) (*userSvc.UserSessionInfo, bool) {
+	if userInfo, ok := ctx.Value(userInfoKey).(userSvc.UserSessionInfo); ok {
+		return &userInfo, true
+	}
+
+	return nil, false
 }

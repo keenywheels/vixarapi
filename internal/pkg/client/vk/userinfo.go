@@ -6,8 +6,6 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
-
-	"github.com/keenywheels/backend/pkg/ctxutils"
 )
 
 func (c *Client) GetUserInfo(
@@ -19,8 +17,6 @@ func (c *Client) GetUserInfo(
 		"client_id":    []string{c.cfg.Auth.ClientID},
 		"access_token": []string{accessToken},
 	}
-
-	ctxutils.GetLogger(ctx).Debugf("[VkClient.GetUserInfo] got request to with params=%v", vals.Encode())
 
 	respRaw, err := c.makeRequest(
 		ctx,

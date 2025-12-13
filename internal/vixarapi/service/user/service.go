@@ -1,19 +1,20 @@
-package service
+package user
 
 import (
 	"context"
 
 	"github.com/keenywheels/backend/internal/pkg/client/vk"
 	"github.com/keenywheels/backend/internal/vixarapi/models"
-	"github.com/keenywheels/backend/internal/vixarapi/repository/postgres"
 	"github.com/keenywheels/backend/internal/vixarapi/repository/redis"
 )
 
 // IRepository provides interface to communicate with the repository layer
 type IRepository interface {
-	SearchTokenInfo(context.Context, *postgres.SearchTokenParams) ([]models.TokenInfo, error)
 	GetUserByVKID(context.Context, int64) (*models.User, error)
 	RegisterVKUser(context.Context, *models.User) (*models.User, error)
+	SaveSearchQuery(context.Context, string, string) (*models.UserQuery, error)
+	DeleteSearchQuery(context.Context, string) error
+	GetSearchQueries(context.Context, string, uint64, uint64) ([]*models.UserQuery, error)
 }
 
 // IRedisRepository provides interface to communicate with the redis repository layer

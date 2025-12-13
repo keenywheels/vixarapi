@@ -31,6 +31,23 @@ func (s *CookieAuth) SetRoles(val []string) {
 	s.Roles = val
 }
 
+type DeleteUserSearchQueryInternalServerError Error
+
+func (*DeleteUserSearchQueryInternalServerError) deleteUserSearchQueryRes() {}
+
+type DeleteUserSearchQueryNotFound Error
+
+func (*DeleteUserSearchQueryNotFound) deleteUserSearchQueryRes() {}
+
+// DeleteUserSearchQueryOK is response for DeleteUserSearchQuery operation.
+type DeleteUserSearchQueryOK struct{}
+
+func (*DeleteUserSearchQueryOK) deleteUserSearchQueryRes() {}
+
+type DeleteUserSearchQueryUnauthorized Error
+
+func (*DeleteUserSearchQueryUnauthorized) deleteUserSearchQueryRes() {}
+
 // Ref: #/components/schemas/Error
 type Error struct {
 	Error string `json:"error"`
@@ -45,6 +62,22 @@ func (s *Error) GetError() string {
 func (s *Error) SetError(val string) {
 	s.Error = val
 }
+
+type GetUserSearchQueriesInternalServerError Error
+
+func (*GetUserSearchQueriesInternalServerError) getUserSearchQueriesRes() {}
+
+type GetUserSearchQueriesNotFound Error
+
+func (*GetUserSearchQueriesNotFound) getUserSearchQueriesRes() {}
+
+type GetUserSearchQueriesOKApplicationJSON []UserSearchQuery
+
+func (*GetUserSearchQueriesOKApplicationJSON) getUserSearchQueriesRes() {}
+
+type GetUserSearchQueriesUnauthorized Error
+
+func (*GetUserSearchQueriesUnauthorized) getUserSearchQueriesRes() {}
 
 type LogoutUserInternalServerError Error
 
@@ -162,6 +195,96 @@ func (o OptString) Or(d string) string {
 	}
 	return d
 }
+
+// NewOptUint64 returns new OptUint64 with value set to v.
+func NewOptUint64(v uint64) OptUint64 {
+	return OptUint64{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptUint64 is optional uint64.
+type OptUint64 struct {
+	Value uint64
+	Set   bool
+}
+
+// IsSet returns true if OptUint64 was set.
+func (o OptUint64) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptUint64) Reset() {
+	var v uint64
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptUint64) SetTo(v uint64) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptUint64) Get() (v uint64, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptUint64) Or(d uint64) uint64 {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+type SaveUserQueryBadRequest Error
+
+func (*SaveUserQueryBadRequest) saveUserQueryRes() {}
+
+type SaveUserQueryInternalServerError Error
+
+func (*SaveUserQueryInternalServerError) saveUserQueryRes() {}
+
+// Ref: #/components/schemas/SaveUserQueryRequest
+type SaveUserQueryRequest struct {
+	Query string `json:"query"`
+}
+
+// GetQuery returns the value of Query.
+func (s *SaveUserQueryRequest) GetQuery() string {
+	return s.Query
+}
+
+// SetQuery sets the value of Query.
+func (s *SaveUserQueryRequest) SetQuery(val string) {
+	s.Query = val
+}
+
+// Ref: #/components/schemas/SaveUserQueryResponse
+type SaveUserQueryResponse struct {
+	ID string `json:"id"`
+}
+
+// GetID returns the value of ID.
+func (s *SaveUserQueryResponse) GetID() string {
+	return s.ID
+}
+
+// SetID sets the value of ID.
+func (s *SaveUserQueryResponse) SetID(val string) {
+	s.ID = val
+}
+
+func (*SaveUserQueryResponse) saveUserQueryRes() {}
+
+type SaveUserQueryUnauthorized Error
+
+func (*SaveUserQueryUnauthorized) saveUserQueryRes() {}
 
 type SearchTokenInfoInternalServerError Error
 
@@ -302,6 +425,43 @@ func (s *TokenRecordFeatures) SetInterestNormalized(val float64) {
 // SetSentiment sets the value of Sentiment.
 func (s *TokenRecordFeatures) SetSentiment(val int16) {
 	s.Sentiment = val
+}
+
+// Ref: #/components/schemas/UserSearchQuery
+type UserSearchQuery struct {
+	ID         string    `json:"id"`
+	Query      string    `json:"query"`
+	SearchDate time.Time `json:"searchDate"`
+}
+
+// GetID returns the value of ID.
+func (s *UserSearchQuery) GetID() string {
+	return s.ID
+}
+
+// GetQuery returns the value of Query.
+func (s *UserSearchQuery) GetQuery() string {
+	return s.Query
+}
+
+// GetSearchDate returns the value of SearchDate.
+func (s *UserSearchQuery) GetSearchDate() time.Time {
+	return s.SearchDate
+}
+
+// SetID sets the value of ID.
+func (s *UserSearchQuery) SetID(val string) {
+	s.ID = val
+}
+
+// SetQuery sets the value of Query.
+func (s *UserSearchQuery) SetQuery(val string) {
+	s.Query = val
+}
+
+// SetSearchDate sets the value of SearchDate.
+func (s *UserSearchQuery) SetSearchDate(val time.Time) {
+	s.SearchDate = val
 }
 
 type VkAuthCallbackBadRequest Error

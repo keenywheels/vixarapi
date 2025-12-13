@@ -7,13 +7,14 @@ import (
 	"github.com/keenywheels/backend/internal/vixarapi/repository/postgres"
 )
 
+// common service layer errors
 var (
 	ErrNotFound      = errors.New("did not get any data")
 	ErrAlreadyExists = errors.New("data already exists")
 )
 
-// parseRepositoryError parses a repository error and returns a service layer error
-func parseRepositoryError(op string, err error) error {
+// ParseRepositoryError parses a repository error and returns a corresponding common service error
+func ParseRepositoryError(op string, err error) error {
 	switch {
 	case errors.Is(err, postgres.ErrNotFound):
 		return fmt.Errorf("[%s] service error: %w", op, ErrNotFound)

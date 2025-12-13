@@ -8,12 +8,30 @@ import (
 
 // Handler handles operations described by OpenAPI v3 specification.
 type Handler interface {
+	// DeleteUserSearchQuery implements deleteUserSearchQuery operation.
+	//
+	// Delete user search query.
+	//
+	// DELETE /api/v1/user/query
+	DeleteUserSearchQuery(ctx context.Context, params DeleteUserSearchQueryParams) (DeleteUserSearchQueryRes, error)
+	// GetUserSearchQueries implements getUserSearchQueries operation.
+	//
+	// Get user search queries.
+	//
+	// GET /api/v1/user/query
+	GetUserSearchQueries(ctx context.Context, params GetUserSearchQueriesParams) (GetUserSearchQueriesRes, error)
 	// LogoutUser implements logoutUser operation.
 	//
 	// Logout user.
 	//
 	// POST /api/v1/auth/logout
 	LogoutUser(ctx context.Context) (LogoutUserRes, error)
+	// SaveUserQuery implements saveUserQuery operation.
+	//
+	// Save user search query.
+	//
+	// POST /api/v1/user/query
+	SaveUserQuery(ctx context.Context, req *SaveUserQueryRequest) (SaveUserQueryRes, error)
 	// SearchTokenInfo implements searchTokenInfo operation.
 	//
 	// Get info for specified token.

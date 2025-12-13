@@ -7,7 +7,7 @@ import (
 
 	"github.com/keenywheels/backend/internal/pkg/client/vk"
 	pgRepo "github.com/keenywheels/backend/internal/vixarapi/repository/postgres"
-	"github.com/keenywheels/backend/internal/vixarapi/service"
+	userSvc "github.com/keenywheels/backend/internal/vixarapi/service/user"
 	"github.com/keenywheels/backend/pkg/redis"
 	"github.com/spf13/viper"
 )
@@ -41,6 +41,11 @@ type CORSConfig struct {
 	MaxAge           time.Duration `mapstructure:"max_age"`
 }
 
+// ServiceConfig contains all configs which connected to services
+type ServiceConfig struct {
+	UserSvc userSvc.Config `mapstructure:"user"`
+}
+
 // AppConfig contains all configs which connected to main app
 type AppConfig struct {
 	HttpCfg         HttpConfig             `mapstructure:"http"`
@@ -48,7 +53,7 @@ type AppConfig struct {
 	CORSConfig      CORSConfig             `mapstructure:"cors"`
 	SchedulerConfig pgRepo.SchedulerConfig `mapstructure:"scheduler"`
 	VKConfig        vk.Config              `mapstructure:"vk"`
-	Service         service.Config         `mapstructure:"service"`
+	Service         ServiceConfig          `mapstructure:"service"`
 }
 
 // PostgresConfig config for postgres

@@ -31,8 +31,23 @@ type UserTable struct {
 	Fields UserFields
 }
 
+// UserQueryTable represents the structure of the user query table
+type UserQueryTable struct {
+	Name   string
+	Fields UserQueryFields
+}
+
+// UserQueryFields represents the fields of the user query table
+type UserQueryFields struct {
+	ID        string
+	UserID    string
+	Query     string
+	CreatedAt string
+}
+
 // Tables holds all table definitions
 type Tables struct {
-	search SearchTokenTable
-	user   UserTable
+	search    SearchTokenTable
+	user      UserTable
+	userQuery UserQueryTable
 }

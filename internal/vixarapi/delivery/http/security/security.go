@@ -2,6 +2,7 @@ package security
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"strings"
 
@@ -20,17 +21,21 @@ func (c *Controller) HandleCookieAuth(
 	}
 
 	// check if the session is valid
-	valid, err := c.srvc.ValidateSession(ctx, session)
+	valid, userInfo, err := c.srvc.ValidateSession(ctx, session)
 	if err != nil {
-		return ctx, fmt.Errorf("failed to validate session: %w", err)
+		return ctx, fmt.Errorf("failed to get session: %w", err)
 	}
 
 	if !valid {
 		return ctx, fmt.Errorf("failed to validate session: %w", ErrInvalidToken)
 	}
 
-	// set session ID in context
-	ctx = SetSessionID(ctx, session)
+	// set sessionID and user info in context
+	if userInfo == nil {
+		return ctx, errors.New("something wrong: got nil user for valid session")
+	}
+
+	ctx = SetSessionID(SetUserInfo(ctx, *userInfo), session)
 
 	return ctx, nil
 }

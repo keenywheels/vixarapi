@@ -1,6 +1,7 @@
 app:
   service:
-    session_secret: "dev_session_secret"
+    user:
+      session_secret: "dev_session_secret"
   http:
     port: "8000"
   cors:

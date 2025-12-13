@@ -14,7 +14,8 @@ import (
 	api "github.com/keenywheels/backend/internal/vixarapi/delivery/http/v1"
 	pgRepository "github.com/keenywheels/backend/internal/vixarapi/repository/postgres"
 	redisRepository "github.com/keenywheels/backend/internal/vixarapi/repository/redis"
-	"github.com/keenywheels/backend/internal/vixarapi/service"
+	searchSrvc "github.com/keenywheels/backend/internal/vixarapi/service/search"
+	userSrvc "github.com/keenywheels/backend/internal/vixarapi/service/user"
 	"github.com/keenywheels/backend/pkg/cors"
 	"github.com/keenywheels/backend/pkg/httpserver"
 	"github.com/keenywheels/backend/pkg/httputils"
@@ -88,13 +89,14 @@ func (app *App) Run() error {
 		return fmt.Errorf("failed to create redis repository: %w", err)
 	}
 
-	// create service
+	// create services
 	vkClient := vk.New(&cfg.AppCfg.VKConfig)
-	svc := service.New(pgRepo, redisRepo, vkClient, &cfg.AppCfg.Service)
+	userSvc := userSrvc.New(pgRepo, redisRepo, vkClient, &cfg.AppCfg.Service.UserSvc)
+	searchSvc := searchSrvc.New(pgRepo)
 
 	// create handlers
-	tokenHandler := api.New(svc)
-	securityHandler := securityApi.New(svc)
+	tokenHandler := api.New(searchSvc, userSvc)
+	securityHandler := securityApi.New(userSvc)
 
 	// create router
 	mux, err := app.initRouter(tokenHandler, securityHandler)

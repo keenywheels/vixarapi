@@ -1,10 +1,11 @@
-package service
+package search
 
 import (
 	"context"
 	"time"
 
 	"github.com/keenywheels/backend/internal/vixarapi/repository/postgres"
+	"github.com/keenywheels/backend/internal/vixarapi/service"
 )
 
 const (
@@ -44,7 +45,7 @@ func (s *Service) SearchTokenInfo(ctx context.Context, params *SearchTokenInfoPa
 
 	tokensInfo, err := s.repo.SearchTokenInfo(ctx, repoParams)
 	if err != nil {
-		return nil, parseRepositoryError(op, err)
+		return nil, service.ParseRepositoryError(op, err)
 	}
 
 	return convertToServiceTokenInfo(tokensInfo), nil

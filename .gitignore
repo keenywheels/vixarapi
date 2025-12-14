@@ -40,3 +40,6 @@ log/
 # postgres
 pgdata/
 dict/
+
+# redis
+redisdata/

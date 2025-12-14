@@ -10,8 +10,50 @@ import (
 	ht "github.com/ogen-go/ogen/http"
 )
 
+func encodeSaveUserQueryRequest(
+	req *SaveUserQueryRequest,
+	r *http.Request,
+) error {
+	const contentType = "application/json"
+	e := new(jx.Encoder)
+	{
+		req.Encode(e)
+	}
+	encoded := e.Bytes()
+	ht.SetBody(r, bytes.NewReader(encoded), contentType)
+	return nil
+}
+
 func encodeSearchTokenInfoRequest(
 	req *SearchTokenInfoRequest,
+	r *http.Request,
+) error {
+	const contentType = "application/json"
+	e := new(jx.Encoder)
+	{
+		req.Encode(e)
+	}
+	encoded := e.Bytes()
+	ht.SetBody(r, bytes.NewReader(encoded), contentType)
+	return nil
+}
+
+func encodeVkAuthCallbackRequest(
+	req *VkAuthCallbackRequest,
+	r *http.Request,
+) error {
+	const contentType = "application/json"
+	e := new(jx.Encoder)
+	{
+		req.Encode(e)
+	}
+	encoded := e.Bytes()
+	ht.SetBody(r, bytes.NewReader(encoded), contentType)
+	return nil
+}
+
+func encodeVkAuthRegisterRequest(
+	req *VkAuthRegisterRequest,
 	r *http.Request,
 ) error {
 	const contentType = "application/json"

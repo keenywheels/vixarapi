@@ -3,7 +3,6 @@ package user
 import (
 	"context"
 	"errors"
-	"fmt"
 
 	gen "github.com/keenywheels/backend/internal/api/v1"
 	"github.com/keenywheels/backend/internal/vixarapi/delivery/http/security"
@@ -46,8 +45,6 @@ func (c *Controller) VkAuthCallback(
 		}, nil
 	}
 
-	cookie := fmt.Sprintf("session_id=%s; Path=/; SameSite=Lax; HttpOnly", res.Session)
-
 	return &gen.VkAuthCallbackResponseHeaders{
 		Response: gen.VkAuthCallbackResponse{
 			UserExists: res.UserExists,
@@ -56,7 +53,7 @@ func (c *Controller) VkAuthCallback(
 			Vkid:       res.VKID,
 		},
 		SetCookie: gen.OptString{
-			Value: cookie,
+			Value: c.cm.SessionCookie(res.Session).String(),
 			Set:   true,
 		},
 	}, nil
@@ -136,11 +133,9 @@ func (c *Controller) LogoutUser(ctx context.Context) (gen.LogoutUserRes, error) 
 		}, nil
 	}
 
-	cookie := "session_id=; Path=/; SameSite=Lax; HttpOnly"
-
 	return &gen.LogoutUserOK{
 		SetCookie: gen.OptString{
-			Value: cookie,
+			Value: c.cm.SessionCookie("").String(),
 			Set:   true,
 		},
 	}, nil

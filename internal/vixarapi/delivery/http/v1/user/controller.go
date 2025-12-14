@@ -3,6 +3,7 @@ package user
 import (
 	"context"
 
+	"github.com/keenywheels/backend/internal/vixarapi/delivery/http/cookie"
 	service "github.com/keenywheels/backend/internal/vixarapi/service/user"
 )
 
@@ -19,11 +20,13 @@ type IService interface {
 // Controller contains handlers for endpoints
 type Controller struct {
 	svc IService
+	cm  *cookie.CookieManager
 }
 
 // New creates a new controller instance
-func New(svc IService) *Controller {
+func New(svc IService, cm *cookie.CookieManager) *Controller {
 	return &Controller{
 		svc: svc,
+		cm:  cm,
 	}
 }

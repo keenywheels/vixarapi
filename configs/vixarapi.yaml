@@ -1,4 +1,8 @@
 app:
+  cookie:
+    session:
+      name: "session_id"
+      expiration: 4320h  # 180 days
   service:
     user:
       session_secret: "dev_session_secret"

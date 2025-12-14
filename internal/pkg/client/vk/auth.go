@@ -33,7 +33,7 @@ func (c *Client) ExchangeCodeToTokens(
 	vals := url.Values{
 		"grant_type":    []string{"authorization_code"},
 		"code_verifier": []string{params.CodeVerifier},
-		"redirect_uri":  []string{params.RedirectURI},
+		"redirect_uri":  []string{"http://localhost"},
 		"code":          []string{params.Code},
 		"client_id":     []string{c.cfg.Auth.ClientID},
 		"device_id":     []string{params.DeviceID},

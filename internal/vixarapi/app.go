@@ -10,6 +10,7 @@ import (
 
 	oas "github.com/keenywheels/backend/internal/api/v1"
 	"github.com/keenywheels/backend/internal/pkg/client/vk"
+	"github.com/keenywheels/backend/internal/vixarapi/delivery/http/cookie"
 	apiSecurity "github.com/keenywheels/backend/internal/vixarapi/delivery/http/security"
 	api "github.com/keenywheels/backend/internal/vixarapi/delivery/http/v1"
 	apiSearch "github.com/keenywheels/backend/internal/vixarapi/delivery/http/v1/search"
@@ -102,8 +103,9 @@ func (app *App) Run() error {
 	searchSvc := searchSrvc.New(searchRepo)
 
 	// create handlers
+	cookieManager := cookie.New(&cfg.AppCfg.CookieConfig)
 	searchController := apiSearch.New(searchSvc)
-	userController := apiUser.New(userSvc)
+	userController := apiUser.New(userSvc, cookieManager)
 
 	securityHandler := apiSecurity.New(userSvc)
 

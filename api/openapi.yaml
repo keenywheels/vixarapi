@@ -14,6 +14,8 @@ paths:
       tags: [token]
       summary: Get info for specified token
       operationId: searchTokenInfo
+      security:
+        - cookieAuth: []
       requestBody:
         required: true
         content:
@@ -29,6 +31,12 @@ paths:
                   type: array
                   items:
                     $ref: '#/components/schemas/TokenInfo'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
         '404':
           description: Token not found
           content:
@@ -41,13 +49,251 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+  /api/v1/auth/vk/callback:
+    post:
+      tags: [auth]
+      summary: VK oauth callback, used to get tokens and user info from vk
+      operationId: vkAuthCallback
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VkAuthCallbackRequest'
+      responses:
+        '200':
+          description: Successfully authenticated with vk
+          headers:
+            Set-Cookie:
+              description: Session cookie
+              schema:
+                type: string
+          content:
+            application/json:
+                schema:
+                  $ref: '#/components/schemas/VkAuthCallbackResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '406':
+          description: Not acceptable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/v1/auth/vk/register:
+    post:
+      tags: [auth]
+      summary: VK oauth register, used to register new users via vk
+      operationId: vkAuthRegister
+      security:
+        - cookieAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VkAuthRegisterRequest'
+      responses:
+        '200':
+          description: Successfully registered with vk
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized (should be session for vk user registration)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Conflict - user already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/v1/auth/logout:
+    post:
+      tags: [auth]
+      summary: Logout user
+      operationId: logoutUser
+      security:
+        - cookieAuth: []
+      responses:
+        '200':
+          description: Successfully logged out
+          headers:
+            Set-Cookie:
+              description: Clear session cookie
+              schema:
+                type: string
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/v1/user/query:
+    post:
+      tags: [user]
+      summary: Save user search query
+      operationId: saveUserQuery
+      security:
+        - cookieAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SaveUserQueryRequest'
+      responses:
+        '200':
+          description: Successfully saved user search query
+          content:
+            application/json:
+                schema:
+                  $ref: '#/components/schemas/SaveUserQueryResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    get:
+      tags: [user]
+      summary: Get user search queries
+      operationId: getUserSearchQueries
+      security:
+        - cookieAuth: []
+      parameters:
+        - in: query
+          name: offset
+          schema:
+            type: integer
+            format: uint64
+            default: 0
+          required: false
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            format: uint64
+            default: 20
+          required: false
+      responses:
+        '200':
+          description: Successfully retrieved user search queries
+          content:
+            application/json:
+                schema:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/UserSearchQuery'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      tags: [user]
+      summary: Delete user search query
+      operationId: deleteUserSearchQuery
+      security:
+        - cookieAuth: []
+      parameters:
+        - in: query
+          name: id
+          schema:
+            type: string
+            minLength: 16
+            maxLength: 128
+          required: true
+      responses:
+        '200':
+          description: Successfully deleted user search query
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
 components:
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: session_id
+
   schemas:
     SearchTokenInfoRequest:
       type: object
       properties:
         token:
           type: string
+          minLength: 1
+          maxLength: 255
         start:
           type: string
           format: date-time
@@ -84,6 +330,84 @@ components:
               format: int16
           required: [interest, interest_normalized, sentiment]
       required: [timestamp, features]
+    VkAuthCallbackRequest:
+      type: object
+      properties:
+        code:
+          type: string
+          minLength: 1
+          maxLength: 256
+        state:
+          type: string
+          minLength: 1
+          maxLength: 256
+        code_verifier:
+          type: string
+          minLength: 1
+          maxLength: 256
+        device_id:
+          type: string
+          minLength: 1
+          maxLength: 256
+        redirect_uri:
+          type: string
+          minLength: 1
+          maxLength: 256
+      required: [code, state, code_verifier, device_id, redirect_uri]
+    VkAuthCallbackResponse:
+      type: object
+      properties:
+        user_exists:
+          type: boolean
+        username:
+          type: string
+        email:
+          type: string
+        vkid:
+          type: integer
+          format: int64
+      required: [user_exists, username, email, vkid]
+    VkAuthRegisterRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          minLength: 4
+          maxLength: 64
+          format: email
+        username:
+          type: string
+          minLength: 4
+          maxLength: 64
+        vkid:
+          type: integer
+          format: int64
+      required: [email, username, vkid]
+    SaveUserQueryRequest:
+      type: object
+      properties:
+        query:
+          type: string
+          minLength: 1
+          maxLength: 1024
+      required: [query]
+    SaveUserQueryResponse:
+      type: object
+      properties:
+        id:
+          type: string
+      required: [id]
+    UserSearchQuery:
+      type: object
+      properties:
+        id:
+          type: string
+        query:
+          type: string
+        searchDate:
+          type: string
+          format: date-time
+      required: [id, query, searchDate]
 
     Error:
       type: object

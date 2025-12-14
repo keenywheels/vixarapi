@@ -1,4 +1,4 @@
-package repository
+package search
 
 import (
 	"context"
@@ -7,6 +7,7 @@ import (
 
 	sq "github.com/Masterminds/squirrel"
 	"github.com/keenywheels/backend/internal/vixarapi/models"
+	commonRepo "github.com/keenywheels/backend/internal/vixarapi/repository/postgres"
 	"github.com/keenywheels/backend/pkg/ctxutils"
 )
 
@@ -26,35 +27,35 @@ func (r *Repository) SearchTokenInfo(
 	// prepare query
 	query, args, err := r.db.Builder.
 		Select(
-			r.tbl.Fields.TokenName,
-			r.tbl.Fields.ScrapeDate,
-			r.tbl.Fields.Interest,
-			fmt.Sprintf("1.0 * %s / %s", r.tbl.Fields.Interest, r.tbl.Fields.MedianInterest),
-			r.tbl.Fields.Sentiment,
+			r.tbls.search.Fields.TokenName,
+			r.tbls.search.Fields.ScrapeDate,
+			r.tbls.search.Fields.Interest,
+			fmt.Sprintf("1.0 * %s / %s", r.tbls.search.Fields.Interest, r.tbls.search.Fields.MedianInterest),
+			r.tbls.search.Fields.Sentiment,
 		).
-		From(r.tbl.Name).
+		From(r.tbls.search.Name).
 		Where(
 			sq.And{
-				sq.Expr(fmt.Sprintf("%s %% lower(?)", r.tbl.Fields.TokenName), params.Token),
-				sq.GtOrEq{r.tbl.Fields.ScrapeDate: params.Start},
-				sq.LtOrEq{r.tbl.Fields.ScrapeDate: params.End},
+				sq.Expr(fmt.Sprintf("%s %% lower(?)", r.tbls.search.Fields.TokenName), params.Token),
+				sq.GtOrEq{r.tbls.search.Fields.ScrapeDate: params.Start},
+				sq.LtOrEq{r.tbls.search.Fields.ScrapeDate: params.End},
 			},
 		).
 		OrderBy(
-			fmt.Sprintf("similarity(%s, lower($1)) DESC", r.tbl.Fields.TokenName),
-			fmt.Sprintf("%s ASC", r.tbl.Fields.ScrapeDate),
+			fmt.Sprintf("similarity(%s, lower($1)) DESC", r.tbls.search.Fields.TokenName),
+			fmt.Sprintf("%s ASC", r.tbls.search.Fields.ScrapeDate),
 		).
 		Limit(searchLimit).
 		ToSql()
 	if err != nil {
-		return nil, parsePostgresError(op, err)
+		return nil, commonRepo.ParsePostgresError(op, err)
 	}
 
 	ctxutils.GetLogger(ctx).Debugf("[%s] search token info query: %s, args: %v", op, query, args)
 
 	rows, err := r.db.Pool.Query(ctx, query, args...)
 	if err != nil {
-		return nil, parsePostgresError(op, err)
+		return nil, commonRepo.ParsePostgresError(op, err)
 	}
 	defer rows.Close()
 
@@ -75,7 +76,7 @@ func (r *Repository) SearchTokenInfo(
 			&record.NormalizedInterest,
 			&record.Sentiment,
 		); err != nil {
-			return nil, parsePostgresError(op, err)
+			return nil, commonRepo.ParsePostgresError(op, err)
 		}
 
 		// is the same token as previous row -> add record to current token info
@@ -107,12 +108,12 @@ func (r *Repository) SearchTokenInfo(
 	}
 
 	if err := rows.Err(); err != nil {
-		return nil, parsePostgresError(op, err)
+		return nil, commonRepo.ParsePostgresError(op, err)
 	}
 
 	// check if any rows were returned
 	if len(res) == 0 {
-		return nil, fmt.Errorf("[%s] failed to find token info: %w", op, ErrNotFound)
+		return nil, fmt.Errorf("[%s] failed to find token info: %w", op, commonRepo.ErrNotFound)
 	}
 
 	return res, nil

@@ -48,24 +48,150 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			break
 		}
 		switch elem[0] {
-		case '/': // Prefix: "/api/v1/token/search"
+		case '/': // Prefix: "/api/v1/"
 
-			if l := len("/api/v1/token/search"); len(elem) >= l && elem[0:l] == "/api/v1/token/search" {
+			if l := len("/api/v1/"); len(elem) >= l && elem[0:l] == "/api/v1/" {
 				elem = elem[l:]
 			} else {
 				break
 			}
 
 			if len(elem) == 0 {
-				// Leaf node.
-				switch r.Method {
-				case "POST":
-					s.handleSearchTokenInfoRequest([0]string{}, elemIsEscaped, w, r)
-				default:
-					s.notAllowed(w, r, "POST")
+				break
+			}
+			switch elem[0] {
+			case 'a': // Prefix: "auth/"
+
+				if l := len("auth/"); len(elem) >= l && elem[0:l] == "auth/" {
+					elem = elem[l:]
+				} else {
+					break
 				}
 
-				return
+				if len(elem) == 0 {
+					break
+				}
+				switch elem[0] {
+				case 'l': // Prefix: "logout"
+
+					if l := len("logout"); len(elem) >= l && elem[0:l] == "logout" {
+						elem = elem[l:]
+					} else {
+						break
+					}
+
+					if len(elem) == 0 {
+						// Leaf node.
+						switch r.Method {
+						case "POST":
+							s.handleLogoutUserRequest([0]string{}, elemIsEscaped, w, r)
+						default:
+							s.notAllowed(w, r, "POST")
+						}
+
+						return
+					}
+
+				case 'v': // Prefix: "vk/"
+
+					if l := len("vk/"); len(elem) >= l && elem[0:l] == "vk/" {
+						elem = elem[l:]
+					} else {
+						break
+					}
+
+					if len(elem) == 0 {
+						break
+					}
+					switch elem[0] {
+					case 'c': // Prefix: "callback"
+
+						if l := len("callback"); len(elem) >= l && elem[0:l] == "callback" {
+							elem = elem[l:]
+						} else {
+							break
+						}
+
+						if len(elem) == 0 {
+							// Leaf node.
+							switch r.Method {
+							case "POST":
+								s.handleVkAuthCallbackRequest([0]string{}, elemIsEscaped, w, r)
+							default:
+								s.notAllowed(w, r, "POST")
+							}
+
+							return
+						}
+
+					case 'r': // Prefix: "register"
+
+						if l := len("register"); len(elem) >= l && elem[0:l] == "register" {
+							elem = elem[l:]
+						} else {
+							break
+						}
+
+						if len(elem) == 0 {
+							// Leaf node.
+							switch r.Method {
+							case "POST":
+								s.handleVkAuthRegisterRequest([0]string{}, elemIsEscaped, w, r)
+							default:
+								s.notAllowed(w, r, "POST")
+							}
+
+							return
+						}
+
+					}
+
+				}
+
+			case 't': // Prefix: "token/search"
+
+				if l := len("token/search"); len(elem) >= l && elem[0:l] == "token/search" {
+					elem = elem[l:]
+				} else {
+					break
+				}
+
+				if len(elem) == 0 {
+					// Leaf node.
+					switch r.Method {
+					case "POST":
+						s.handleSearchTokenInfoRequest([0]string{}, elemIsEscaped, w, r)
+					default:
+						s.notAllowed(w, r, "POST")
+					}
+
+					return
+				}
+
+			case 'u': // Prefix: "user/query"
+
+				if l := len("user/query"); len(elem) >= l && elem[0:l] == "user/query" {
+					elem = elem[l:]
+				} else {
+					break
+				}
+
+				if len(elem) == 0 {
+					// Leaf node.
+					switch r.Method {
+					case "DELETE":
+						s.handleDeleteUserSearchQueryRequest([0]string{}, elemIsEscaped, w, r)
+					case "GET":
+						s.handleGetUserSearchQueriesRequest([0]string{}, elemIsEscaped, w, r)
+					case "POST":
+						s.handleSaveUserQueryRequest([0]string{}, elemIsEscaped, w, r)
+					default:
+						s.notAllowed(w, r, "DELETE,GET,POST")
+					}
+
+					return
+				}
+
 			}
 
 		}
@@ -148,28 +274,182 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 			break
 		}
 		switch elem[0] {
-		case '/': // Prefix: "/api/v1/token/search"
+		case '/': // Prefix: "/api/v1/"
 
-			if l := len("/api/v1/token/search"); len(elem) >= l && elem[0:l] == "/api/v1/token/search" {
+			if l := len("/api/v1/"); len(elem) >= l && elem[0:l] == "/api/v1/" {
 				elem = elem[l:]
 			} else {
 				break
 			}
 
 			if len(elem) == 0 {
-				// Leaf node.
-				switch method {
-				case "POST":
-					r.name = SearchTokenInfoOperation
-					r.summary = "Get info for specified token"
-					r.operationID = "searchTokenInfo"
-					r.pathPattern = "/api/v1/token/search"
-					r.args = args
-					r.count = 0
-					return r, true
-				default:
-					return
+				break
+			}
+			switch elem[0] {
+			case 'a': // Prefix: "auth/"
+
+				if l := len("auth/"); len(elem) >= l && elem[0:l] == "auth/" {
+					elem = elem[l:]
+				} else {
+					break
 				}
+
+				if len(elem) == 0 {
+					break
+				}
+				switch elem[0] {
+				case 'l': // Prefix: "logout"
+
+					if l := len("logout"); len(elem) >= l && elem[0:l] == "logout" {
+						elem = elem[l:]
+					} else {
+						break
+					}
+
+					if len(elem) == 0 {
+						// Leaf node.
+						switch method {
+						case "POST":
+							r.name = LogoutUserOperation
+							r.summary = "Logout user"
+							r.operationID = "logoutUser"
+							r.pathPattern = "/api/v1/auth/logout"
+							r.args = args
+							r.count = 0
+							return r, true
+						default:
+							return
+						}
+					}
+
+				case 'v': // Prefix: "vk/"
+
+					if l := len("vk/"); len(elem) >= l && elem[0:l] == "vk/" {
+						elem = elem[l:]
+					} else {
+						break
+					}
+
+					if len(elem) == 0 {
+						break
+					}
+					switch elem[0] {
+					case 'c': // Prefix: "callback"
+
+						if l := len("callback"); len(elem) >= l && elem[0:l] == "callback" {
+							elem = elem[l:]
+						} else {
+							break
+						}
+
+						if len(elem) == 0 {
+							// Leaf node.
+							switch method {
+							case "POST":
+								r.name = VkAuthCallbackOperation
+								r.summary = "VK oauth callback, used to get tokens and user info from vk"
+								r.operationID = "vkAuthCallback"
+								r.pathPattern = "/api/v1/auth/vk/callback"
+								r.args = args
+								r.count = 0
+								return r, true
+							default:
+								return
+							}
+						}
+
+					case 'r': // Prefix: "register"
+
+						if l := len("register"); len(elem) >= l && elem[0:l] == "register" {
+							elem = elem[l:]
+						} else {
+							break
+						}
+
+						if len(elem) == 0 {
+							// Leaf node.
+							switch method {
+							case "POST":
+								r.name = VkAuthRegisterOperation
+								r.summary = "VK oauth register, used to register new users via vk"
+								r.operationID = "vkAuthRegister"
+								r.pathPattern = "/api/v1/auth/vk/register"
+								r.args = args
+								r.count = 0
+								return r, true
+							default:
+								return
+							}
+						}
+
+					}
+
+				}
+
+			case 't': // Prefix: "token/search"
+
+				if l := len("token/search"); len(elem) >= l && elem[0:l] == "token/search" {
+					elem = elem[l:]
+				} else {
+					break
+				}
+
+				if len(elem) == 0 {
+					// Leaf node.
+					switch method {
+					case "POST":
+						r.name = SearchTokenInfoOperation
+						r.summary = "Get info for specified token"
+						r.operationID = "searchTokenInfo"
+						r.pathPattern = "/api/v1/token/search"
+						r.args = args
+						r.count = 0
+						return r, true
+					default:
+						return
+					}
+				}
+
+			case 'u': // Prefix: "user/query"
+
+				if l := len("user/query"); len(elem) >= l && elem[0:l] == "user/query" {
+					elem = elem[l:]
+				} else {
+					break
+				}
+
+				if len(elem) == 0 {
+					// Leaf node.
+					switch method {
+					case "DELETE":
+						r.name = DeleteUserSearchQueryOperation
+						r.summary = "Delete user search query"
+						r.operationID = "deleteUserSearchQuery"
+						r.pathPattern = "/api/v1/user/query"
+						r.args = args
+						r.count = 0
+						return r, true
+					case "GET":
+						r.name = GetUserSearchQueriesOperation
+						r.summary = "Get user search queries"
+						r.operationID = "getUserSearchQueries"
+						r.pathPattern = "/api/v1/user/query"
+						r.args = args
+						r.count = 0
+						return r, true
+					case "POST":
+						r.name = SaveUserQueryOperation
+						r.summary = "Save user search query"
+						r.operationID = "saveUserQuery"
+						r.pathPattern = "/api/v1/user/query"
+						r.args = args
+						r.count = 0
+						return r, true
+					default:
+						return
+					}
+				}
+
 			}
 
 		}

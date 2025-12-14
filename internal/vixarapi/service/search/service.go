@@ -1,25 +1,25 @@
-package service
+package search
 
 import (
 	"context"
 
 	"github.com/keenywheels/backend/internal/vixarapi/models"
-	"github.com/keenywheels/backend/internal/vixarapi/repository"
+	repo "github.com/keenywheels/backend/internal/vixarapi/repository/postgres/search"
 )
 
-// IRepository provides interface to communicate with the repository layer
+// IRepository provides interface to communicate with search repository layer
 type IRepository interface {
-	SearchTokenInfo(context.Context, *repository.SearchTokenParams) ([]models.TokenInfo, error)
+	SearchTokenInfo(context.Context, *repo.SearchTokenParams) ([]models.TokenInfo, error)
 }
 
 // Service provides interest-related business logic
 type Service struct {
-	repo IRepository
+	r IRepository
 }
 
 // New creates a new interest service
 func New(repo IRepository) *Service {
 	return &Service{
-		repo: repo,
+		r: repo,
 	}
 }

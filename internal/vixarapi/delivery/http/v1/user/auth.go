@@ -1,4 +1,4 @@
-package v1
+package user
 
 import (
 	"context"
@@ -7,8 +7,8 @@ import (
 
 	gen "github.com/keenywheels/backend/internal/api/v1"
 	"github.com/keenywheels/backend/internal/vixarapi/delivery/http/security"
-	"github.com/keenywheels/backend/internal/vixarapi/service"
-	userSvc "github.com/keenywheels/backend/internal/vixarapi/service/user"
+	commonService "github.com/keenywheels/backend/internal/vixarapi/service"
+	service "github.com/keenywheels/backend/internal/vixarapi/service/user"
 	"github.com/keenywheels/backend/pkg/ctxutils"
 	"github.com/keenywheels/backend/pkg/httputils"
 )
@@ -31,7 +31,7 @@ func (c *Controller) VkAuthCallback(
 		}, nil
 	}
 
-	res, err := c.userSvc.HandleVkAuthCallback(ctx, &userSvc.VkAuthCallbackParams{
+	res, err := c.svc.HandleVkAuthCallback(ctx, &service.VkAuthCallbackParams{
 		Code:         req.Code,
 		State:        req.State,
 		CodeVerifier: req.CodeVerifier,
@@ -89,14 +89,14 @@ func (c *Controller) VkAuthRegister(
 		}, nil
 	}
 
-	if err := c.userSvc.RegisterVkUser(ctx, &userSvc.RegisterVkUserParams{
+	if err := c.svc.RegisterVkUser(ctx, &service.RegisterVkUserParams{
 		SessionID: sessionID,
 		Email:     req.Email,
 		Username:  req.Username,
 		VKID:      req.Vkid,
 	}); err != nil {
 		switch {
-		case errors.Is(err, service.ErrAlreadyExists):
+		case errors.Is(err, commonService.ErrAlreadyExists):
 			return &gen.VkAuthRegisterConflict{
 				Error: httputils.ErrorConflict,
 			}, nil
@@ -128,7 +128,7 @@ func (c *Controller) LogoutUser(ctx context.Context) (gen.LogoutUserRes, error) 
 		}, nil
 	}
 
-	if err := c.userSvc.LogoutUser(ctx, sessionID); err != nil {
+	if err := c.svc.LogoutUser(ctx, sessionID); err != nil {
 		log.Errorf("[%s] failed to logout user: %v", op, err)
 
 		return &gen.LogoutUserInternalServerError{

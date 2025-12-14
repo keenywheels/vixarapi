@@ -1,4 +1,4 @@
-package v1
+package user
 
 import (
 	"context"
@@ -6,8 +6,8 @@ import (
 
 	gen "github.com/keenywheels/backend/internal/api/v1"
 	"github.com/keenywheels/backend/internal/vixarapi/delivery/http/security"
-	"github.com/keenywheels/backend/internal/vixarapi/service"
-	userSvc "github.com/keenywheels/backend/internal/vixarapi/service/user"
+	commonService "github.com/keenywheels/backend/internal/vixarapi/service"
+	service "github.com/keenywheels/backend/internal/vixarapi/service/user"
 	"github.com/keenywheels/backend/pkg/ctxutils"
 	"github.com/keenywheels/backend/pkg/httputils"
 )
@@ -42,7 +42,7 @@ func (c *Controller) SaveUserQuery(
 	}
 
 	// save user query
-	id, err := c.userSvc.SaveSearchQuery(ctx, &userSvc.SaveQueryParams{
+	id, err := c.svc.SaveSearchQuery(ctx, &service.SaveQueryParams{
 		UserID: userInfo.ID,
 		Query:  req.Query,
 	})
@@ -70,9 +70,9 @@ func (c *Controller) DeleteUserSearchQuery(
 	)
 
 	// delete user search query
-	if err := c.userSvc.DeleteSearchQuery(ctx, params.ID); err != nil {
+	if err := c.svc.DeleteSearchQuery(ctx, params.ID); err != nil {
 		switch {
-		case errors.Is(err, service.ErrNotFound):
+		case errors.Is(err, commonService.ErrNotFound):
 			return &gen.DeleteUserSearchQueryNotFound{
 				Error: httputils.ErrorNotFound,
 			}, nil
@@ -109,14 +109,14 @@ func (c *Controller) GetUserSearchQueries(
 	}
 
 	// get user search queries
-	queries, err := c.userSvc.GetSearchQueries(ctx, &userSvc.GetSearchQueriesParams{
+	queries, err := c.svc.GetSearchQueries(ctx, &service.GetSearchQueriesParams{
 		UserID: userInfo.ID,
 		Limit:  params.Limit.Value,
 		Offset: params.Offset.Value,
 	})
 	if err != nil {
 		switch {
-		case errors.Is(err, service.ErrNotFound):
+		case errors.Is(err, commonService.ErrNotFound):
 			return &gen.GetUserSearchQueriesNotFound{
 				Error: httputils.ErrorNotFound,
 			}, nil
@@ -135,7 +135,7 @@ func (c *Controller) GetUserSearchQueries(
 }
 
 // converQueries converts service layer queries to api layer queries
-func converQueries(queries []userSvc.Query) []gen.UserSearchQuery {
+func converQueries(queries []service.Query) []gen.UserSearchQuery {
 	resp := make([]gen.UserSearchQuery, 0, len(queries))
 	for _, q := range queries {
 		resp = append(resp, gen.UserSearchQuery{

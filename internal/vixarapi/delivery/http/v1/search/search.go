@@ -1,4 +1,4 @@
-package v1
+package search
 
 import (
 	"context"
@@ -6,8 +6,8 @@ import (
 	"time"
 
 	gen "github.com/keenywheels/backend/internal/api/v1"
-	"github.com/keenywheels/backend/internal/vixarapi/service"
-	searchSvc "github.com/keenywheels/backend/internal/vixarapi/service/search"
+	commonService "github.com/keenywheels/backend/internal/vixarapi/service"
+	service "github.com/keenywheels/backend/internal/vixarapi/service/search"
 	"github.com/keenywheels/backend/pkg/ctxutils"
 	"github.com/keenywheels/backend/pkg/httputils"
 )
@@ -27,14 +27,14 @@ func (c *Controller) SearchTokenInfo(
 		end = req.End.Value.UTC()
 	}
 
-	tokensInfo, err := c.searchSvc.SearchTokenInfo(ctx, &searchSvc.SearchTokenInfoParams{
+	tokensInfo, err := c.svc.SearchTokenInfo(ctx, &service.SearchTokenInfoParams{
 		Token: req.Token,
 		Start: req.Start.UTC(),
 		End:   end,
 	})
 	if err != nil {
 		switch {
-		case errors.Is(err, service.ErrNotFound):
+		case errors.Is(err, commonService.ErrNotFound):
 			return &gen.SearchTokenInfoNotFound{
 				Error: httputils.ErrorNotFound,
 			}, nil
@@ -53,7 +53,7 @@ func (c *Controller) SearchTokenInfo(
 }
 
 // convertToSearchTokenInfoResp converts service layer structs to api response structs
-func convertToSearchTokenInfoResp(tokens []searchSvc.TokenInfo) []gen.TokenInfo {
+func convertToSearchTokenInfoResp(tokens []service.TokenInfo) []gen.TokenInfo {
 	resp := make([]gen.TokenInfo, 0, len(tokens))
 
 	for _, t := range tokens {

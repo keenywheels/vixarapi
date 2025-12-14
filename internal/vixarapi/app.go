@@ -10,8 +10,10 @@ import (
 
 	oas "github.com/keenywheels/backend/internal/api/v1"
 	"github.com/keenywheels/backend/internal/pkg/client/vk"
-	securityApi "github.com/keenywheels/backend/internal/vixarapi/delivery/http/security"
+	apiSecurity "github.com/keenywheels/backend/internal/vixarapi/delivery/http/security"
 	api "github.com/keenywheels/backend/internal/vixarapi/delivery/http/v1"
+	apiSearch "github.com/keenywheels/backend/internal/vixarapi/delivery/http/v1/search"
+	apiUser "github.com/keenywheels/backend/internal/vixarapi/delivery/http/v1/user"
 	repoScheduler "github.com/keenywheels/backend/internal/vixarapi/repository/postgres/scheduler"
 	repoSearch "github.com/keenywheels/backend/internal/vixarapi/repository/postgres/search"
 	repoUser "github.com/keenywheels/backend/internal/vixarapi/repository/postgres/user"
@@ -100,16 +102,19 @@ func (app *App) Run() error {
 	searchSvc := searchSrvc.New(searchRepo)
 
 	// create handlers
-	tokenHandler := api.New(searchSvc, userSvc)
-	securityHandler := securityApi.New(userSvc)
+	searchController := apiSearch.New(searchSvc)
+	userController := apiUser.New(userSvc)
 
-	// create router
-	mux, err := app.initRouter(tokenHandler, securityHandler)
+	securityHandler := apiSecurity.New(userSvc)
+
+	router := api.New(searchController, userController)
+
+	// create api server
+	mux, err := app.initRouter(router, securityHandler)
 	if err != nil {
 		return fmt.Errorf("failed to create http ogen server: %v", err)
 	}
 
-	// create main http server
 	apiSrv := app.createHttpServer(context.Background(), mux)
 
 	ctx, cancel := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
@@ -183,7 +188,7 @@ func (app *App) initLogger() {
 	app.logger = zap.New(opts...)
 }
 
-// initRouter creates router using ogen
+// initRouter initialize ogen router
 func (app *App) initRouter(handler oas.Handler, securityHandler oas.SecurityHandler) (http.Handler, error) {
 	// create custom handlers
 	notFoundHandler := func(w http.ResponseWriter, r *http.Request) {
@@ -192,7 +197,7 @@ func (app *App) initRouter(handler oas.Handler, securityHandler oas.SecurityHand
 
 	errorHandler := func(_ context.Context, w http.ResponseWriter, r *http.Request, err error) {
 		switch {
-		case securityApi.IsSecurityError(err):
+		case apiSecurity.IsSecurityError(err):
 			httputils.UnauthorizedJSON(w)
 		default:
 			app.logger.Errorf("API ERROR: %v", err)

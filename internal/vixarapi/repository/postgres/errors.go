@@ -8,13 +8,14 @@ import (
 	"github.com/jackc/pgx/v5/pgconn"
 )
 
+// common repository layer postgres errors
 var (
 	ErrNotFound      = errors.New("data not found")
 	ErrAlreadyExists = errors.New("data already exists")
 )
 
-// parsePostgresError parses a Postgres error and returns a repo layer error
-func parsePostgresError(op string, err error) error {
+// ParsePostgresError parses a Postgres error and returns a common repository layer error
+func ParsePostgresError(op string, err error) error {
 	var pgErr *pgconn.PgError
 
 	switch {

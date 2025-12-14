@@ -1,4 +1,4 @@
-package postgres
+package user
 
 import (
 	"context"
@@ -6,6 +6,7 @@ import (
 
 	sq "github.com/Masterminds/squirrel"
 	"github.com/keenywheels/backend/internal/vixarapi/models"
+	commonRepo "github.com/keenywheels/backend/internal/vixarapi/repository/postgres"
 )
 
 // GetUserByVKID return user by his vkid
@@ -25,7 +26,7 @@ func (r *Repository) GetUserByVKID(ctx context.Context, vkid int64) (*models.Use
 		Where(sq.Eq{r.tbls.user.Fields.VKID: vkid}).
 		ToSql()
 	if err != nil {
-		return nil, parsePostgresError(op, err)
+		return nil, commonRepo.ParsePostgresError(op, err)
 	}
 
 	var user models.User
@@ -38,7 +39,7 @@ func (r *Repository) GetUserByVKID(ctx context.Context, vkid int64) (*models.Use
 		&user.VKID,
 		&user.CreatedAt,
 	); err != nil {
-		return nil, parsePostgresError(op, err)
+		return nil, commonRepo.ParsePostgresError(op, err)
 	}
 
 	return &user, nil
@@ -72,7 +73,7 @@ func (r *Repository) RegisterVKUser(ctx context.Context, user *models.User) (*mo
 		)).
 		ToSql()
 	if err != nil {
-		return nil, parsePostgresError(op, err)
+		return nil, commonRepo.ParsePostgresError(op, err)
 	}
 
 	var regUser models.User
@@ -85,7 +86,7 @@ func (r *Repository) RegisterVKUser(ctx context.Context, user *models.User) (*mo
 		&regUser.VKID,
 		&regUser.CreatedAt,
 	); err != nil {
-		return nil, parsePostgresError(op, err)
+		return nil, commonRepo.ParsePostgresError(op, err)
 	}
 
 	return &regUser, nil

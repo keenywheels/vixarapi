@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/keenywheels/backend/internal/pkg/client/vk"
-	pgRepo "github.com/keenywheels/backend/internal/vixarapi/repository/postgres"
+	repoScheduler "github.com/keenywheels/backend/internal/vixarapi/repository/postgres/scheduler"
 	userSvc "github.com/keenywheels/backend/internal/vixarapi/service/user"
 	"github.com/keenywheels/backend/pkg/redis"
 	"github.com/spf13/viper"
@@ -48,12 +48,12 @@ type ServiceConfig struct {
 
 // AppConfig contains all configs which connected to main app
 type AppConfig struct {
-	HttpCfg         HttpConfig             `mapstructure:"http"`
-	LoggerCfg       LoggerConfig           `mapstructure:"logger"`
-	CORSConfig      CORSConfig             `mapstructure:"cors"`
-	SchedulerConfig pgRepo.SchedulerConfig `mapstructure:"scheduler"`
-	VKConfig        vk.Config              `mapstructure:"vk"`
-	Service         ServiceConfig          `mapstructure:"service"`
+	HttpCfg         HttpConfig           `mapstructure:"http"`
+	LoggerCfg       LoggerConfig         `mapstructure:"logger"`
+	CORSConfig      CORSConfig           `mapstructure:"cors"`
+	SchedulerConfig repoScheduler.Config `mapstructure:"scheduler"`
+	VKConfig        vk.Config            `mapstructure:"vk"`
+	Service         ServiceConfig        `mapstructure:"service"`
 }
 
 // PostgresConfig config for postgres

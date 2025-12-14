@@ -148,10 +148,10 @@ func (s *Service) LogoutUser(ctx context.Context, sessionID string) error {
 	)
 
 	// get user info from session
-	user, err := s.redis.GetUserSession(ctx, sessionID)
+	user, err := s.sesh.GetUserSession(ctx, sessionID)
 	if err == nil && user.VKID != nil {
 		// if retrieved user session, than get vkid and delete vk tokens
-		if err := s.redis.DeleteVkTokens(ctx, fmt.Sprintf("%d", *user.VKID)); err != nil {
+		if err := s.sesh.DeleteVkTokens(ctx, fmt.Sprintf("%d", *user.VKID)); err != nil {
 			log.Errorf("[%s] failed to delete vk tokens for vkid: %v", op, err)
 		}
 	} else {
@@ -160,7 +160,7 @@ func (s *Service) LogoutUser(ctx context.Context, sessionID string) error {
 	}
 
 	// delete user session from redis
-	if err := s.redis.DeleteUserSession(ctx, sessionID); err != nil {
+	if err := s.sesh.DeleteUserSession(ctx, sessionID); err != nil {
 		return fmt.Errorf("%s: failed to delete user session: %w", op, err)
 	}
 

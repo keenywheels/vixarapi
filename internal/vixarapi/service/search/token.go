@@ -4,7 +4,8 @@ import (
 	"context"
 	"time"
 
-	"github.com/keenywheels/backend/internal/vixarapi/repository/postgres"
+	"github.com/keenywheels/backend/internal/vixarapi/models"
+	repo "github.com/keenywheels/backend/internal/vixarapi/repository/postgres/search"
 	"github.com/keenywheels/backend/internal/vixarapi/service"
 )
 
@@ -37,16 +38,40 @@ type SearchTokenInfoParams struct {
 func (s *Service) SearchTokenInfo(ctx context.Context, params *SearchTokenInfoParams) ([]TokenInfo, error) {
 	op := "Service.SearchTokenInfo"
 
-	repoParams := &postgres.SearchTokenParams{
+	repoParams := &repo.SearchTokenParams{
 		Token: params.Token,
 		Start: params.Start,
 		End:   params.End,
 	}
 
-	tokensInfo, err := s.repo.SearchTokenInfo(ctx, repoParams)
+	tokensInfo, err := s.r.SearchTokenInfo(ctx, repoParams)
 	if err != nil {
 		return nil, service.ParseRepositoryError(op, err)
 	}
 
 	return convertToServiceTokenInfo(tokensInfo), nil
+}
+
+// convertToServiceTokenInfo converts repository structs to service layer structs
+func convertToServiceTokenInfo(tokens []models.TokenInfo) []TokenInfo {
+	resp := make([]TokenInfo, 0, len(tokens))
+
+	for _, t := range tokens {
+		records := make([]Record, 0, len(t.Records))
+		for _, r := range t.Records {
+			records = append(records, Record{
+				ScrapeDate:         r.ScrapeDate.Format(timedateLayout),
+				Interest:           r.Interest,
+				NormalizedInterest: r.NormalizedInterest,
+				Sentiment:          r.Sentiment,
+			})
+		}
+
+		resp = append(resp, TokenInfo{
+			TokenName: t.TokenName,
+			Records:   records,
+		})
+	}
+
+	return resp
 }

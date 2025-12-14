@@ -5,10 +5,10 @@ import (
 
 	"github.com/keenywheels/backend/internal/pkg/client/vk"
 	"github.com/keenywheels/backend/internal/vixarapi/models"
-	"github.com/keenywheels/backend/internal/vixarapi/repository/redis"
+	"github.com/keenywheels/backend/internal/vixarapi/repository/redis/session"
 )
 
-// IRepository provides interface to communicate with the repository layer
+// IRepository provides interface to communicate with the postgres repository layer
 type IRepository interface {
 	GetUserByVKID(context.Context, int64) (*models.User, error)
 	RegisterVKUser(context.Context, *models.User) (*models.User, error)
@@ -17,13 +17,13 @@ type IRepository interface {
 	GetSearchQueries(context.Context, string, uint64, uint64) ([]*models.UserQuery, error)
 }
 
-// IRedisRepository provides interface to communicate with the redis repository layer
-type IRedisRepository interface {
-	SaveUserSession(ctx context.Context, sessionID string, userInfo *redis.UserInfo) error
-	GetUserSession(ctx context.Context, sessionID string) (*redis.UserInfo, error)
+// ISession provides interface to communicate with the session repository layer
+type ISession interface {
+	SaveUserSession(ctx context.Context, sessionID string, userInfo *session.UserInfo) error
+	GetUserSession(ctx context.Context, sessionID string) (*session.UserInfo, error)
 	DeleteUserSession(ctx context.Context, userID string) error
-	SaveVkTokens(ctx context.Context, key string, tokens *redis.VkTokens) error
-	GetVkTokens(ctx context.Context, key string) (*redis.VkTokens, error)
+	SaveVkTokens(ctx context.Context, key string, tokens *session.VkTokens) error
+	GetVkTokens(ctx context.Context, key string) (*session.VkTokens, error)
 	DeleteVkTokens(ctx context.Context, key string) error
 }
 
@@ -34,9 +34,9 @@ type Config struct {
 
 // Service provides interest-related business logic
 type Service struct {
-	repo  IRepository
-	redis IRedisRepository
-	vk    *vk.Client
+	repo IRepository
+	sesh ISession
+	vk   *vk.Client
 
 	cfg *Config
 }
@@ -44,14 +44,14 @@ type Service struct {
 // New creates a new interest service
 func New(
 	repo IRepository,
-	redis IRedisRepository,
+	sesh ISession,
 	vk *vk.Client,
 	cfg *Config,
 ) *Service {
 	return &Service{
-		repo:  repo,
-		redis: redis,
-		vk:    vk,
-		cfg:   cfg,
+		repo: repo,
+		sesh: sesh,
+		vk:   vk,
+		cfg:  cfg,
 	}
 }

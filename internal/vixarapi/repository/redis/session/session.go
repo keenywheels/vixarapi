@@ -1,9 +1,11 @@
-package redis
+package session
 
 import (
 	"context"
 	"encoding/json"
 	"fmt"
+
+	commonRepo "github.com/keenywheels/backend/internal/vixarapi/repository/redis"
 )
 
 // UserInfo represents user session information
@@ -18,7 +20,7 @@ type UserInfo struct {
 // SaveUserSession saves a user session in Redis
 func (r *Repository) SaveUserSession(ctx context.Context, key string, userInfo *UserInfo) error {
 	if userInfo == nil {
-		return fmt.Errorf("failed to save session: %w", ErrNilUserInfo)
+		return fmt.Errorf("failed to save session: %w", commonRepo.ErrNilData)
 	}
 
 	data, err := json.Marshal(*userInfo)
@@ -41,7 +43,7 @@ func (r *Repository) GetUserSession(ctx context.Context, key string) (*UserInfo,
 	}
 
 	if !ok {
-		return nil, fmt.Errorf("failed to get session: %w", ErrNotFound)
+		return nil, fmt.Errorf("failed to get session: %w", commonRepo.ErrNotFound)
 	}
 
 	var userInfo UserInfo
@@ -72,7 +74,7 @@ type VkTokens struct {
 // SaveVkTokens saves VK tokens in Redis
 func (r *Repository) SaveVkTokens(ctx context.Context, key string, tokens *VkTokens) error {
 	if tokens == nil {
-		return fmt.Errorf("failed to save tokens: %w", ErrNilTokens)
+		return fmt.Errorf("failed to save tokens: %w", commonRepo.ErrNilData)
 	}
 
 	data, err := json.Marshal(*tokens)
@@ -95,7 +97,7 @@ func (r *Repository) GetVkTokens(ctx context.Context, key string) (*VkTokens, er
 	}
 
 	if !ok {
-		return nil, fmt.Errorf("failed to get vk tokens: %w", ErrNotFound)
+		return nil, fmt.Errorf("failed to get vk tokens: %w", commonRepo.ErrNotFound)
 	}
 
 	var tokens VkTokens

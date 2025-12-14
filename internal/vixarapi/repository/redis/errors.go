@@ -1,9 +1,9 @@
-package redis
+package session
 
 import "errors"
 
+// common errors for redis repository layer
 var (
-	ErrNotFound    = errors.New("data not found")
-	ErrNilUserInfo = errors.New("user info is nil")
-	ErrNilTokens   = errors.New("vk tokens is nil")
+	ErrNotFound = errors.New("data not found")
+	ErrNilData  = errors.New("got unexpected nil data")
 )

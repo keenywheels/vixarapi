@@ -1,4 +1,4 @@
-package postgres
+package user
 
 import (
 	"context"
@@ -6,6 +6,7 @@ import (
 
 	sq "github.com/Masterminds/squirrel"
 	"github.com/keenywheels/backend/internal/vixarapi/models"
+	commonRepo "github.com/keenywheels/backend/internal/vixarapi/repository/postgres"
 )
 
 // SaveSearchQuery saves a search query for a user
@@ -30,7 +31,7 @@ func (r *Repository) SaveSearchQuery(ctx context.Context, userID string, query s
 		)).
 		ToSql()
 	if err != nil {
-		return nil, parsePostgresError(op, err)
+		return nil, commonRepo.ParsePostgresError(op, err)
 	}
 
 	var userQuery models.UserQuery
@@ -41,7 +42,7 @@ func (r *Repository) SaveSearchQuery(ctx context.Context, userID string, query s
 		&userQuery.Query,
 		&userQuery.CreatedAt,
 	); err != nil {
-		return nil, parsePostgresError(op, err)
+		return nil, commonRepo.ParsePostgresError(op, err)
 	}
 
 	return &userQuery, nil
@@ -56,17 +57,17 @@ func (r *Repository) DeleteSearchQuery(ctx context.Context, id string) error {
 		Where(sq.Eq{r.tbls.userQuery.Fields.ID: id}).
 		ToSql()
 	if err != nil {
-		return parsePostgresError(op, err)
+		return commonRepo.ParsePostgresError(op, err)
 	}
 
 	tag, err := r.db.Pool.Exec(ctx, query, args...)
 	if err != nil {
-		return parsePostgresError(op, err)
+		return commonRepo.ParsePostgresError(op, err)
 	}
 
 	// nothing was deleted -> return not found
 	if tag.RowsAffected() == 0 {
-		return fmt.Errorf("[%s] search query not found: %w", op, ErrNotFound)
+		return fmt.Errorf("[%s] search query not found: %w", op, commonRepo.ErrNotFound)
 	}
 
 	return nil
@@ -95,12 +96,12 @@ func (r *Repository) GetSearchQueries(
 		Offset(offset).
 		ToSql()
 	if err != nil {
-		return nil, parsePostgresError(op, err)
+		return nil, commonRepo.ParsePostgresError(op, err)
 	}
 
 	rows, err := r.db.Pool.Query(ctx, query, args...)
 	if err != nil {
-		return nil, parsePostgresError(op, err)
+		return nil, commonRepo.ParsePostgresError(op, err)
 	}
 	defer rows.Close()
 
@@ -115,18 +116,18 @@ func (r *Repository) GetSearchQueries(
 			&userQuery.Query,
 			&userQuery.CreatedAt,
 		); err != nil {
-			return nil, parsePostgresError(op, err)
+			return nil, commonRepo.ParsePostgresError(op, err)
 		}
 
 		queries = append(queries, &userQuery)
 	}
 
 	if err := rows.Err(); err != nil {
-		return nil, parsePostgresError(op, err)
+		return nil, commonRepo.ParsePostgresError(op, err)
 	}
 
 	if len(queries) == 0 {
-		return nil, fmt.Errorf("[%s] user does not have any queries: %w", op, ErrNotFound)
+		return nil, fmt.Errorf("[%s] user does not have any queries: %w", op, commonRepo.ErrNotFound)
 	}
 
 	return queries, nil

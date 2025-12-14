@@ -12,7 +12,8 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/keenywheels/backend/internal/vixarapi/models"
-	"github.com/keenywheels/backend/internal/vixarapi/repository/redis"
+	commonRedis "github.com/keenywheels/backend/internal/vixarapi/repository/redis"
+	sessionRepo "github.com/keenywheels/backend/internal/vixarapi/repository/redis/session"
 )
 
 // UserSessionInfo represents user information stored in session
@@ -24,9 +25,9 @@ type UserSessionInfo struct {
 
 // ValidateSession checks if the session is valid
 func (s *Service) ValidateSession(ctx context.Context, session string) (bool, *UserSessionInfo, error) {
-	userInfo, err := s.redis.GetUserSession(ctx, session)
+	userInfo, err := s.sesh.GetUserSession(ctx, session)
 	if err != nil {
-		if errors.Is(err, redis.ErrNotFound) {
+		if errors.Is(err, commonRedis.ErrNotFound) {
 			return false, nil, nil
 		}
 
@@ -67,7 +68,7 @@ func (s *Service) saveSession(
 		sessionID = *session
 	}
 
-	err := s.redis.SaveUserSession(ctx, sessionID, &redis.UserInfo{
+	err := s.sesh.SaveUserSession(ctx, sessionID, &sessionRepo.UserInfo{
 		ID:       user.ID,
 		Username: user.Username,
 		Email:    user.Email,
@@ -84,7 +85,7 @@ func (s *Service) saveSession(
 // saveVkTokens saves VK OAuth tokens in Redis
 func (s *Service) saveVkTokens(ctx context.Context, tokens *vkTokens) error {
 	// save vk tokens by vkid for long term access
-	if err := s.redis.SaveVkTokens(ctx, fmt.Sprintf("%d", tokens.VKID), &redis.VkTokens{
+	if err := s.sesh.SaveVkTokens(ctx, fmt.Sprintf("%d", tokens.VKID), &sessionRepo.VkTokens{
 		AccessToken:  tokens.AccessToken,
 		RefreshToken: tokens.RefreshToken,
 		DeviceID:     tokens.DeviceID,

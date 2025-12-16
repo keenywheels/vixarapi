@@ -22,3 +22,17 @@ func (l *Logger) With(fields ...logger.Field) logger.Logger {
 
 	return &loggerWithFields
 }
+
+// Add method to add fields to logger
+func (l *Logger) Add(fields ...logger.Field) {
+	if len(fields) == 0 {
+		return
+	}
+
+	// add fields to the existing logger
+	for _, field := range fields {
+		l.sl = l.sl.With(
+			zap.Any(field.Key, field.Value),
+		)
+	}
+}

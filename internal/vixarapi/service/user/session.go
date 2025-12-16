@@ -21,6 +21,7 @@ type UserSessionInfo struct {
 	ID       string
 	Username string
 	Email    string
+	VKID     int64
 }
 
 // ValidateSession checks if the session is valid
@@ -34,11 +35,17 @@ func (s *Service) ValidateSession(ctx context.Context, session string) (bool, *U
 		return false, nil, fmt.Errorf("failed to get user session: %w", err)
 	}
 
-	return true, &UserSessionInfo{
+	resp := UserSessionInfo{
 		ID:       userInfo.ID,
 		Username: userInfo.Username,
 		Email:    userInfo.Email,
-	}, nil
+	}
+
+	if userInfo.VKID != nil {
+		resp.VKID = *userInfo.VKID
+	}
+
+	return true, &resp, nil
 }
 
 // saveSession saves the user session in Redis

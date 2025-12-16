@@ -7,6 +7,9 @@ import (
 	"strings"
 
 	gen "github.com/keenywheels/backend/internal/api/v1"
+	"github.com/keenywheels/backend/internal/vixarapi/service/user"
+	"github.com/keenywheels/backend/pkg/ctxutils"
+	"github.com/keenywheels/backend/pkg/logger"
 )
 
 // HandleCookieAuth handles cookie-based authentication
@@ -35,7 +38,24 @@ func (c *Controller) HandleCookieAuth(
 		return ctx, errors.New("something wrong: got nil user for valid session")
 	}
 
+	// update logger with user info fields
+	ctxutils.GetLogger(ctx).Add(getFields(userInfo)...)
+
+	// update context with logger, user info and session ID
 	ctx = SetSessionID(SetUserInfo(ctx, *userInfo), session)
 
 	return ctx, nil
+}
+
+func getFields(userInfo *user.UserSessionInfo) []logger.Field {
+	fields := []logger.Field{
+		{Key: "user_id", Value: userInfo.ID},
+		{Key: "email", Value: userInfo.Email},
+	}
+
+	if userInfo.VKID != 0 {
+		fields = append(fields, logger.Field{Key: "vkid", Value: userInfo.VKID})
+	}
+
+	return fields
 }

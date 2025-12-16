@@ -25,6 +25,7 @@ type Logger interface {
 	Fatal(args ...any)
 
 	With(fields ...Field) Logger
+	Add(fields ...Field)
 
 	ToStdLog() *log.Logger
 	Close() error

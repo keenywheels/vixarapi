@@ -9,5 +9,6 @@ type TokenData struct {
 	Interest  int64
 	Sentiment int16
 	SiteName  string
+	Category  string
 	Date      time.Time
 }

@@ -11,6 +11,7 @@ const (
 	LogoutUserOperation            OperationName = "LogoutUser"
 	SaveUserQueryOperation         OperationName = "SaveUserQuery"
 	SearchTokenInfoOperation       OperationName = "SearchTokenInfo"
+	UserInfoOperation              OperationName = "UserInfo"
 	VkAuthCallbackOperation        OperationName = "VkAuthCallback"
 	VkAuthRegisterOperation        OperationName = "VkAuthRegister"
 )

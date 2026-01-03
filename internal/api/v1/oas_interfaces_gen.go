@@ -21,6 +21,10 @@ type SearchTokenInfoRes interface {
 	searchTokenInfoRes()
 }
 
+type UserInfoRes interface {
+	userInfoRes()
+}
+
 type VkAuthCallbackRes interface {
 	vkAuthCallbackRes()
 }

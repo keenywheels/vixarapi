@@ -460,6 +460,42 @@ func (s *TokenRecordFeatures) SetSentiment(val int16) {
 	s.Sentiment = val
 }
 
+type UserInfoInternalServerError Error
+
+func (*UserInfoInternalServerError) userInfoRes() {}
+
+// Ref: #/components/schemas/UserInfoResponse
+type UserInfoResponse struct {
+	Username string `json:"username"`
+	Email    string `json:"email"`
+}
+
+// GetUsername returns the value of Username.
+func (s *UserInfoResponse) GetUsername() string {
+	return s.Username
+}
+
+// GetEmail returns the value of Email.
+func (s *UserInfoResponse) GetEmail() string {
+	return s.Email
+}
+
+// SetUsername sets the value of Username.
+func (s *UserInfoResponse) SetUsername(val string) {
+	s.Username = val
+}
+
+// SetEmail sets the value of Email.
+func (s *UserInfoResponse) SetEmail(val string) {
+	s.Email = val
+}
+
+func (*UserInfoResponse) userInfoRes() {}
+
+type UserInfoUnauthorized Error
+
+func (*UserInfoUnauthorized) userInfoRes() {}
+
 // Ref: #/components/schemas/UserSearchQuery
 type UserSearchQuery struct {
 	ID         string    `json:"id"`

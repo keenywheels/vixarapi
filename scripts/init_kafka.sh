@@ -11,7 +11,7 @@ kafka-topics --bootstrap-server ${KAFKA_HOSTNAME}:${KAFKA_DOCKER_PORT} --list
 
 # create test messages
 echo -e 'Creating test messages in kafka topic:'
-for (( i=10; i<=14; i++ ))
+for (( i=10; i<=15; i++ ))
 do
   echo "Creating message ${i}"
 
@@ -20,7 +20,7 @@ do
     --topic "${KAFKA_SCRAPER_TOPIC}"
 done
 
-for (( i=15; i<=20; i++ ))
+for (( i=10; i<=15; i++ ))
 do
   echo "Creating message ${i}"
 

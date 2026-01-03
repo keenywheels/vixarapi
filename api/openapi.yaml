@@ -294,6 +294,10 @@ components:
           type: string
           minLength: 1
           maxLength: 255
+        category:
+          type: string
+          minLength: 1
+          maxLength: 255
         start:
           type: string
           format: date-time
@@ -306,11 +310,13 @@ components:
       properties:
         token:
           type: string
+        category:
+          type: string
         records:
           type: array
           items:
             $ref: '#/components/schemas/TokenRecord'
-      required: [token, records]
+      required: [token, category, records]
     TokenRecord:
       type: object
       properties:
@@ -325,10 +331,13 @@ components:
             interest_normalized:
               type: number
               format: float64
+            interest_category:
+              type: number
+              format: float64
             sentiment:
               type: integer
               format: int16
-          required: [interest, interest_normalized, sentiment]
+          required: [interest, interest_normalized, interest_category, sentiment]
       required: [timestamp, features]
     VkAuthCallbackRequest:
       type: object

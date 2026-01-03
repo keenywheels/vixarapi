@@ -63,6 +63,7 @@ func (r *Repository) SearchTokenInfo(
 		Where(sq.And(filter)).
 		OrderBy(
 			fmt.Sprintf("similarity(%s, lower($1)) DESC", r.tbls.search.Fields.TokenName),
+			fmt.Sprintf("%s", r.tbls.search.Fields.Category),
 			fmt.Sprintf("%s ASC", r.tbls.search.Fields.ScrapeDate),
 		).
 		Limit(searchLimit).

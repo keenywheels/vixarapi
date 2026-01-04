@@ -27,10 +27,16 @@ func (c *Controller) SearchTokenInfo(
 		end = req.End.Value.UTC()
 	}
 
+	var category *string
+	if req.Category.Set {
+		category = &req.Category.Value
+	}
+
 	tokensInfo, err := c.svc.SearchTokenInfo(ctx, &service.SearchTokenInfoParams{
-		Token: req.Token,
-		Start: req.Start.UTC(),
-		End:   end,
+		Token:    req.Token,
+		Category: category,
+		Start:    req.Start.UTC(),
+		End:      end,
 	})
 	if err != nil {
 		switch {
@@ -64,14 +70,16 @@ func convertToSearchTokenInfoResp(tokens []service.TokenInfo) []gen.TokenInfo {
 				Features: gen.TokenRecordFeatures{
 					Interest:           r.Interest,
 					InterestNormalized: r.NormalizedInterest,
+					InterestCategory:   r.CategoryInterest,
 					Sentiment:          r.Sentiment,
 				},
 			})
 		}
 
 		resp = append(resp, gen.TokenInfo{
-			Token:   t.TokenName,
-			Records: records,
+			Token:    t.TokenName,
+			Category: t.Category,
+			Records:  records,
 		})
 	}
 

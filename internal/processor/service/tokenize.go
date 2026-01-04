@@ -55,10 +55,11 @@ func (s *Service) parseTokens(
 	registry metricsRegistry,
 ) ([]models.TokenData, error) {
 	var (
-		log    = ctxutils.GetLogger(ctx)
-		site   = msg.SiteName
-		date   = msg.Date
-		result = make([]models.TokenData, 0, len(tokens))
+		log      = ctxutils.GetLogger(ctx)
+		site     = msg.SiteName
+		date     = msg.Date
+		category = msg.Category
+		result   = make([]models.TokenData, 0, len(tokens))
 	)
 
 	dateParsed, err := time.Parse(models.ScrapeDataFormat, date)
@@ -117,6 +118,7 @@ func (s *Service) parseTokens(
 			Interest:  interest,
 			Sentiment: resp.Sentiment,
 			SiteName:  site,
+			Category:  category,
 			Date:      dateParsed,
 		})
 	}

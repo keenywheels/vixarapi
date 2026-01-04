@@ -29,6 +29,13 @@ func (r *Router) LogoutUser(
 	return r.userController.LogoutUser(ctx)
 }
 
+// UserInfo implements UserInfo for gen.Handler
+func (r *Router) UserInfo(
+	ctx context.Context,
+) (gen.UserInfoRes, error) {
+	return r.userController.UserInfo(ctx)
+}
+
 // RegisterUser implements RegisterUser for gen.Handler
 func (r *Router) SaveUserQuery(
 	ctx context.Context,

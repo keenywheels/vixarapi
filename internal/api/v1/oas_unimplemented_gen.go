@@ -58,6 +58,15 @@ func (UnimplementedHandler) SearchTokenInfo(ctx context.Context, req *SearchToke
 	return r, ht.ErrNotImplemented
 }
 
+// UserInfo implements userInfo operation.
+//
+// Get info of logged in user.
+//
+// GET /api/v1/auth/me
+func (UnimplementedHandler) UserInfo(ctx context.Context) (r UserInfoRes, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
 // VkAuthCallback implements vkAuthCallback operation.
 //
 // VK oauth callback, used to get tokens and user info from vk.

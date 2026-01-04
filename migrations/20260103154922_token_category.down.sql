@@ -1,5 +1,15 @@
-CREATE EXTENSION IF NOT EXISTS pg_trgm;
+-- delete new mv
+DROP INDEX IF EXISTS mv_token_search_pk;
+DROP INDEX IF EXISTS mv_token_search_trgm_idx;
+DROP INDEX IF EXISTS mv_token_search_interest_idx;
+DROP INDEX IF EXISTS mv_token_search_category_idx;
+DROP MATERIALIZED VIEW IF EXISTS mv_token_search;
 
+-- delete category column
+ALTER TABLE token_data
+DROP COLUMN category;
+
+-- recreate previous mv
 CREATE MATERIALIZED VIEW mv_token_search AS
 WITH
     aggr AS (SELECT token_name,

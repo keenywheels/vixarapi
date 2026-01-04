@@ -6,7 +6,9 @@ type SearchTokenFields struct {
 	ScrapeDate     string
 	Interest       string
 	Sentiment      string
-	MedianInterest string
+	Category       string
+	GlobalMedian   string
+	CategoryMedian string
 }
 
 // SearchTokenTable represents the structure of the search token table
@@ -24,7 +26,9 @@ func NewSearchTokenTable() SearchTokenTable {
 			ScrapeDate:     "scrape_date",
 			Interest:       "interest",
 			Sentiment:      "sentiment",
-			MedianInterest: "median_interest",
+			Category:       "category",
+			GlobalMedian:   "global_median",
+			CategoryMedian: "category_median",
 		},
 	}
 }

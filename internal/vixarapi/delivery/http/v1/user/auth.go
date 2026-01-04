@@ -140,3 +140,26 @@ func (c *Controller) LogoutUser(ctx context.Context) (gen.LogoutUserRes, error) 
 		},
 	}, nil
 }
+
+// UserInfo get info of logged-in user
+func (c *Controller) UserInfo(ctx context.Context) (gen.UserInfoRes, error) {
+	var (
+		op  = "Controller.UserInfo"
+		log = ctxutils.GetLogger(ctx)
+	)
+
+	// get user info from context
+	userInfo, ok := security.GetUserInfo(ctx)
+	if !ok {
+		log.Errorf("[%s] user info not found in context", op)
+
+		return &gen.UserInfoInternalServerError{
+			Error: httputils.ErrorInternalError,
+		}, nil
+	}
+
+	return &gen.UserInfoResponse{
+		Username: userInfo.Username,
+		Email:    userInfo.Email,
+	}, nil
+}

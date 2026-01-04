@@ -38,6 +38,12 @@ type Handler interface {
 	//
 	// POST /api/v1/token/search
 	SearchTokenInfo(ctx context.Context, req *SearchTokenInfoRequest) (SearchTokenInfoRes, error)
+	// UserInfo implements userInfo operation.
+	//
+	// Get info of logged in user.
+	//
+	// GET /api/v1/auth/me
+	UserInfo(ctx context.Context) (UserInfoRes, error)
 	// VkAuthCallback implements vkAuthCallback operation.
 	//
 	// VK oauth callback, used to get tokens and user info from vk.

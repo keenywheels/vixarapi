@@ -300,14 +300,20 @@ func (*SearchTokenInfoOKApplicationJSON) searchTokenInfoRes() {}
 
 // Ref: #/components/schemas/SearchTokenInfoRequest
 type SearchTokenInfoRequest struct {
-	Token string      `json:"token"`
-	Start time.Time   `json:"start"`
-	End   OptDateTime `json:"end"`
+	Token    string      `json:"token"`
+	Category OptString   `json:"category"`
+	Start    time.Time   `json:"start"`
+	End      OptDateTime `json:"end"`
 }
 
 // GetToken returns the value of Token.
 func (s *SearchTokenInfoRequest) GetToken() string {
 	return s.Token
+}
+
+// GetCategory returns the value of Category.
+func (s *SearchTokenInfoRequest) GetCategory() OptString {
+	return s.Category
 }
 
 // GetStart returns the value of Start.
@@ -323,6 +329,11 @@ func (s *SearchTokenInfoRequest) GetEnd() OptDateTime {
 // SetToken sets the value of Token.
 func (s *SearchTokenInfoRequest) SetToken(val string) {
 	s.Token = val
+}
+
+// SetCategory sets the value of Category.
+func (s *SearchTokenInfoRequest) SetCategory(val OptString) {
+	s.Category = val
 }
 
 // SetStart sets the value of Start.
@@ -341,13 +352,19 @@ func (*SearchTokenInfoUnauthorized) searchTokenInfoRes() {}
 
 // Ref: #/components/schemas/TokenInfo
 type TokenInfo struct {
-	Token   string        `json:"token"`
-	Records []TokenRecord `json:"records"`
+	Token    string        `json:"token"`
+	Category string        `json:"category"`
+	Records  []TokenRecord `json:"records"`
 }
 
 // GetToken returns the value of Token.
 func (s *TokenInfo) GetToken() string {
 	return s.Token
+}
+
+// GetCategory returns the value of Category.
+func (s *TokenInfo) GetCategory() string {
+	return s.Category
 }
 
 // GetRecords returns the value of Records.
@@ -358,6 +375,11 @@ func (s *TokenInfo) GetRecords() []TokenRecord {
 // SetToken sets the value of Token.
 func (s *TokenInfo) SetToken(val string) {
 	s.Token = val
+}
+
+// SetCategory sets the value of Category.
+func (s *TokenInfo) SetCategory(val string) {
+	s.Category = val
 }
 
 // SetRecords sets the value of Records.
@@ -394,6 +416,7 @@ func (s *TokenRecord) SetFeatures(val TokenRecordFeatures) {
 type TokenRecordFeatures struct {
 	Interest           int64   `json:"interest"`
 	InterestNormalized float64 `json:"interest_normalized"`
+	InterestCategory   float64 `json:"interest_category"`
 	Sentiment          int16   `json:"sentiment"`
 }
 
@@ -405,6 +428,11 @@ func (s *TokenRecordFeatures) GetInterest() int64 {
 // GetInterestNormalized returns the value of InterestNormalized.
 func (s *TokenRecordFeatures) GetInterestNormalized() float64 {
 	return s.InterestNormalized
+}
+
+// GetInterestCategory returns the value of InterestCategory.
+func (s *TokenRecordFeatures) GetInterestCategory() float64 {
+	return s.InterestCategory
 }
 
 // GetSentiment returns the value of Sentiment.
@@ -422,10 +450,51 @@ func (s *TokenRecordFeatures) SetInterestNormalized(val float64) {
 	s.InterestNormalized = val
 }
 
+// SetInterestCategory sets the value of InterestCategory.
+func (s *TokenRecordFeatures) SetInterestCategory(val float64) {
+	s.InterestCategory = val
+}
+
 // SetSentiment sets the value of Sentiment.
 func (s *TokenRecordFeatures) SetSentiment(val int16) {
 	s.Sentiment = val
 }
+
+type UserInfoInternalServerError Error
+
+func (*UserInfoInternalServerError) userInfoRes() {}
+
+// Ref: #/components/schemas/UserInfoResponse
+type UserInfoResponse struct {
+	Username string `json:"username"`
+	Email    string `json:"email"`
+}
+
+// GetUsername returns the value of Username.
+func (s *UserInfoResponse) GetUsername() string {
+	return s.Username
+}
+
+// GetEmail returns the value of Email.
+func (s *UserInfoResponse) GetEmail() string {
+	return s.Email
+}
+
+// SetUsername sets the value of Username.
+func (s *UserInfoResponse) SetUsername(val string) {
+	s.Username = val
+}
+
+// SetEmail sets the value of Email.
+func (s *UserInfoResponse) SetEmail(val string) {
+	s.Email = val
+}
+
+func (*UserInfoResponse) userInfoRes() {}
+
+type UserInfoUnauthorized Error
+
+func (*UserInfoUnauthorized) userInfoRes() {}
 
 // Ref: #/components/schemas/UserSearchQuery
 type UserSearchQuery struct {

@@ -50,7 +50,7 @@ type ServiceConfig struct {
 
 // AppConfig contains all configs which connected to main app
 type AppConfig struct {
-	gttpCfg         HttpConfig           `mapstructure:"http"`
+	HttpCfg         HttpConfig           `mapstructure:"http"`
 	LoggerCfg       LoggerConfig         `mapstructure:"logger"`
 	CORSConfig      CORSConfig           `mapstructure:"cors"`
 	SchedulerConfig repoScheduler.Config `mapstructure:"scheduler"`

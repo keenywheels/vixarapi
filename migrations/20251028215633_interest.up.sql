@@ -1,12 +1,13 @@
-CREATE TABLE token_data (
-  token_id BIGSERIAL,
-  token_name TEXT NOT NULL,
-  interest BIGINT NOT NULL,
-  sentiment SMALLINT NOT NULL,
-  site_name TEXT NOT NULL,
-  scrape_date TIMESTAMP NOT NULL,
+CREATE TABLE token_data
+(
+    token_id    BIGSERIAL,
+    token_name  TEXT      NOT NULL,
+    interest    BIGINT    NOT NULL,
+    sentiment   SMALLINT  NOT NULL,
+    site_name   TEXT      NOT NULL,
+    scrape_date TIMESTAMP NOT NULL,
 
-  CONSTRAINT token_id_pkey PRIMARY KEY(token_id)
+    CONSTRAINT token_id_pkey PRIMARY KEY (token_id)
 );
 
 COMMENT ON COLUMN token_data.token_id IS 'Идентификатор токена';

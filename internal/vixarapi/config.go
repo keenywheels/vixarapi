@@ -5,8 +5,12 @@ import (
 	"strings"
 	"time"
 
-	"github.com/keenywheels/backend/internal/vixarapi/repository"
+	"github.com/keenywheels/backend/internal/pkg/client/vk"
+	"github.com/keenywheels/backend/internal/vixarapi/delivery/http/cookie"
+	repoScheduler "github.com/keenywheels/backend/internal/vixarapi/repository/postgres/scheduler"
+	userSvc "github.com/keenywheels/backend/internal/vixarapi/service/user"
 	"github.com/keenywheels/backend/pkg/mailer"
+	"github.com/keenywheels/backend/pkg/redis"
 	"github.com/spf13/viper"
 )
 
@@ -35,17 +39,25 @@ type CORSConfig struct {
 	AllowOrigins     []string      `mapstructure:"allow_origins"`
 	AllowMethods     []string      `mapstructure:"allow_methods"`
 	AllowHeaders     []string      `mapstructure:"allow_headers"`
-	AllowCredentials bool          `mapsturcture:"allow_credentials"`
-	MaxAge           time.Duration `mapsturcture:"max_age"`
+	AllowCredentials bool          `mapstructure:"allow_credentials"`
+	MaxAge           time.Duration `mapstructure:"max_age"`
+}
+
+// ServiceConfig contains all configs which connected to services
+type ServiceConfig struct {
+	UserSvc userSvc.Config `mapstructure:"user"`
 }
 
 // AppConfig contains all configs which connected to main app
 type AppConfig struct {
-	HttpCfg         HttpConfig                 `mapstructure:"http"`
-	LoggerCfg       LoggerConfig               `mapstructure:"logger"`
-	CORSConfig      CORSConfig                 `mapstructure:"cors"`
-	SchedulerConfig repository.SchedulerConfig `mapstructure:"scheduler"`
-	SMTPConfig      mailer.SMTPConfig          `mapstructure:"smtp"`
+	gttpCfg         HttpConfig           `mapstructure:"http"`
+	LoggerCfg       LoggerConfig         `mapstructure:"logger"`
+	CORSConfig      CORSConfig           `mapstructure:"cors"`
+	SchedulerConfig repoScheduler.Config `mapstructure:"scheduler"`
+	VKConfig        vk.Config            `mapstructure:"vk"`
+	Service         ServiceConfig        `mapstructure:"service"`
+	CookieConfig    cookie.Config        `mapstructure:"cookie"`
+	SMTPConfig      mailer.SMTPConfig    `mapstructure:"smtp"`
 }
 
 // PostgresConfig config for postgres
@@ -71,6 +83,7 @@ func (cfg *PostgresConfig) DSN() string {
 type Config struct {
 	AppCfg      AppConfig      `mapstructure:"app"`
 	PostgresCfg PostgresConfig `mapstructure:"postgres"`
+	RedisCfg    redis.Config   `mapstructure:"redis"`
 }
 
 // LoadConfig function which reads config file and return Config instance

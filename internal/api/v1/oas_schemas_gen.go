@@ -6,6 +6,48 @@ import (
 	"time"
 )
 
+type CookieAuth struct {
+	APIKey string
+	Roles  []string
+}
+
+// GetAPIKey returns the value of APIKey.
+func (s *CookieAuth) GetAPIKey() string {
+	return s.APIKey
+}
+
+// GetRoles returns the value of Roles.
+func (s *CookieAuth) GetRoles() []string {
+	return s.Roles
+}
+
+// SetAPIKey sets the value of APIKey.
+func (s *CookieAuth) SetAPIKey(val string) {
+	s.APIKey = val
+}
+
+// SetRoles sets the value of Roles.
+func (s *CookieAuth) SetRoles(val []string) {
+	s.Roles = val
+}
+
+type DeleteUserSearchQueryInternalServerError Error
+
+func (*DeleteUserSearchQueryInternalServerError) deleteUserSearchQueryRes() {}
+
+type DeleteUserSearchQueryNotFound Error
+
+func (*DeleteUserSearchQueryNotFound) deleteUserSearchQueryRes() {}
+
+// DeleteUserSearchQueryOK is response for DeleteUserSearchQuery operation.
+type DeleteUserSearchQueryOK struct{}
+
+func (*DeleteUserSearchQueryOK) deleteUserSearchQueryRes() {}
+
+type DeleteUserSearchQueryUnauthorized Error
+
+func (*DeleteUserSearchQueryUnauthorized) deleteUserSearchQueryRes() {}
+
 // Ref: #/components/schemas/Error
 type Error struct {
 	Error string `json:"error"`
@@ -20,6 +62,47 @@ func (s *Error) GetError() string {
 func (s *Error) SetError(val string) {
 	s.Error = val
 }
+
+type GetUserSearchQueriesInternalServerError Error
+
+func (*GetUserSearchQueriesInternalServerError) getUserSearchQueriesRes() {}
+
+type GetUserSearchQueriesNotFound Error
+
+func (*GetUserSearchQueriesNotFound) getUserSearchQueriesRes() {}
+
+type GetUserSearchQueriesOKApplicationJSON []UserSearchQuery
+
+func (*GetUserSearchQueriesOKApplicationJSON) getUserSearchQueriesRes() {}
+
+type GetUserSearchQueriesUnauthorized Error
+
+func (*GetUserSearchQueriesUnauthorized) getUserSearchQueriesRes() {}
+
+type LogoutUserInternalServerError Error
+
+func (*LogoutUserInternalServerError) logoutUserRes() {}
+
+// LogoutUserOK is response for LogoutUser operation.
+type LogoutUserOK struct {
+	SetCookie OptString
+}
+
+// GetSetCookie returns the value of SetCookie.
+func (s *LogoutUserOK) GetSetCookie() OptString {
+	return s.SetCookie
+}
+
+// SetSetCookie sets the value of SetCookie.
+func (s *LogoutUserOK) SetSetCookie(val OptString) {
+	s.SetCookie = val
+}
+
+func (*LogoutUserOK) logoutUserRes() {}
+
+type LogoutUserUnauthorized Error
+
+func (*LogoutUserUnauthorized) logoutUserRes() {}
 
 // NewOptDateTime returns new OptDateTime with value set to v.
 func NewOptDateTime(v time.Time) OptDateTime {
@@ -67,6 +150,142 @@ func (o OptDateTime) Or(d time.Time) time.Time {
 	return d
 }
 
+// NewOptString returns new OptString with value set to v.
+func NewOptString(v string) OptString {
+	return OptString{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptString is optional string.
+type OptString struct {
+	Value string
+	Set   bool
+}
+
+// IsSet returns true if OptString was set.
+func (o OptString) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptString) Reset() {
+	var v string
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptString) SetTo(v string) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptString) Get() (v string, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptString) Or(d string) string {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptUint64 returns new OptUint64 with value set to v.
+func NewOptUint64(v uint64) OptUint64 {
+	return OptUint64{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptUint64 is optional uint64.
+type OptUint64 struct {
+	Value uint64
+	Set   bool
+}
+
+// IsSet returns true if OptUint64 was set.
+func (o OptUint64) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptUint64) Reset() {
+	var v uint64
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptUint64) SetTo(v uint64) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptUint64) Get() (v uint64, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptUint64) Or(d uint64) uint64 {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+type SaveUserQueryBadRequest Error
+
+func (*SaveUserQueryBadRequest) saveUserQueryRes() {}
+
+type SaveUserQueryInternalServerError Error
+
+func (*SaveUserQueryInternalServerError) saveUserQueryRes() {}
+
+// Ref: #/components/schemas/SaveUserQueryRequest
+type SaveUserQueryRequest struct {
+	Query string `json:"query"`
+}
+
+// GetQuery returns the value of Query.
+func (s *SaveUserQueryRequest) GetQuery() string {
+	return s.Query
+}
+
+// SetQuery sets the value of Query.
+func (s *SaveUserQueryRequest) SetQuery(val string) {
+	s.Query = val
+}
+
+// Ref: #/components/schemas/SaveUserQueryResponse
+type SaveUserQueryResponse struct {
+	ID string `json:"id"`
+}
+
+// GetID returns the value of ID.
+func (s *SaveUserQueryResponse) GetID() string {
+	return s.ID
+}
+
+// SetID sets the value of ID.
+func (s *SaveUserQueryResponse) SetID(val string) {
+	s.ID = val
+}
+
+func (*SaveUserQueryResponse) saveUserQueryRes() {}
+
+type SaveUserQueryUnauthorized Error
+
+func (*SaveUserQueryUnauthorized) saveUserQueryRes() {}
+
 type SearchTokenInfoInternalServerError Error
 
 func (*SearchTokenInfoInternalServerError) searchTokenInfoRes() {}
@@ -81,14 +300,20 @@ func (*SearchTokenInfoOKApplicationJSON) searchTokenInfoRes() {}
 
 // Ref: #/components/schemas/SearchTokenInfoRequest
 type SearchTokenInfoRequest struct {
-	Token string      `json:"token"`
-	Start time.Time   `json:"start"`
-	End   OptDateTime `json:"end"`
+	Token    string      `json:"token"`
+	Category OptString   `json:"category"`
+	Start    time.Time   `json:"start"`
+	End      OptDateTime `json:"end"`
 }
 
 // GetToken returns the value of Token.
 func (s *SearchTokenInfoRequest) GetToken() string {
 	return s.Token
+}
+
+// GetCategory returns the value of Category.
+func (s *SearchTokenInfoRequest) GetCategory() OptString {
+	return s.Category
 }
 
 // GetStart returns the value of Start.
@@ -106,6 +331,11 @@ func (s *SearchTokenInfoRequest) SetToken(val string) {
 	s.Token = val
 }
 
+// SetCategory sets the value of Category.
+func (s *SearchTokenInfoRequest) SetCategory(val OptString) {
+	s.Category = val
+}
+
 // SetStart sets the value of Start.
 func (s *SearchTokenInfoRequest) SetStart(val time.Time) {
 	s.Start = val
@@ -116,15 +346,25 @@ func (s *SearchTokenInfoRequest) SetEnd(val OptDateTime) {
 	s.End = val
 }
 
+type SearchTokenInfoUnauthorized Error
+
+func (*SearchTokenInfoUnauthorized) searchTokenInfoRes() {}
+
 // Ref: #/components/schemas/TokenInfo
 type TokenInfo struct {
-	Token   string        `json:"token"`
-	Records []TokenRecord `json:"records"`
+	Token    string        `json:"token"`
+	Category string        `json:"category"`
+	Records  []TokenRecord `json:"records"`
 }
 
 // GetToken returns the value of Token.
 func (s *TokenInfo) GetToken() string {
 	return s.Token
+}
+
+// GetCategory returns the value of Category.
+func (s *TokenInfo) GetCategory() string {
+	return s.Category
 }
 
 // GetRecords returns the value of Records.
@@ -135,6 +375,11 @@ func (s *TokenInfo) GetRecords() []TokenRecord {
 // SetToken sets the value of Token.
 func (s *TokenInfo) SetToken(val string) {
 	s.Token = val
+}
+
+// SetCategory sets the value of Category.
+func (s *TokenInfo) SetCategory(val string) {
+	s.Category = val
 }
 
 // SetRecords sets the value of Records.
@@ -171,6 +416,7 @@ func (s *TokenRecord) SetFeatures(val TokenRecordFeatures) {
 type TokenRecordFeatures struct {
 	Interest           int64   `json:"interest"`
 	InterestNormalized float64 `json:"interest_normalized"`
+	InterestCategory   float64 `json:"interest_category"`
 	Sentiment          int16   `json:"sentiment"`
 }
 
@@ -182,6 +428,11 @@ func (s *TokenRecordFeatures) GetInterest() int64 {
 // GetInterestNormalized returns the value of InterestNormalized.
 func (s *TokenRecordFeatures) GetInterestNormalized() float64 {
 	return s.InterestNormalized
+}
+
+// GetInterestCategory returns the value of InterestCategory.
+func (s *TokenRecordFeatures) GetInterestCategory() float64 {
+	return s.InterestCategory
 }
 
 // GetSentiment returns the value of Sentiment.
@@ -199,7 +450,290 @@ func (s *TokenRecordFeatures) SetInterestNormalized(val float64) {
 	s.InterestNormalized = val
 }
 
+// SetInterestCategory sets the value of InterestCategory.
+func (s *TokenRecordFeatures) SetInterestCategory(val float64) {
+	s.InterestCategory = val
+}
+
 // SetSentiment sets the value of Sentiment.
 func (s *TokenRecordFeatures) SetSentiment(val int16) {
 	s.Sentiment = val
 }
+
+type UserInfoInternalServerError Error
+
+func (*UserInfoInternalServerError) userInfoRes() {}
+
+// Ref: #/components/schemas/UserInfoResponse
+type UserInfoResponse struct {
+	Username string `json:"username"`
+	Email    string `json:"email"`
+}
+
+// GetUsername returns the value of Username.
+func (s *UserInfoResponse) GetUsername() string {
+	return s.Username
+}
+
+// GetEmail returns the value of Email.
+func (s *UserInfoResponse) GetEmail() string {
+	return s.Email
+}
+
+// SetUsername sets the value of Username.
+func (s *UserInfoResponse) SetUsername(val string) {
+	s.Username = val
+}
+
+// SetEmail sets the value of Email.
+func (s *UserInfoResponse) SetEmail(val string) {
+	s.Email = val
+}
+
+func (*UserInfoResponse) userInfoRes() {}
+
+type UserInfoUnauthorized Error
+
+func (*UserInfoUnauthorized) userInfoRes() {}
+
+// Ref: #/components/schemas/UserSearchQuery
+type UserSearchQuery struct {
+	ID         string    `json:"id"`
+	Query      string    `json:"query"`
+	SearchDate time.Time `json:"searchDate"`
+}
+
+// GetID returns the value of ID.
+func (s *UserSearchQuery) GetID() string {
+	return s.ID
+}
+
+// GetQuery returns the value of Query.
+func (s *UserSearchQuery) GetQuery() string {
+	return s.Query
+}
+
+// GetSearchDate returns the value of SearchDate.
+func (s *UserSearchQuery) GetSearchDate() time.Time {
+	return s.SearchDate
+}
+
+// SetID sets the value of ID.
+func (s *UserSearchQuery) SetID(val string) {
+	s.ID = val
+}
+
+// SetQuery sets the value of Query.
+func (s *UserSearchQuery) SetQuery(val string) {
+	s.Query = val
+}
+
+// SetSearchDate sets the value of SearchDate.
+func (s *UserSearchQuery) SetSearchDate(val time.Time) {
+	s.SearchDate = val
+}
+
+type VkAuthCallbackBadRequest Error
+
+func (*VkAuthCallbackBadRequest) vkAuthCallbackRes() {}
+
+type VkAuthCallbackInternalServerError Error
+
+func (*VkAuthCallbackInternalServerError) vkAuthCallbackRes() {}
+
+type VkAuthCallbackNotAcceptable Error
+
+func (*VkAuthCallbackNotAcceptable) vkAuthCallbackRes() {}
+
+// Ref: #/components/schemas/VkAuthCallbackRequest
+type VkAuthCallbackRequest struct {
+	Code         string `json:"code"`
+	State        string `json:"state"`
+	CodeVerifier string `json:"code_verifier"`
+	DeviceID     string `json:"device_id"`
+	RedirectURI  string `json:"redirect_uri"`
+}
+
+// GetCode returns the value of Code.
+func (s *VkAuthCallbackRequest) GetCode() string {
+	return s.Code
+}
+
+// GetState returns the value of State.
+func (s *VkAuthCallbackRequest) GetState() string {
+	return s.State
+}
+
+// GetCodeVerifier returns the value of CodeVerifier.
+func (s *VkAuthCallbackRequest) GetCodeVerifier() string {
+	return s.CodeVerifier
+}
+
+// GetDeviceID returns the value of DeviceID.
+func (s *VkAuthCallbackRequest) GetDeviceID() string {
+	return s.DeviceID
+}
+
+// GetRedirectURI returns the value of RedirectURI.
+func (s *VkAuthCallbackRequest) GetRedirectURI() string {
+	return s.RedirectURI
+}
+
+// SetCode sets the value of Code.
+func (s *VkAuthCallbackRequest) SetCode(val string) {
+	s.Code = val
+}
+
+// SetState sets the value of State.
+func (s *VkAuthCallbackRequest) SetState(val string) {
+	s.State = val
+}
+
+// SetCodeVerifier sets the value of CodeVerifier.
+func (s *VkAuthCallbackRequest) SetCodeVerifier(val string) {
+	s.CodeVerifier = val
+}
+
+// SetDeviceID sets the value of DeviceID.
+func (s *VkAuthCallbackRequest) SetDeviceID(val string) {
+	s.DeviceID = val
+}
+
+// SetRedirectURI sets the value of RedirectURI.
+func (s *VkAuthCallbackRequest) SetRedirectURI(val string) {
+	s.RedirectURI = val
+}
+
+// Ref: #/components/schemas/VkAuthCallbackResponse
+type VkAuthCallbackResponse struct {
+	UserExists bool   `json:"user_exists"`
+	Username   string `json:"username"`
+	Email      string `json:"email"`
+	Vkid       int64  `json:"vkid"`
+}
+
+// GetUserExists returns the value of UserExists.
+func (s *VkAuthCallbackResponse) GetUserExists() bool {
+	return s.UserExists
+}
+
+// GetUsername returns the value of Username.
+func (s *VkAuthCallbackResponse) GetUsername() string {
+	return s.Username
+}
+
+// GetEmail returns the value of Email.
+func (s *VkAuthCallbackResponse) GetEmail() string {
+	return s.Email
+}
+
+// GetVkid returns the value of Vkid.
+func (s *VkAuthCallbackResponse) GetVkid() int64 {
+	return s.Vkid
+}
+
+// SetUserExists sets the value of UserExists.
+func (s *VkAuthCallbackResponse) SetUserExists(val bool) {
+	s.UserExists = val
+}
+
+// SetUsername sets the value of Username.
+func (s *VkAuthCallbackResponse) SetUsername(val string) {
+	s.Username = val
+}
+
+// SetEmail sets the value of Email.
+func (s *VkAuthCallbackResponse) SetEmail(val string) {
+	s.Email = val
+}
+
+// SetVkid sets the value of Vkid.
+func (s *VkAuthCallbackResponse) SetVkid(val int64) {
+	s.Vkid = val
+}
+
+// VkAuthCallbackResponseHeaders wraps VkAuthCallbackResponse with response headers.
+type VkAuthCallbackResponseHeaders struct {
+	SetCookie OptString
+	Response  VkAuthCallbackResponse
+}
+
+// GetSetCookie returns the value of SetCookie.
+func (s *VkAuthCallbackResponseHeaders) GetSetCookie() OptString {
+	return s.SetCookie
+}
+
+// GetResponse returns the value of Response.
+func (s *VkAuthCallbackResponseHeaders) GetResponse() VkAuthCallbackResponse {
+	return s.Response
+}
+
+// SetSetCookie sets the value of SetCookie.
+func (s *VkAuthCallbackResponseHeaders) SetSetCookie(val OptString) {
+	s.SetCookie = val
+}
+
+// SetResponse sets the value of Response.
+func (s *VkAuthCallbackResponseHeaders) SetResponse(val VkAuthCallbackResponse) {
+	s.Response = val
+}
+
+func (*VkAuthCallbackResponseHeaders) vkAuthCallbackRes() {}
+
+type VkAuthRegisterBadRequest Error
+
+func (*VkAuthRegisterBadRequest) vkAuthRegisterRes() {}
+
+type VkAuthRegisterConflict Error
+
+func (*VkAuthRegisterConflict) vkAuthRegisterRes() {}
+
+type VkAuthRegisterInternalServerError Error
+
+func (*VkAuthRegisterInternalServerError) vkAuthRegisterRes() {}
+
+// VkAuthRegisterOK is response for VkAuthRegister operation.
+type VkAuthRegisterOK struct{}
+
+func (*VkAuthRegisterOK) vkAuthRegisterRes() {}
+
+// Ref: #/components/schemas/VkAuthRegisterRequest
+type VkAuthRegisterRequest struct {
+	Email    string `json:"email"`
+	Username string `json:"username"`
+	Vkid     int64  `json:"vkid"`
+}
+
+// GetEmail returns the value of Email.
+func (s *VkAuthRegisterRequest) GetEmail() string {
+	return s.Email
+}
+
+// GetUsername returns the value of Username.
+func (s *VkAuthRegisterRequest) GetUsername() string {
+	return s.Username
+}
+
+// GetVkid returns the value of Vkid.
+func (s *VkAuthRegisterRequest) GetVkid() int64 {
+	return s.Vkid
+}
+
+// SetEmail sets the value of Email.
+func (s *VkAuthRegisterRequest) SetEmail(val string) {
+	s.Email = val
+}
+
+// SetUsername sets the value of Username.
+func (s *VkAuthRegisterRequest) SetUsername(val string) {
+	s.Username = val
+}
+
+// SetVkid sets the value of Vkid.
+func (s *VkAuthRegisterRequest) SetVkid(val int64) {
+	s.Vkid = val
+}
+
+type VkAuthRegisterUnauthorized Error
+
+func (*VkAuthRegisterUnauthorized) vkAuthRegisterRes() {}

@@ -1,8 +1,15 @@
 app:
+  cookie:
+    session:
+      name: "session_id"
+      expiration: 4320h  # 180 days
+  service:
+    user:
+      session_secret: "dev_session_secret"
   http:
     port: "8000"
   cors:
-    allow_origins: ["http://localhost:3000"]
+    allow_origins: ["http://localhost:3000", "http://localhost:80", "http://localhost"]
     allow_credentials: true
     max_age: 24h
   logger:
@@ -16,6 +23,13 @@ app:
     port: "587"
     username: ""
     password: ""
+  vk:
+    http:
+      timeout: 5s
+    auth:
+      url: "https://id.vk.ru"
+      client_id: "54390662"
+    secret: "dev_secret"
 
 postgres:
   host: postgres
@@ -24,3 +38,8 @@ postgres:
   password: password
   dbname: db
   sslmode: disable
+
+redis:
+  addr: "redis:6379"
+  password: "dev_redis_password"
+  db: 0

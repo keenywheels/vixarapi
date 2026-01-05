@@ -18,6 +18,11 @@ app:
     encoding: json
   scheduler:
     refresh_search_table_pattern: "*/1 * * * *"  # for testing, every minute
+  smtp:
+    host: smtp.mail.ru
+    port: "587"
+    username: ""
+    password: ""
   vk:
     http:
       timeout: 5s

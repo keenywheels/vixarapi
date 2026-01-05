@@ -9,6 +9,7 @@ import (
 	"github.com/keenywheels/backend/internal/vixarapi/delivery/http/cookie"
 	repoScheduler "github.com/keenywheels/backend/internal/vixarapi/repository/postgres/scheduler"
 	userSvc "github.com/keenywheels/backend/internal/vixarapi/service/user"
+	"github.com/keenywheels/backend/pkg/notifier/smtp"
 	"github.com/keenywheels/backend/pkg/redis"
 	"github.com/spf13/viper"
 )
@@ -56,6 +57,7 @@ type AppConfig struct {
 	VKConfig        vk.Config            `mapstructure:"vk"`
 	Service         ServiceConfig        `mapstructure:"service"`
 	CookieConfig    cookie.Config        `mapstructure:"cookie"`
+	SMTPConfig      smtp.Config          `mapstructure:"smtp"`
 }
 
 // PostgresConfig config for postgres

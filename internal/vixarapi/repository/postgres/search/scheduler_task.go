@@ -1,12 +1,12 @@
-package scheduler
+package search
 
 import (
 	"context"
 	"fmt"
 )
 
-// updateSearchTable performs the update of the search table
-func (r *Repository) updateSearchTable(ctx context.Context) error {
+// UpdateSearchTable performs the update of the search table
+func (r *Repository) UpdateSearchTable(ctx context.Context) error {
 	var (
 		op    = "Repository.updateSearchTable"
 		query = fmt.Sprintf("REFRESH MATERIALIZED VIEW CONCURRENTLY %s;", r.tbls.search.Name)

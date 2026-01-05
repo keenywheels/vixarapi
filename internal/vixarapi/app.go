@@ -15,13 +15,13 @@ import (
 	api "github.com/keenywheels/backend/internal/vixarapi/delivery/http/v1"
 	apiSearch "github.com/keenywheels/backend/internal/vixarapi/delivery/http/v1/search"
 	apiUser "github.com/keenywheels/backend/internal/vixarapi/delivery/http/v1/user"
-	repoScheduler "github.com/keenywheels/backend/internal/vixarapi/repository/postgres/scheduler"
 	repoSearch "github.com/keenywheels/backend/internal/vixarapi/repository/postgres/search"
 	repoUser "github.com/keenywheels/backend/internal/vixarapi/repository/postgres/user"
 	repoSession "github.com/keenywheels/backend/internal/vixarapi/repository/redis/session"
-	searchSrvc "github.com/keenywheels/backend/internal/vixarapi/service/search"
+	srvcSearch "github.com/keenywheels/backend/internal/vixarapi/service/search"
 	userSrvc "github.com/keenywheels/backend/internal/vixarapi/service/user"
 	"github.com/keenywheels/backend/pkg/cors"
+	"github.com/keenywheels/backend/pkg/ctxutils"
 	"github.com/keenywheels/backend/pkg/httpserver"
 	"github.com/keenywheels/backend/pkg/httputils"
 	"github.com/keenywheels/backend/pkg/logger"
@@ -78,11 +78,6 @@ func (app *App) Run() error {
 	defer db.Close()
 
 	// create postgres repositories
-	schedulerRepo, err := repoScheduler.New(db)
-	if err != nil {
-		return fmt.Errorf("failed to create scheduler repository: %w", err)
-	}
-
 	userRepo := repoUser.New(db)
 	searchRepo := repoSearch.New(db)
 
@@ -100,11 +95,15 @@ func (app *App) Run() error {
 	// create services
 	vkClient := vk.New(&cfg.AppCfg.VKConfig)
 	userSvc := userSrvc.New(userRepo, redisRepo, vkClient, &cfg.AppCfg.Service.UserSvc)
-	searchSvc := searchSrvc.New(searchRepo)
+
+	searchSrvc, err := srvcSearch.New(searchRepo)
+	if err != nil {
+		return fmt.Errorf("failed to create search service: %w", err)
+	}
 
 	// create handlers
 	cookieManager := cookie.New(&cfg.AppCfg.CookieConfig)
-	searchController := apiSearch.New(searchSvc)
+	searchController := apiSearch.New(searchSrvc)
 	userController := apiUser.New(userSvc, cookieManager)
 
 	securityHandler := apiSecurity.New(userSvc)
@@ -127,14 +126,15 @@ func (app *App) Run() error {
 	// run repository scheduler
 	app.logger.Infof("starting repository scheduler with cfg=%+v", app.cfg.AppCfg.SchedulerConfig)
 
-	if err := schedulerRepo.StartScheduler(ctx, app.logger, &app.cfg.AppCfg.SchedulerConfig); err != nil {
+	err = searchSrvc.StartScheduler(ctxutils.SetLogger(ctx, app.logger), &app.cfg.AppCfg.SchedulerConfig)
+	if err != nil {
 		return fmt.Errorf("failed to start repository scheduler: %w", err)
 	}
 
 	g.Go(func() error {
 		<-ctx.Done()
 		app.logger.Infof("shutting down repository scheduler...")
-		return schedulerRepo.CloseScheduler()
+		return searchSrvc.CloseScheduler()
 	})
 
 	// run http server

@@ -4,7 +4,12 @@ import (
 	"fmt"
 	"net"
 	"net/smtp"
+
+	"github.com/keenywheels/backend/pkg/notifier"
 )
+
+// check that Mailer implements Notifier interface
+var _ notifier.Notifier = (*Mailer)(nil)
 
 // Mailer struct implements Mailer interface using SMTP protocol and contains auth and config for sending email with SMTP
 type Mailer struct {

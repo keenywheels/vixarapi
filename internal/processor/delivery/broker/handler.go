@@ -5,6 +5,7 @@ import (
 	"errors"
 
 	"github.com/IBM/sarama"
+	"github.com/google/uuid"
 	"github.com/keenywheels/backend/pkg/ctxutils"
 	"golang.org/x/sync/errgroup"
 )
@@ -40,7 +41,11 @@ func (b *Broker) ConsumeClaim(session sarama.ConsumerGroupSession, claim sarama.
 					return nil
 				}
 
-				b.messageQueue <- message{msg: msg, retry: 0} // status doesn't matter in messageQueue
+				b.messageQueue <- message{
+					id:    uuid.NewString(),
+					msg:   msg,
+					retry: 0,
+				} // status doesn't matter in messageQueue
 
 			case <-ctx.Done():
 				return ctx.Err()
@@ -57,10 +62,11 @@ func (b *Broker) ConsumeClaim(session sarama.ConsumerGroupSession, claim sarama.
 				}
 
 				// mark as done if acknowledged or retries exhausted
-				if msg.status == statusSuccess || msg.retry == b.maxRetry {
+				if msg.status == statusSuccess {
 					session.MarkMessage(msg.msg, "")
+					b.l.Infof("successfully process message %s from topic %s", msg.id, msg.msg.Topic)
 				} else {
-					b.messageQueue <- message{msg: msg.msg, retry: msg.retry + 1}
+					b.l.Errorf("failed to process message %s from topic %s", msg.id, msg.msg.Topic)
 				}
 
 			case <-ctx.Done():

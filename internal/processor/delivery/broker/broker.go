@@ -26,6 +26,7 @@ const (
 // message represents a message in queue
 type message struct {
 	msg    *sarama.ConsumerMessage
+	id     string
 	retry  int
 	status string
 }
@@ -85,7 +86,7 @@ func New(cfg Config, service IService, topics Topics, opts ...Option) *Broker {
 	}
 
 	// initialize queues
-	b.messageQueue = make(chan message, b.workerCount*2) // TODO: проверить такой размер буфера по бенчмаркам
+	b.messageQueue = make(chan message, b.workerCount*2)
 	b.ackQueue = make(chan message, b.workerCount*2)
 
 	return b

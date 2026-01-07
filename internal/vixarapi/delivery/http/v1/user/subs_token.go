@@ -69,6 +69,13 @@ func (c *Controller) SubscribeUserToToken(
 		Threshold: req.Threshold,
 	})
 	if err != nil {
+		switch {
+		case errors.Is(err, commonService.ErrAlreadyExists):
+			return &gen.SubscribeUserToTokenConflict{
+				Error: httputils.ErrorConflict,
+			}, nil
+		}
+
 		log.Errorf("[%s] failed to subscribe user to token: %v", op, err)
 
 		return &gen.SubscribeUserToTokenInternalServerError{

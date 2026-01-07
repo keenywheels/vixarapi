@@ -387,6 +387,10 @@ type SubscribeUserToTokenBadRequest Error
 
 func (*SubscribeUserToTokenBadRequest) subscribeUserToTokenRes() {}
 
+type SubscribeUserToTokenConflict Error
+
+func (*SubscribeUserToTokenConflict) subscribeUserToTokenRes() {}
+
 type SubscribeUserToTokenInternalServerError Error
 
 func (*SubscribeUserToTokenInternalServerError) subscribeUserToTokenRes() {}

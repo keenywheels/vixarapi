@@ -82,6 +82,7 @@ func (r *Repository) GetTokenSubs(
 			r.tbls.userTokenSub.Fields.ScanDate,
 			r.tbls.userTokenSub.Fields.CreatedAt,
 		).
+		From(r.tbls.userTokenSub.Name).
 		Where(sq.Eq{r.tbls.userTokenSub.Fields.UserID: userID}).
 		OrderBy(fmt.Sprintf("%s DESC", r.tbls.userTokenSub.Fields.CreatedAt)).
 		Limit(limit).

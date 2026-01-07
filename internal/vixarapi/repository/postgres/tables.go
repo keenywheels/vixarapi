@@ -114,7 +114,7 @@ type UserTokenSubFields struct {
 // NewUserTokenSubTable creates a new instance of UserTokenSubTable
 func NewUserTokenSubTable() UserTokenSubTable {
 	return UserTokenSubTable{
-		Name: "user_query",
+		Name: "user_token_sub",
 		Fields: UserTokenSubFields{
 			ID:               "id",
 			UserID:           "user_id",

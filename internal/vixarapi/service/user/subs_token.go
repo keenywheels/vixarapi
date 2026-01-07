@@ -115,7 +115,7 @@ func parseInterest(token *models.Token, method string) (int64, error) {
 
 // convertTokenSubs converts token subs from the repository layer to the service layer format
 func convertTokenSubs(subs []*models.UserTokenSub) []*TokenSubInfo {
-	res := make([]*TokenSubInfo, len(subs))
+	res := make([]*TokenSubInfo, 0, len(subs))
 	for _, s := range subs {
 		res = append(res, &TokenSubInfo{
 			ID:               s.ID,

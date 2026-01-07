@@ -23,3 +23,17 @@ type UserQuery struct {
 	Query     string
 	CreatedAt time.Time
 }
+
+// UserTokenSub represents a user token subscription in database
+type UserTokenSub struct {
+	ID               string
+	UserID           string
+	Token            string
+	Category         string
+	CurrentInterest  int64
+	PreviousInterest int64
+	Threshold        float64
+	Method           string
+	ScanDate         time.Time
+	CreatedAt        time.Time
+}

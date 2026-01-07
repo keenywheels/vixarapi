@@ -48,6 +48,23 @@ type DeleteUserSearchQueryUnauthorized Error
 
 func (*DeleteUserSearchQueryUnauthorized) deleteUserSearchQueryRes() {}
 
+type DeleteUserTokenSubInternalServerError Error
+
+func (*DeleteUserTokenSubInternalServerError) deleteUserTokenSubRes() {}
+
+type DeleteUserTokenSubNotFound Error
+
+func (*DeleteUserTokenSubNotFound) deleteUserTokenSubRes() {}
+
+// DeleteUserTokenSubOK is response for DeleteUserTokenSub operation.
+type DeleteUserTokenSubOK struct{}
+
+func (*DeleteUserTokenSubOK) deleteUserTokenSubRes() {}
+
+type DeleteUserTokenSubUnauthorized Error
+
+func (*DeleteUserTokenSubUnauthorized) deleteUserTokenSubRes() {}
+
 // Ref: #/components/schemas/Error
 type Error struct {
 	Error string `json:"error"`
@@ -78,6 +95,22 @@ func (*GetUserSearchQueriesOKApplicationJSON) getUserSearchQueriesRes() {}
 type GetUserSearchQueriesUnauthorized Error
 
 func (*GetUserSearchQueriesUnauthorized) getUserSearchQueriesRes() {}
+
+type GetUserTokenSubsInternalServerError Error
+
+func (*GetUserTokenSubsInternalServerError) getUserTokenSubsRes() {}
+
+type GetUserTokenSubsNotFound Error
+
+func (*GetUserTokenSubsNotFound) getUserTokenSubsRes() {}
+
+type GetUserTokenSubsOKApplicationJSON []UserTokenSub
+
+func (*GetUserTokenSubsOKApplicationJSON) getUserTokenSubsRes() {}
+
+type GetUserTokenSubsUnauthorized Error
+
+func (*GetUserTokenSubsUnauthorized) getUserTokenSubsRes() {}
 
 type LogoutUserInternalServerError Error
 
@@ -350,6 +383,83 @@ type SearchTokenInfoUnauthorized Error
 
 func (*SearchTokenInfoUnauthorized) searchTokenInfoRes() {}
 
+type SubscribeUserToTokenBadRequest Error
+
+func (*SubscribeUserToTokenBadRequest) subscribeUserToTokenRes() {}
+
+type SubscribeUserToTokenInternalServerError Error
+
+func (*SubscribeUserToTokenInternalServerError) subscribeUserToTokenRes() {}
+
+// Ref: #/components/schemas/SubscribeUserToTokenRequest
+type SubscribeUserToTokenRequest struct {
+	Token     string    `json:"token"`
+	Category  string    `json:"category"`
+	Threshold float64   `json:"threshold"`
+	Method    OptString `json:"method"`
+}
+
+// GetToken returns the value of Token.
+func (s *SubscribeUserToTokenRequest) GetToken() string {
+	return s.Token
+}
+
+// GetCategory returns the value of Category.
+func (s *SubscribeUserToTokenRequest) GetCategory() string {
+	return s.Category
+}
+
+// GetThreshold returns the value of Threshold.
+func (s *SubscribeUserToTokenRequest) GetThreshold() float64 {
+	return s.Threshold
+}
+
+// GetMethod returns the value of Method.
+func (s *SubscribeUserToTokenRequest) GetMethod() OptString {
+	return s.Method
+}
+
+// SetToken sets the value of Token.
+func (s *SubscribeUserToTokenRequest) SetToken(val string) {
+	s.Token = val
+}
+
+// SetCategory sets the value of Category.
+func (s *SubscribeUserToTokenRequest) SetCategory(val string) {
+	s.Category = val
+}
+
+// SetThreshold sets the value of Threshold.
+func (s *SubscribeUserToTokenRequest) SetThreshold(val float64) {
+	s.Threshold = val
+}
+
+// SetMethod sets the value of Method.
+func (s *SubscribeUserToTokenRequest) SetMethod(val OptString) {
+	s.Method = val
+}
+
+// Ref: #/components/schemas/SubscribeUserToTokenResponse
+type SubscribeUserToTokenResponse struct {
+	ID string `json:"id"`
+}
+
+// GetID returns the value of ID.
+func (s *SubscribeUserToTokenResponse) GetID() string {
+	return s.ID
+}
+
+// SetID sets the value of ID.
+func (s *SubscribeUserToTokenResponse) SetID(val string) {
+	s.ID = val
+}
+
+func (*SubscribeUserToTokenResponse) subscribeUserToTokenRes() {}
+
+type SubscribeUserToTokenUnauthorized Error
+
+func (*SubscribeUserToTokenUnauthorized) subscribeUserToTokenRes() {}
+
 // Ref: #/components/schemas/TokenInfo
 type TokenInfo struct {
 	Token    string        `json:"token"`
@@ -531,6 +641,87 @@ func (s *UserSearchQuery) SetQuery(val string) {
 // SetSearchDate sets the value of SearchDate.
 func (s *UserSearchQuery) SetSearchDate(val time.Time) {
 	s.SearchDate = val
+}
+
+// Ref: #/components/schemas/UserTokenSub
+type UserTokenSub struct {
+	ID               string    `json:"id"`
+	Token            string    `json:"token"`
+	Category         string    `json:"category"`
+	Method           string    `json:"method"`
+	CurrentInterest  int64     `json:"current_interest"`
+	PreviousInterest int64     `json:"previous_interest"`
+	LastScan         time.Time `json:"last_scan"`
+}
+
+// GetID returns the value of ID.
+func (s *UserTokenSub) GetID() string {
+	return s.ID
+}
+
+// GetToken returns the value of Token.
+func (s *UserTokenSub) GetToken() string {
+	return s.Token
+}
+
+// GetCategory returns the value of Category.
+func (s *UserTokenSub) GetCategory() string {
+	return s.Category
+}
+
+// GetMethod returns the value of Method.
+func (s *UserTokenSub) GetMethod() string {
+	return s.Method
+}
+
+// GetCurrentInterest returns the value of CurrentInterest.
+func (s *UserTokenSub) GetCurrentInterest() int64 {
+	return s.CurrentInterest
+}
+
+// GetPreviousInterest returns the value of PreviousInterest.
+func (s *UserTokenSub) GetPreviousInterest() int64 {
+	return s.PreviousInterest
+}
+
+// GetLastScan returns the value of LastScan.
+func (s *UserTokenSub) GetLastScan() time.Time {
+	return s.LastScan
+}
+
+// SetID sets the value of ID.
+func (s *UserTokenSub) SetID(val string) {
+	s.ID = val
+}
+
+// SetToken sets the value of Token.
+func (s *UserTokenSub) SetToken(val string) {
+	s.Token = val
+}
+
+// SetCategory sets the value of Category.
+func (s *UserTokenSub) SetCategory(val string) {
+	s.Category = val
+}
+
+// SetMethod sets the value of Method.
+func (s *UserTokenSub) SetMethod(val string) {
+	s.Method = val
+}
+
+// SetCurrentInterest sets the value of CurrentInterest.
+func (s *UserTokenSub) SetCurrentInterest(val int64) {
+	s.CurrentInterest = val
+}
+
+// SetPreviousInterest sets the value of PreviousInterest.
+func (s *UserTokenSub) SetPreviousInterest(val int64) {
+	s.PreviousInterest = val
+}
+
+// SetLastScan sets the value of LastScan.
+func (s *UserTokenSub) SetLastScan(val time.Time) {
+	s.LastScan = val
 }
 
 type VkAuthCallbackBadRequest Error

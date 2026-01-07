@@ -8,7 +8,8 @@ CREATE TABLE user_token_sub
     prv_interest  BIGINT      NOT NULL DEFAULT 0,
     threshold     NUMERIC     NOT NULL,
     method        TEXT        NOT NULL DEFAULT 'denormalized',
-    updated_at    TIMESTAMPTZ NOT NULL,
+    scan_date     TIMESTAMPTZ NOT NULL,
+    created_at    TIMESTAMPTZ NOT NULL DEFAULT NOW(),
 
     CONSTRAINT user_token_sub_pk PRIMARY KEY (id),
     CONSTRAINT user_token_sub_user_id_fkey FOREIGN KEY (user_id)
@@ -25,8 +26,9 @@ COMMENT ON COLUMN user_token_sub.curr_interest IS 'Текущий интерес
 COMMENT ON COLUMN user_token_sub.prv_interest IS 'Предыдущее значение интереса по токену';
 COMMENT ON COLUMN user_token_sub.threshold IS 'Пороговое значение для уведомления';
 COMMENT ON COLUMN user_token_sub.method IS 'Метод для сравнение значений интереса';
-COMMENT ON COLUMN user_token_sub.updated_at IS 'Дата и время последнего обновления';
+COMMENT ON COLUMN user_token_sub.scan_date IS 'Дата и время последнего обновления';
+COMMENT ON COLUMN user_token_sub.created_at IS 'Дата и время создания записи';
 
 CREATE UNIQUE INDEX user_token_sub_unique_idx ON user_token_sub (user_id, category, token, method);
 CREATE INDEX user_token_sub_user_id_idx ON user_token_sub (user_id);
-CREATE INDEX user_token_sub_updated_at_idx ON user_token_sub (updated_at);
+CREATE INDEX user_token_sub_scan_date_idx ON user_token_sub (scan_date);

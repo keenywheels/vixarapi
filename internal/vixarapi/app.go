@@ -94,7 +94,7 @@ func (app *App) Run() error {
 
 	// create services
 	vkClient := vk.New(&cfg.AppCfg.VKConfig)
-	userSvc := userSrvc.New(userRepo, redisRepo, vkClient, &cfg.AppCfg.Service.UserSvc)
+	userSvc := userSrvc.New(userRepo, redisRepo, searchRepo, vkClient, &cfg.AppCfg.Service.UserSvc)
 
 	searchSrvc, err := srvcSearch.New(searchRepo)
 	if err != nil {

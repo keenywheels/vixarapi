@@ -22,12 +22,30 @@ func (UnimplementedHandler) DeleteUserSearchQuery(ctx context.Context, params De
 	return r, ht.ErrNotImplemented
 }
 
+// DeleteUserTokenSub implements deleteUserTokenSub operation.
+//
+// Delete user's token subscription.
+//
+// DELETE /api/v1/user/subs/token
+func (UnimplementedHandler) DeleteUserTokenSub(ctx context.Context, params DeleteUserTokenSubParams) (r DeleteUserTokenSubRes, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
 // GetUserSearchQueries implements getUserSearchQueries operation.
 //
 // Get user search queries.
 //
 // GET /api/v1/user/query
 func (UnimplementedHandler) GetUserSearchQueries(ctx context.Context, params GetUserSearchQueriesParams) (r GetUserSearchQueriesRes, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
+// GetUserTokenSubs implements getUserTokenSubs operation.
+//
+// Get user's token subs.
+//
+// GET /api/v1/user/subs/token
+func (UnimplementedHandler) GetUserTokenSubs(ctx context.Context, params GetUserTokenSubsParams) (r GetUserTokenSubsRes, _ error) {
 	return r, ht.ErrNotImplemented
 }
 
@@ -55,6 +73,15 @@ func (UnimplementedHandler) SaveUserQuery(ctx context.Context, req *SaveUserQuer
 //
 // POST /api/v1/token/search
 func (UnimplementedHandler) SearchTokenInfo(ctx context.Context, req *SearchTokenInfoRequest) (r SearchTokenInfoRes, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
+// SubscribeUserToToken implements subscribeUserToToken operation.
+//
+// Subscribe user to specified token.
+//
+// POST /api/v1/user/subs/token
+func (UnimplementedHandler) SubscribeUserToToken(ctx context.Context, req *SubscribeUserToTokenRequest) (r SubscribeUserToTokenRes, _ error) {
 	return r, ht.ErrNotImplemented
 }
 

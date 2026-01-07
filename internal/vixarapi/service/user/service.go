@@ -5,6 +5,8 @@ import (
 
 	"github.com/keenywheels/backend/internal/pkg/client/vk"
 	"github.com/keenywheels/backend/internal/vixarapi/models"
+	"github.com/keenywheels/backend/internal/vixarapi/repository/postgres/search"
+	"github.com/keenywheels/backend/internal/vixarapi/repository/postgres/user"
 	"github.com/keenywheels/backend/internal/vixarapi/repository/redis/session"
 )
 
@@ -15,6 +17,14 @@ type IRepository interface {
 	SaveSearchQuery(context.Context, string, string) (*models.UserQuery, error)
 	DeleteSearchQuery(context.Context, string) error
 	GetSearchQueries(context.Context, string, uint64, uint64) ([]*models.UserQuery, error)
+	AddTokenSub(context.Context, *user.AddTokenSubParams) (string, error)
+	GetTokenSubs(context.Context, string, uint64, uint64) ([]*models.UserTokenSub, error)
+	DeleteTokenSub(context.Context, string) error
+}
+
+// ISearch provides interface to communicate with the search repository layer
+type ISearch interface {
+	GetLatestToken(ctx context.Context, params *search.GetTokenParams) (*models.Token, error)
 }
 
 // ISession provides interface to communicate with the session repository layer
@@ -36,6 +46,7 @@ type Config struct {
 type Service struct {
 	repo IRepository
 	sesh ISession
+	srch ISearch
 	vk   *vk.Client
 
 	cfg *Config
@@ -45,12 +56,14 @@ type Service struct {
 func New(
 	repo IRepository,
 	sesh ISession,
+	srch ISearch,
 	vk *vk.Client,
 	cfg *Config,
 ) *Service {
 	return &Service{
 		repo: repo,
 		sesh: sesh,
+		srch: srch,
 		vk:   vk,
 		cfg:  cfg,
 	}

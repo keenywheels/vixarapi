@@ -188,28 +188,66 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 					return
 				}
 
-			case 'u': // Prefix: "user/query"
+			case 'u': // Prefix: "user/"
 
-				if l := len("user/query"); len(elem) >= l && elem[0:l] == "user/query" {
+				if l := len("user/"); len(elem) >= l && elem[0:l] == "user/" {
 					elem = elem[l:]
 				} else {
 					break
 				}
 
 				if len(elem) == 0 {
-					// Leaf node.
-					switch r.Method {
-					case "DELETE":
-						s.handleDeleteUserSearchQueryRequest([0]string{}, elemIsEscaped, w, r)
-					case "GET":
-						s.handleGetUserSearchQueriesRequest([0]string{}, elemIsEscaped, w, r)
-					case "POST":
-						s.handleSaveUserQueryRequest([0]string{}, elemIsEscaped, w, r)
-					default:
-						s.notAllowed(w, r, "DELETE,GET,POST")
+					break
+				}
+				switch elem[0] {
+				case 'q': // Prefix: "query"
+
+					if l := len("query"); len(elem) >= l && elem[0:l] == "query" {
+						elem = elem[l:]
+					} else {
+						break
 					}
 
-					return
+					if len(elem) == 0 {
+						// Leaf node.
+						switch r.Method {
+						case "DELETE":
+							s.handleDeleteUserSearchQueryRequest([0]string{}, elemIsEscaped, w, r)
+						case "GET":
+							s.handleGetUserSearchQueriesRequest([0]string{}, elemIsEscaped, w, r)
+						case "POST":
+							s.handleSaveUserQueryRequest([0]string{}, elemIsEscaped, w, r)
+						default:
+							s.notAllowed(w, r, "DELETE,GET,POST")
+						}
+
+						return
+					}
+
+				case 's': // Prefix: "subs/token"
+
+					if l := len("subs/token"); len(elem) >= l && elem[0:l] == "subs/token" {
+						elem = elem[l:]
+					} else {
+						break
+					}
+
+					if len(elem) == 0 {
+						// Leaf node.
+						switch r.Method {
+						case "DELETE":
+							s.handleDeleteUserTokenSubRequest([0]string{}, elemIsEscaped, w, r)
+						case "GET":
+							s.handleGetUserTokenSubsRequest([0]string{}, elemIsEscaped, w, r)
+						case "POST":
+							s.handleSubscribeUserToTokenRequest([0]string{}, elemIsEscaped, w, r)
+						default:
+							s.notAllowed(w, r, "DELETE,GET,POST")
+						}
+
+						return
+					}
+
 				}
 
 			}
@@ -454,44 +492,98 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 					}
 				}
 
-			case 'u': // Prefix: "user/query"
+			case 'u': // Prefix: "user/"
 
-				if l := len("user/query"); len(elem) >= l && elem[0:l] == "user/query" {
+				if l := len("user/"); len(elem) >= l && elem[0:l] == "user/" {
 					elem = elem[l:]
 				} else {
 					break
 				}
 
 				if len(elem) == 0 {
-					// Leaf node.
-					switch method {
-					case "DELETE":
-						r.name = DeleteUserSearchQueryOperation
-						r.summary = "Delete user search query"
-						r.operationID = "deleteUserSearchQuery"
-						r.pathPattern = "/api/v1/user/query"
-						r.args = args
-						r.count = 0
-						return r, true
-					case "GET":
-						r.name = GetUserSearchQueriesOperation
-						r.summary = "Get user search queries"
-						r.operationID = "getUserSearchQueries"
-						r.pathPattern = "/api/v1/user/query"
-						r.args = args
-						r.count = 0
-						return r, true
-					case "POST":
-						r.name = SaveUserQueryOperation
-						r.summary = "Save user search query"
-						r.operationID = "saveUserQuery"
-						r.pathPattern = "/api/v1/user/query"
-						r.args = args
-						r.count = 0
-						return r, true
-					default:
-						return
+					break
+				}
+				switch elem[0] {
+				case 'q': // Prefix: "query"
+
+					if l := len("query"); len(elem) >= l && elem[0:l] == "query" {
+						elem = elem[l:]
+					} else {
+						break
 					}
+
+					if len(elem) == 0 {
+						// Leaf node.
+						switch method {
+						case "DELETE":
+							r.name = DeleteUserSearchQueryOperation
+							r.summary = "Delete user search query"
+							r.operationID = "deleteUserSearchQuery"
+							r.pathPattern = "/api/v1/user/query"
+							r.args = args
+							r.count = 0
+							return r, true
+						case "GET":
+							r.name = GetUserSearchQueriesOperation
+							r.summary = "Get user search queries"
+							r.operationID = "getUserSearchQueries"
+							r.pathPattern = "/api/v1/user/query"
+							r.args = args
+							r.count = 0
+							return r, true
+						case "POST":
+							r.name = SaveUserQueryOperation
+							r.summary = "Save user search query"
+							r.operationID = "saveUserQuery"
+							r.pathPattern = "/api/v1/user/query"
+							r.args = args
+							r.count = 0
+							return r, true
+						default:
+							return
+						}
+					}
+
+				case 's': // Prefix: "subs/token"
+
+					if l := len("subs/token"); len(elem) >= l && elem[0:l] == "subs/token" {
+						elem = elem[l:]
+					} else {
+						break
+					}
+
+					if len(elem) == 0 {
+						// Leaf node.
+						switch method {
+						case "DELETE":
+							r.name = DeleteUserTokenSubOperation
+							r.summary = "Delete user's token subscription"
+							r.operationID = "deleteUserTokenSub"
+							r.pathPattern = "/api/v1/user/subs/token"
+							r.args = args
+							r.count = 0
+							return r, true
+						case "GET":
+							r.name = GetUserTokenSubsOperation
+							r.summary = "Get user's token subs"
+							r.operationID = "getUserTokenSubs"
+							r.pathPattern = "/api/v1/user/subs/token"
+							r.args = args
+							r.count = 0
+							return r, true
+						case "POST":
+							r.name = SubscribeUserToTokenOperation
+							r.summary = "Subscribe user to specified token"
+							r.operationID = "subscribeUserToToken"
+							r.pathPattern = "/api/v1/user/subs/token"
+							r.args = args
+							r.count = 0
+							return r, true
+						default:
+							return
+						}
+					}
+
 				}
 
 			}

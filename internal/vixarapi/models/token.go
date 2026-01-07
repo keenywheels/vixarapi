@@ -2,6 +2,16 @@ package models
 
 import "time"
 
+type Token struct {
+	TokenName      string
+	ScrapeDate     time.Time
+	Interest       int64
+	Sentiment      int16
+	Category       string
+	GlobalMedian   int64
+	CategoryMedian int64
+}
+
 // TokenRecord represent a single record of token data
 type TokenRecord struct {
 	ScrapeDate       time.Time

@@ -15,6 +15,9 @@ type IService interface {
 	SaveSearchQuery(context.Context, *service.SaveQueryParams) (string, error)
 	DeleteSearchQuery(context.Context, string) error
 	GetSearchQueries(context.Context, *service.GetSearchQueriesParams) ([]service.Query, error)
+	SubscribeToToken(ctx context.Context, params *service.SubscribeToTokenParams) (string, error)
+	GetSubscribedTokens(ctx context.Context, userID string, limit, offset uint64) ([]*service.TokenSubInfo, error)
+	UnsubscribeFromToken(ctx context.Context, id string) error
 }
 
 // Controller contains handlers for endpoints

@@ -18,11 +18,15 @@ func (s *Service) updateSearchTask(ctx context.Context) error {
 	log.Infof("[%s] updating search table", op)
 
 	if err := s.r.UpdateSearchTable(ctx); err != nil {
+		// return error cuz if we fail to update the search table, no need to proceed further
 		return fmt.Errorf("[%s] failed to update search table: %w", op, err)
 	}
 
 	// update token subs values
-	// TODO: добавить для этого метод в слой репозитория
+	if err := s.r.UpdateUserTokenSubs(ctx); err != nil {
+		// return error cuz if we fail to update the token subs, no need to trigger users notification
+		return fmt.Errorf("[%s] failed to update user token subs: %w", op, err)
+	}
 
 	// notify users
 	// TODO: тут надо будет написать функцию, которая будет делать запрос к подпискам

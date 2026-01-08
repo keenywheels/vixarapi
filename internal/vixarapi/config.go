@@ -73,6 +73,18 @@ type PostgresConfig struct {
 	ConnTimeout  time.Duration `mapstructure:"conn_timeout"`
 }
 
+// KafkaTopics contains all kafka topics
+type KafkaTopics struct {
+	Notifications string `mapstructure:"notifications"`
+}
+
+// KafkaConfig contains config for kafka
+type KafkaConfig struct {
+	MaxRetry int         `mapstructure:"max_retry"`
+	Brokers  []string    `mapstructure:"brokers"`
+	Topics   KafkaTopics `mapstructure:"topics"`
+}
+
 // DSN return dsn using PostgresConfig
 func (cfg *PostgresConfig) DSN() string {
 	return fmt.Sprintf("postgres://%s:%s@%s:%d/%s?sslmode=%s",
@@ -84,6 +96,7 @@ type Config struct {
 	AppCfg      AppConfig      `mapstructure:"app"`
 	PostgresCfg PostgresConfig `mapstructure:"postgres"`
 	RedisCfg    redis.Config   `mapstructure:"redis"`
+	KafkaCfg    KafkaConfig    `mapstructure:"kafka"`
 }
 
 // LoadConfig function which reads config file and return Config instance

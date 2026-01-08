@@ -10,11 +10,13 @@ import (
 
 	oas "github.com/keenywheels/backend/internal/api/v1"
 	"github.com/keenywheels/backend/internal/pkg/client/vk"
+	"github.com/keenywheels/backend/internal/pkg/producer/kafka"
 	"github.com/keenywheels/backend/internal/vixarapi/delivery/http/cookie"
 	apiSecurity "github.com/keenywheels/backend/internal/vixarapi/delivery/http/security"
 	api "github.com/keenywheels/backend/internal/vixarapi/delivery/http/v1"
 	apiSearch "github.com/keenywheels/backend/internal/vixarapi/delivery/http/v1/search"
 	apiUser "github.com/keenywheels/backend/internal/vixarapi/delivery/http/v1/user"
+	"github.com/keenywheels/backend/internal/vixarapi/repository/broker"
 	repoSearch "github.com/keenywheels/backend/internal/vixarapi/repository/postgres/search"
 	repoUser "github.com/keenywheels/backend/internal/vixarapi/repository/postgres/user"
 	repoSession "github.com/keenywheels/backend/internal/vixarapi/repository/redis/session"
@@ -92,11 +94,23 @@ func (app *App) Run() error {
 		return fmt.Errorf("failed to create redis repository: %w", err)
 	}
 
+	// create broker
+	k, err := kafka.New(cfg.KafkaCfg.Brokers, kafka.Config{
+		MaxRetry: cfg.KafkaCfg.MaxRetry,
+	})
+	if err != nil {
+		return fmt.Errorf("failed to create kafka producer: %w", err)
+	}
+
+	b := broker.New(k, broker.Topics{
+		Notifications: cfg.KafkaCfg.Topics.Notifications,
+	})
+
 	// create services
 	vkClient := vk.New(&cfg.AppCfg.VKConfig)
 	userSvc := userSrvc.New(userRepo, redisRepo, searchRepo, vkClient, &cfg.AppCfg.Service.UserSvc)
 
-	searchSrvc, err := srvcSearch.New(searchRepo)
+	searchSrvc, err := srvcSearch.New(searchRepo, b)
 	if err != nil {
 		return fmt.Errorf("failed to create search service: %w", err)
 	}

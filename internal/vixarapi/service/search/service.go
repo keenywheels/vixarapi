@@ -13,7 +13,7 @@ import (
 type IRepository interface {
 	SearchTokenInfo(context.Context, *repo.SearchTokenParams) ([]models.TokenInfo, error)
 	UpdateSearchTable(context.Context) error
-	UpdateUserTokenSubs(ctx context.Context) error
+	UpdateUserTokenSubs(ctx context.Context, intervalType string, amount int) error
 }
 
 // IBroker provides interface to communicate with message broker

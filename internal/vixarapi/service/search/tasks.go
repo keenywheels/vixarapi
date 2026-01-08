@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/keenywheels/backend/internal/vixarapi/repository/postgres/search"
 	"github.com/keenywheels/backend/pkg/ctxutils"
 )
 
@@ -23,7 +24,8 @@ func (s *Service) updateSearchTask(ctx context.Context) error {
 	}
 
 	// update token subs values
-	if err := s.r.UpdateUserTokenSubs(ctx); err != nil {
+	// TODO: вынести в конфиг, если надо будет менять интервал
+	if err := s.r.UpdateUserTokenSubs(ctx, search.IntervalDays, 1); err != nil {
 		// return error cuz if we fail to update the token subs, no need to trigger users notification
 		return fmt.Errorf("[%s] failed to update user token subs: %w", op, err)
 	}

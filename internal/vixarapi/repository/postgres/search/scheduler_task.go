@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"slices"
 
+	commonRepo "github.com/keenywheels/backend/internal/vixarapi/repository/postgres"
 	"github.com/keenywheels/backend/pkg/ctxutils"
 )
 
@@ -74,4 +75,80 @@ func (r *Repository) UpdateUserTokenSubs(ctx context.Context, intervalType strin
 	log.Infof("[%s] successfully updated %d records, interval=%s", op, tag.RowsAffected(), interval)
 
 	return nil
+}
+
+// IncreasedTokenSubInfo represents info about increased token subs
+type IncreasedTokenSubInfo struct {
+	UserID           string
+	Email            string
+	Username         string
+	Token            string
+	Category         string
+	CurrentInterest  float64
+	PreviousInterest float64
+	Threshold        float64
+}
+
+// GetIncreasedTokenSubs returns all token subs that were increased
+func (r *Repository) GetIncreasedTokenSubs(
+	ctx context.Context,
+	limit uint64,
+	offset uint64,
+) ([]*IncreasedTokenSubInfo, error) {
+	var (
+		op    = "Repository.GetIncreasedTokenSubs"
+		query = `
+			SELECT
+				u.id AS user_id,
+				u.email,
+				u.username,
+				uts.token,
+				uts.category,
+				uts.curr_interest,
+				uts.prv_interest,
+				uts.threshold
+			FROM user_token_sub uts
+			JOIN users u ON uts.user_id = u.id
+			WHERE curr_interest / prv_interest > threshold
+			ORDER BY u.id, uts.id
+			LIMIT $1 OFFSET $2;
+		`
+	)
+
+	rows, err := r.db.Pool.Query(ctx, query, limit, offset)
+	if err != nil {
+		return nil, commonRepo.ParsePostgresError(op, err)
+	}
+	defer rows.Close()
+
+	// get user token subs
+	var subs []*IncreasedTokenSubInfo
+	for rows.Next() {
+		var sub IncreasedTokenSubInfo
+
+		if err := rows.Scan(
+			&sub.UserID,
+			&sub.Email,
+			&sub.Username,
+			&sub.Token,
+			&sub.Category,
+			&sub.CurrentInterest,
+			&sub.PreviousInterest,
+			&sub.Threshold,
+		); err != nil {
+			return nil, commonRepo.ParsePostgresError(op, err)
+		}
+
+		subs = append(subs, &sub)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, commonRepo.ParsePostgresError(op, err)
+	}
+
+	if len(subs) == 0 {
+		return nil, fmt.Errorf("[%s] no token subs were increased: %w", op, commonRepo.ErrNotFound)
+	}
+
+	return subs, nil
 }

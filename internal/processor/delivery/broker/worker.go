@@ -32,10 +32,12 @@ func (b *Broker) processTasks(ctx context.Context, msg message) {
 		err error
 	)
 
-	// check topic to choose right handler
+	// check topic to choose the right handler
 	switch msg.msg.Topic {
 	case b.topics.ScraperData:
 		err = b.service.TokenizeMessage(ctx, string(msg.msg.Value))
+	case b.topics.Notifications:
+		err = b.service.NotifyUser(ctx, string(msg.msg.Value))
 	default:
 		b.l.Warnf("[%s] unknown topic %s for %s", op, msg.msg.Topic, msg.id)
 	}

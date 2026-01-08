@@ -81,7 +81,8 @@ func (app *App) Run() error {
 	}
 
 	b := broker.New(brokerCfg, service, broker.Topics{
-		ScraperData: cfg.KafkaCfg.Topics.ScraperData,
+		ScraperData:   cfg.KafkaCfg.Topics.ScraperData,
+		Notifications: cfg.KafkaCfg.Topics.Notifications,
 	}, brokerOpts...)
 
 	// create kafka consumer
@@ -102,10 +103,13 @@ func (app *App) Run() error {
 	g, ctx := errgroup.WithContext(ctx)
 
 	// start consuming
-	topics := []string{cfg.KafkaCfg.Topics.ScraperData}
+	topics := []string{
+		cfg.KafkaCfg.Topics.ScraperData,   // topic with data from scraped sites
+		cfg.KafkaCfg.Topics.Notifications, // topic with notifications
+	}
 
 	g.Go(func() error {
-		app.logger.Infof("starting kafka consumer for topics: %v", []string{cfg.KafkaCfg.Topics.ScraperData})
+		app.logger.Infof("starting kafka consumer for topics: %v", topics)
 
 		if err := kafkaConsumer.StartConsuming(ctx, topics, b); err != nil {
 			return fmt.Errorf("kafka consumer error: %w", err)

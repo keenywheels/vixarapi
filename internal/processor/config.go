@@ -67,7 +67,8 @@ type AppConfig struct {
 
 // KafkaTopics contains all kafka topics
 type KafkaTopics struct {
-	ScraperData string `mapstructure:"scraper_data"`
+	ScraperData   string `mapstructure:"scraper_data"`
+	Notifications string `mapstructure:"notifications"`
 }
 
 // KafkaConfig contains Kafka configuration

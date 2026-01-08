@@ -26,3 +26,4 @@ kafka:
     - kafka:9093
   topics:
     scraper_data: "scraper_data"
+    notifications: "notifications"

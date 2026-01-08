@@ -34,11 +34,13 @@ type message struct {
 // IService defines the interface for the service layer of processor
 type IService interface {
 	TokenizeMessage(ctx context.Context, message string) error
+	NotifyUser(ctx context.Context, message string) error
 }
 
 // Topics holds the topic names
 type Topics struct {
-	ScraperData string
+	ScraperData   string
+	Notifications string
 }
 
 // Broker struct for message broker

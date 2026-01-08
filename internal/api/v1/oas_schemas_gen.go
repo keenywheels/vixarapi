@@ -653,8 +653,8 @@ type UserTokenSub struct {
 	Token            string    `json:"token"`
 	Category         string    `json:"category"`
 	Method           string    `json:"method"`
-	CurrentInterest  int64     `json:"current_interest"`
-	PreviousInterest int64     `json:"previous_interest"`
+	CurrentInterest  float64   `json:"current_interest"`
+	PreviousInterest float64   `json:"previous_interest"`
 	LastScan         time.Time `json:"last_scan"`
 }
 
@@ -679,12 +679,12 @@ func (s *UserTokenSub) GetMethod() string {
 }
 
 // GetCurrentInterest returns the value of CurrentInterest.
-func (s *UserTokenSub) GetCurrentInterest() int64 {
+func (s *UserTokenSub) GetCurrentInterest() float64 {
 	return s.CurrentInterest
 }
 
 // GetPreviousInterest returns the value of PreviousInterest.
-func (s *UserTokenSub) GetPreviousInterest() int64 {
+func (s *UserTokenSub) GetPreviousInterest() float64 {
 	return s.PreviousInterest
 }
 
@@ -714,12 +714,12 @@ func (s *UserTokenSub) SetMethod(val string) {
 }
 
 // SetCurrentInterest sets the value of CurrentInterest.
-func (s *UserTokenSub) SetCurrentInterest(val int64) {
+func (s *UserTokenSub) SetCurrentInterest(val float64) {
 	s.CurrentInterest = val
 }
 
 // SetPreviousInterest sets the value of PreviousInterest.
-func (s *UserTokenSub) SetPreviousInterest(val int64) {
+func (s *UserTokenSub) SetPreviousInterest(val float64) {
 	s.PreviousInterest = val
 }
 

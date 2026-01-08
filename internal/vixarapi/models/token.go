@@ -2,6 +2,7 @@ package models
 
 import "time"
 
+// Token represent unparsed token record in database
 type Token struct {
 	TokenName      string
 	ScrapeDate     time.Time

@@ -39,7 +39,6 @@ func (s *Service) SubscribeToToken(ctx context.Context, params *SubscribeToToken
 		return "", service.ParseRepositoryError(op, err)
 	}
 
-	// TODO: подумать, как все будет готово: мб стоит вынести эту логику в sql квери?
 	interest, err := parseInterest(token, params.Method)
 	if err != nil {
 		return "", fmt.Errorf("[%s] got unexpected method: %w", op, err)
@@ -67,8 +66,8 @@ type TokenSubInfo struct {
 	Token            string
 	Category         string
 	Method           string
-	CurrentInterest  int64
-	PreviousInterest int64
+	CurrentInterest  float64
+	PreviousInterest float64
 	ScanDate         time.Time
 }
 

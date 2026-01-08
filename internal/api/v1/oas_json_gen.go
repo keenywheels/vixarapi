@@ -2567,11 +2567,11 @@ func (s *UserTokenSub) encodeFields(e *jx.Encoder) {
 	}
 	{
 		e.FieldStart("current_interest")
-		e.Int64(s.CurrentInterest)
+		e.Float64(s.CurrentInterest)
 	}
 	{
 		e.FieldStart("previous_interest")
-		e.Int64(s.PreviousInterest)
+		e.Float64(s.PreviousInterest)
 	}
 	{
 		e.FieldStart("last_scan")
@@ -2649,8 +2649,8 @@ func (s *UserTokenSub) Decode(d *jx.Decoder) error {
 		case "current_interest":
 			requiredBitSet[0] |= 1 << 4
 			if err := func() error {
-				v, err := d.Int64()
-				s.CurrentInterest = int64(v)
+				v, err := d.Float64()
+				s.CurrentInterest = float64(v)
 				if err != nil {
 					return err
 				}
@@ -2661,8 +2661,8 @@ func (s *UserTokenSub) Decode(d *jx.Decoder) error {
 		case "previous_interest":
 			requiredBitSet[0] |= 1 << 5
 			if err := func() error {
-				v, err := d.Int64()
-				s.PreviousInterest = int64(v)
+				v, err := d.Float64()
+				s.PreviousInterest = float64(v)
 				if err != nil {
 					return err
 				}

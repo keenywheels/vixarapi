@@ -30,8 +30,8 @@ type UserTokenSub struct {
 	UserID           string
 	Token            string
 	Category         string
-	CurrentInterest  int64
-	PreviousInterest int64
+	CurrentInterest  float64
+	PreviousInterest float64
 	Threshold        float64
 	Method           string
 	ScanDate         time.Time

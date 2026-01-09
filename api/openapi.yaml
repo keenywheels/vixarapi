@@ -304,6 +304,133 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+  /api/v1/user/subs/token:
+    post:
+      tags: [user]
+      summary: Subscribe user to specified token
+      operationId: subscribeUserToToken
+      security:
+        - cookieAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubscribeUserToTokenRequest'
+      responses:
+        '200':
+          description: Successfully saved user search query
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubscribeUserToTokenResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Conflict - already subscribed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    get:
+      tags: [user]
+      summary: Get user's token subs
+      operationId: getUserTokenSubs
+      security:
+        - cookieAuth: []
+      parameters:
+        - in: query
+          name: offset
+          schema:
+            type: integer
+            format: uint64
+            default: 0
+          required: false
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            format: uint64
+            default: 20
+          required: false
+      responses:
+        '200':
+          description: Successfully retrieved user's token subs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserTokenSub'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      tags: [user]
+      summary: Delete user's token subscription
+      operationId: deleteUserTokenSub
+      security:
+        - cookieAuth: []
+      parameters:
+        - in: query
+          name: id
+          schema:
+            type: string
+            minLength: 16
+            maxLength: 128
+          required: true
+      responses:
+        '200':
+          description: Successfully deleted user's token subscription
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 
 components:
   securitySchemes:
@@ -451,6 +578,51 @@ components:
         email:
           type: string
       required: [username, email]
+    SubscribeUserToTokenRequest:
+      type: object
+      properties:
+        token:
+          type: string
+          minLength: 1
+          maxLength: 128
+        category:
+          type: string
+          minLength: 1
+          maxLength: 128
+        threshold:
+          type: number
+        method:
+          type: string
+          minLength: 1
+          maxLength: 128
+      required: [token, category, threshold]
+    SubscribeUserToTokenResponse:
+      type: object
+      properties:
+        id:
+          type: string
+      required: [id]
+    UserTokenSub:
+      type: object
+      properties:
+        id:
+          type: string
+        token:
+          type: string
+        category:
+          type: string
+        method:
+          type: string
+        current_interest:
+          type: number
+          format: float64
+        previous_interest:
+          type: number
+          format: float64
+        last_scan:
+          type: string
+          format: date-time
+      required: [id, token, category, method, current_interest, previous_interest, last_scan]
 
     Error:
       type: object

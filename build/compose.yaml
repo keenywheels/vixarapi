@@ -4,6 +4,9 @@ services:
     build:
       context: ..
       dockerfile: build/image/vixarapi/Dockerfile
+    depends_on:
+      kafka:
+        condition: service_healthy
     env_file: vixarapi.env
     restart: always
     ports:

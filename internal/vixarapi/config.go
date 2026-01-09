@@ -7,9 +7,8 @@ import (
 
 	"github.com/keenywheels/backend/internal/pkg/client/vk"
 	"github.com/keenywheels/backend/internal/vixarapi/delivery/http/cookie"
-	repoScheduler "github.com/keenywheels/backend/internal/vixarapi/repository/postgres/scheduler"
+	srvcSearch "github.com/keenywheels/backend/internal/vixarapi/service/search"
 	userSvc "github.com/keenywheels/backend/internal/vixarapi/service/user"
-	"github.com/keenywheels/backend/pkg/notifier/smtp"
 	"github.com/keenywheels/backend/pkg/redis"
 	"github.com/spf13/viper"
 )
@@ -23,7 +22,7 @@ type HttpConfig struct {
 	ShutdownTimeout time.Duration `mapstructure:"shutdown_timeout"`
 }
 
-// Config struct for logger config
+// LoggerConfig struct for logger config
 type LoggerConfig struct {
 	LogLevel      string `mapstructure:"loglvl"`
 	Mode          string `mapstructure:"mode"`
@@ -34,7 +33,7 @@ type LoggerConfig struct {
 	MaxLogAge     int    `mapstructure:"max_log_age"`
 }
 
-// Config for CORS
+// CORSConfig for CORS
 type CORSConfig struct {
 	AllowOrigins     []string      `mapstructure:"allow_origins"`
 	AllowMethods     []string      `mapstructure:"allow_methods"`
@@ -50,14 +49,13 @@ type ServiceConfig struct {
 
 // AppConfig contains all configs which connected to main app
 type AppConfig struct {
-	HttpCfg         HttpConfig           `mapstructure:"http"`
-	LoggerCfg       LoggerConfig         `mapstructure:"logger"`
-	CORSConfig      CORSConfig           `mapstructure:"cors"`
-	SchedulerConfig repoScheduler.Config `mapstructure:"scheduler"`
-	VKConfig        vk.Config            `mapstructure:"vk"`
-	Service         ServiceConfig        `mapstructure:"service"`
-	CookieConfig    cookie.Config        `mapstructure:"cookie"`
-	SMTPConfig      smtp.Config          `mapstructure:"smtp"`
+	HttpCfg         HttpConfig                 `mapstructure:"http"`
+	LoggerCfg       LoggerConfig               `mapstructure:"logger"`
+	CORSConfig      CORSConfig                 `mapstructure:"cors"`
+	SchedulerConfig srvcSearch.SchedulerConfig `mapstructure:"scheduler"`
+	VKConfig        vk.Config                  `mapstructure:"vk"`
+	Service         ServiceConfig              `mapstructure:"service"`
+	CookieConfig    cookie.Config              `mapstructure:"cookie"`
 }
 
 // PostgresConfig config for postgres
@@ -73,6 +71,18 @@ type PostgresConfig struct {
 	ConnTimeout  time.Duration `mapstructure:"conn_timeout"`
 }
 
+// KafkaTopics contains all kafka topics
+type KafkaTopics struct {
+	Notifications string `mapstructure:"notifications"`
+}
+
+// KafkaConfig contains config for kafka
+type KafkaConfig struct {
+	MaxRetry int         `mapstructure:"max_retry"`
+	Brokers  []string    `mapstructure:"brokers"`
+	Topics   KafkaTopics `mapstructure:"topics"`
+}
+
 // DSN return dsn using PostgresConfig
 func (cfg *PostgresConfig) DSN() string {
 	return fmt.Sprintf("postgres://%s:%s@%s:%d/%s?sslmode=%s",
@@ -84,6 +94,7 @@ type Config struct {
 	AppCfg      AppConfig      `mapstructure:"app"`
 	PostgresCfg PostgresConfig `mapstructure:"postgres"`
 	RedisCfg    redis.Config   `mapstructure:"redis"`
+	KafkaCfg    KafkaConfig    `mapstructure:"kafka"`
 }
 
 // LoadConfig function which reads config file and return Config instance

@@ -7,8 +7,9 @@ import (
 
 // Tables holds the table definitions
 type Tables struct {
-	user      commonRepo.UserTable
-	userQuery commonRepo.UserQueryTable
+	user         commonRepo.UserTable
+	userQuery    commonRepo.UserQueryTable
+	userTokenSub commonRepo.UserTokenSubTable
 }
 
 // Repository provides interest-related data access logic
@@ -21,8 +22,9 @@ type Repository struct {
 func New(db *postgres.Postgres) *Repository {
 	return &Repository{
 		tbls: Tables{
-			user:      commonRepo.NewUserTable(),
-			userQuery: commonRepo.NewUserQueryTable(),
+			user:         commonRepo.NewUserTable(),
+			userQuery:    commonRepo.NewUserQueryTable(),
+			userTokenSub: commonRepo.NewUserTokenSubTable(),
 		},
 		db: db,
 	}

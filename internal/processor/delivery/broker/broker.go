@@ -26,6 +26,7 @@ const (
 // message represents a message in queue
 type message struct {
 	msg    *sarama.ConsumerMessage
+	id     string
 	retry  int
 	status string
 }
@@ -33,11 +34,13 @@ type message struct {
 // IService defines the interface for the service layer of processor
 type IService interface {
 	TokenizeMessage(ctx context.Context, message string) error
+	NotifyUser(ctx context.Context, message string) error
 }
 
 // Topics holds the topic names
 type Topics struct {
-	ScraperData string
+	ScraperData   string
+	Notifications string
 }
 
 // Broker struct for message broker
@@ -85,7 +88,7 @@ func New(cfg Config, service IService, topics Topics, opts ...Option) *Broker {
 	}
 
 	// initialize queues
-	b.messageQueue = make(chan message, b.workerCount*2) // TODO: проверить такой размер буфера по бенчмаркам
+	b.messageQueue = make(chan message, b.workerCount*2)
 	b.ackQueue = make(chan message, b.workerCount*2)
 
 	return b

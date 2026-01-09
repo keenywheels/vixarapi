@@ -5,11 +5,11 @@ import (
 	"net"
 	"net/smtp"
 
-	"github.com/keenywheels/backend/pkg/notifier"
+	"github.com/keenywheels/backend/pkg/mailer"
 )
 
-// check that Mailer implements Notifier interface
-var _ notifier.Notifier = (*Mailer)(nil)
+// check that Mailer implements Mailer interface
+var _ mailer.Mailer = (*Mailer)(nil)
 
 // Mailer struct implements Mailer interface using SMTP protocol and contains auth and config for sending email with SMTP
 type Mailer struct {
@@ -21,9 +21,9 @@ type Mailer struct {
 func New(config *Config) *Mailer {
 	auth := smtp.PlainAuth(
 		"",
-		config.username,
-		config.password,
-		config.host,
+		config.Username,
+		config.Password,
+		config.Host,
 	)
 
 	return &Mailer{
@@ -37,9 +37,9 @@ func (m *Mailer) Send(recipients []string, subject, text string) error {
 	mailBody := fmt.Sprintf("Subject: %s\n%s", subject, text)
 
 	if err := smtp.SendMail(
-		net.JoinHostPort(m.config.host, m.config.port),
+		net.JoinHostPort(m.config.Host, m.config.Port),
 		m.auth,
-		m.config.username,
+		m.config.Username,
 		recipients,
 		[]byte(mailBody),
 	); err != nil {

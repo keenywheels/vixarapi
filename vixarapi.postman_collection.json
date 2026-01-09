@@ -289,6 +289,100 @@
 							"response": []
 						}
 					]
+				},
+				{
+					"name": "subs",
+					"item": [
+						{
+							"name": "token",
+							"item": [
+								{
+									"name": "post",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"token\": \"чип\",\n  \"category\": \"news\",\n  \"threshold\": 1.2,\n  \"method\": \"global_median\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "http://localhost:8000/api/v1/user/subs/token",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8000",
+											"path": [
+												"api",
+												"v1",
+												"user",
+												"subs",
+												"token"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "get",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:8000/api/v1/user/subs/token",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8000",
+											"path": [
+												"api",
+												"v1",
+												"user",
+												"subs",
+												"token"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "delete",
+									"request": {
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:8000/api/v1/user/subs/token?id=0b61b36e-c45f-4d33-a3f3-df4491052bd2",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8000",
+											"path": [
+												"api",
+												"v1",
+												"user",
+												"subs",
+												"token"
+											],
+											"query": [
+												{
+													"key": "id",
+													"value": "0b61b36e-c45f-4d33-a3f3-df4491052bd2"
+												}
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						}
+					]
 				}
 			]
 		}

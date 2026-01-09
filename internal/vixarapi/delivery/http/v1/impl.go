@@ -22,7 +22,7 @@ func (r *Router) GetUserSearchQueries(
 	return r.userController.GetUserSearchQueries(ctx, params)
 }
 
-// LoginUser implements LoginUser for gen.Handler
+// LogoutUser implements Logout for gen.Handler
 func (r *Router) LogoutUser(
 	ctx context.Context,
 ) (gen.LogoutUserRes, error) {
@@ -36,7 +36,7 @@ func (r *Router) UserInfo(
 	return r.userController.UserInfo(ctx)
 }
 
-// RegisterUser implements RegisterUser for gen.Handler
+// SaveUserQuery implements SaveUserQuery for gen.Handler
 func (r *Router) SaveUserQuery(
 	ctx context.Context,
 	req *gen.SaveUserQueryRequest,
@@ -44,7 +44,7 @@ func (r *Router) SaveUserQuery(
 	return r.userController.SaveUserQuery(ctx, req)
 }
 
-// UserLogin implements UserLogin for gen.Handler
+// VkAuthCallback implements VkAuthCallback for gen.Handler
 func (r *Router) VkAuthCallback(
 	ctx context.Context,
 	req *gen.VkAuthCallbackRequest,
@@ -52,12 +52,36 @@ func (r *Router) VkAuthCallback(
 	return r.userController.VkAuthCallback(ctx, req)
 }
 
-// UserRegister implements UserRegister for gen.Handler
+// VkAuthRegister implements VkAuthRegister for gen.Handler
 func (r *Router) VkAuthRegister(
 	ctx context.Context,
 	req *gen.VkAuthRegisterRequest,
 ) (gen.VkAuthRegisterRes, error) {
 	return r.userController.VkAuthRegister(ctx, req)
+}
+
+// SubscribeUserToToken implements SubscribeUserToToken for gen.Handler
+func (r *Router) SubscribeUserToToken(
+	ctx context.Context,
+	req *gen.SubscribeUserToTokenRequest,
+) (gen.SubscribeUserToTokenRes, error) {
+	return r.userController.SubscribeUserToToken(ctx, req)
+}
+
+// GetUserTokenSubs implements GetUserTokenSubs for gen.Handler
+func (r *Router) GetUserTokenSubs(
+	ctx context.Context,
+	params gen.GetUserTokenSubsParams,
+) (gen.GetUserTokenSubsRes, error) {
+	return r.userController.GetUserTokenSubs(ctx, params)
+}
+
+// DeleteUserTokenSub implements DeleteUserTokenSub for gen.Handler
+func (r *Router) DeleteUserTokenSub(
+	ctx context.Context,
+	params gen.DeleteUserTokenSubParams,
+) (gen.DeleteUserTokenSubRes, error) {
+	return r.userController.DeleteUserTokenSub(ctx, params)
 }
 
 // SearchTokenInfo implements SearchTokenInfo for gen.Handler

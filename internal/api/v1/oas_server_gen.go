@@ -14,12 +14,24 @@ type Handler interface {
 	//
 	// DELETE /api/v1/user/query
 	DeleteUserSearchQuery(ctx context.Context, params DeleteUserSearchQueryParams) (DeleteUserSearchQueryRes, error)
+	// DeleteUserTokenSub implements deleteUserTokenSub operation.
+	//
+	// Delete user's token subscription.
+	//
+	// DELETE /api/v1/user/subs/token
+	DeleteUserTokenSub(ctx context.Context, params DeleteUserTokenSubParams) (DeleteUserTokenSubRes, error)
 	// GetUserSearchQueries implements getUserSearchQueries operation.
 	//
 	// Get user search queries.
 	//
 	// GET /api/v1/user/query
 	GetUserSearchQueries(ctx context.Context, params GetUserSearchQueriesParams) (GetUserSearchQueriesRes, error)
+	// GetUserTokenSubs implements getUserTokenSubs operation.
+	//
+	// Get user's token subs.
+	//
+	// GET /api/v1/user/subs/token
+	GetUserTokenSubs(ctx context.Context, params GetUserTokenSubsParams) (GetUserTokenSubsRes, error)
 	// LogoutUser implements logoutUser operation.
 	//
 	// Logout user.
@@ -38,6 +50,12 @@ type Handler interface {
 	//
 	// POST /api/v1/token/search
 	SearchTokenInfo(ctx context.Context, req *SearchTokenInfoRequest) (SearchTokenInfoRes, error)
+	// SubscribeUserToToken implements subscribeUserToToken operation.
+	//
+	// Subscribe user to specified token.
+	//
+	// POST /api/v1/user/subs/token
+	SubscribeUserToToken(ctx context.Context, req *SubscribeUserToTokenRequest) (SubscribeUserToTokenRes, error)
 	// UserInfo implements userInfo operation.
 	//
 	// Get info of logged in user.

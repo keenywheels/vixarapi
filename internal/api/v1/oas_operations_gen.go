@@ -7,10 +7,13 @@ type OperationName = string
 
 const (
 	DeleteUserSearchQueryOperation OperationName = "DeleteUserSearchQuery"
+	DeleteUserTokenSubOperation    OperationName = "DeleteUserTokenSub"
 	GetUserSearchQueriesOperation  OperationName = "GetUserSearchQueries"
+	GetUserTokenSubsOperation      OperationName = "GetUserTokenSubs"
 	LogoutUserOperation            OperationName = "LogoutUser"
 	SaveUserQueryOperation         OperationName = "SaveUserQuery"
 	SearchTokenInfoOperation       OperationName = "SearchTokenInfo"
+	SubscribeUserToTokenOperation  OperationName = "SubscribeUserToToken"
 	UserInfoOperation              OperationName = "UserInfo"
 	VkAuthCallbackOperation        OperationName = "VkAuthCallback"
 	VkAuthRegisterOperation        OperationName = "VkAuthRegister"

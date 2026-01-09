@@ -12,6 +12,7 @@ const (
 // Tables holds the table definitions
 type Tables struct {
 	search commonRepo.SearchTokenTable
+	uts    commonRepo.UserTokenSubTable
 }
 
 // Repository provides interest-related data access logic
@@ -25,6 +26,7 @@ func New(db *postgres.Postgres) *Repository {
 	return &Repository{
 		tbls: Tables{
 			search: commonRepo.NewSearchTokenTable(),
+			uts:    commonRepo.NewUserTokenSubTable(),
 		},
 		db: db,
 	}

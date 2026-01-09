@@ -34,10 +34,13 @@ func findAuthorization(h http.Header, prefix string) (string, bool) {
 
 var operationRolesCookieAuth = map[string][]string{
 	DeleteUserSearchQueryOperation: []string{},
+	DeleteUserTokenSubOperation:    []string{},
 	GetUserSearchQueriesOperation:  []string{},
+	GetUserTokenSubsOperation:      []string{},
 	LogoutUserOperation:            []string{},
 	SaveUserQueryOperation:         []string{},
 	SearchTokenInfoOperation:       []string{},
+	SubscribeUserToTokenOperation:  []string{},
 	UserInfoOperation:              []string{},
 	VkAuthRegisterOperation:        []string{},
 }

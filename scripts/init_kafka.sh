@@ -5,6 +5,7 @@ set -e
 # create kafka topic
 echo -e 'Creating kafka topics'
 kafka-topics --bootstrap-server ${KAFKA_HOSTNAME}:${KAFKA_DOCKER_PORT} --create --if-not-exists --topic ${KAFKA_SCRAPER_TOPIC} --replication-factor 1 --partitions 1
+kafka-topics --bootstrap-server ${KAFKA_HOSTNAME}:${KAFKA_DOCKER_PORT} --create --if-not-exists --topic ${KAFKA_NOTIFICATIONS_TOPIC} --replication-factor 1 --partitions 1
 
 echo -e 'Successfully created the following topics:'
 kafka-topics --bootstrap-server ${KAFKA_HOSTNAME}:${KAFKA_DOCKER_PORT} --list

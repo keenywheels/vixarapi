@@ -5,8 +5,16 @@ type DeleteUserSearchQueryRes interface {
 	deleteUserSearchQueryRes()
 }
 
+type DeleteUserTokenSubRes interface {
+	deleteUserTokenSubRes()
+}
+
 type GetUserSearchQueriesRes interface {
 	getUserSearchQueriesRes()
+}
+
+type GetUserTokenSubsRes interface {
+	getUserTokenSubsRes()
 }
 
 type LogoutUserRes interface {
@@ -19,6 +27,10 @@ type SaveUserQueryRes interface {
 
 type SearchTokenInfoRes interface {
 	searchTokenInfoRes()
+}
+
+type SubscribeUserToTokenRes interface {
+	subscribeUserToTokenRes()
 }
 
 type UserInfoRes interface {

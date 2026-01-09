@@ -38,6 +38,20 @@ func encodeSearchTokenInfoRequest(
 	return nil
 }
 
+func encodeSubscribeUserToTokenRequest(
+	req *SubscribeUserToTokenRequest,
+	r *http.Request,
+) error {
+	const contentType = "application/json"
+	e := new(jx.Encoder)
+	{
+		req.Encode(e)
+	}
+	encoded := e.Bytes()
+	ht.SetBody(r, bytes.NewReader(encoded), contentType)
+	return nil
+}
+
 func encodeVkAuthCallbackRequest(
 	req *VkAuthCallbackRequest,
 	r *http.Request,

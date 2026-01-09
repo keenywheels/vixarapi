@@ -17,7 +17,8 @@ INSERT INTO users (username, email, vkid) VALUES ('test_user', 'test_user@mail.r
 
 Затем добавляем в redis сессию:
 ```redis
-SET "test_session" '{"user_id": 1, "username": "test_user", "email": "test_user@mail.ru", "vkid": 1234, "tguser": null}'
+SET "test_session" '{"id": "<USER_ID>", "username": "test_user", "email": "test_user@mail.ru", "vkid": 1234, "tguser": null}'
 ```
+где `<USER_ID>` это id пользователя, которого мы только что добавили в postgres (можно узнать через `SELECT id FROM users WHERE username='test_user'`).
 
 теперь можно использовать "test_session" в куке "session_id" для запросов к приватным ручкам.

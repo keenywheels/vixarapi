@@ -14,6 +14,7 @@ import (
 	"github.com/keenywheels/backend/internal/processor/service"
 	"github.com/keenywheels/backend/pkg/logger"
 	"github.com/keenywheels/backend/pkg/logger/zap"
+	"github.com/keenywheels/backend/pkg/mailer/smtp"
 	"github.com/keenywheels/backend/pkg/postgres"
 	"golang.org/x/sync/errgroup"
 )
@@ -66,8 +67,10 @@ func (app *App) Run() error {
 	llm := llm.NewClient(&cfg.App.Clients.LLM)
 
 	// create service layer
+	mailer := smtp.New(&cfg.App.SMTPCfg)
+
 	repo := repository.New(db)
-	service := service.New(repo, llm)
+	service := service.New(repo, llm, mailer)
 
 	// create broker
 	brokerOpts := []broker.Option{
@@ -81,7 +84,8 @@ func (app *App) Run() error {
 	}
 
 	b := broker.New(brokerCfg, service, broker.Topics{
-		ScraperData: cfg.KafkaCfg.Topics.ScraperData,
+		ScraperData:   cfg.KafkaCfg.Topics.ScraperData,
+		Notifications: cfg.KafkaCfg.Topics.Notifications,
 	}, brokerOpts...)
 
 	// create kafka consumer
@@ -102,10 +106,13 @@ func (app *App) Run() error {
 	g, ctx := errgroup.WithContext(ctx)
 
 	// start consuming
-	topics := []string{cfg.KafkaCfg.Topics.ScraperData}
+	topics := []string{
+		cfg.KafkaCfg.Topics.ScraperData,   // topic with data from scraped sites
+		cfg.KafkaCfg.Topics.Notifications, // topic with notifications
+	}
 
 	g.Go(func() error {
-		app.logger.Infof("starting kafka consumer for topics: %v", []string{cfg.KafkaCfg.Topics.ScraperData})
+		app.logger.Infof("starting kafka consumer for topics: %v", topics)
 
 		if err := kafkaConsumer.StartConsuming(ctx, topics, b); err != nil {
 			return fmt.Errorf("kafka consumer error: %w", err)

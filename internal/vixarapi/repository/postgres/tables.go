@@ -90,3 +90,42 @@ func NewUserQueryTable() UserQueryTable {
 		},
 	}
 }
+
+// UserTokenSubTable represents the structure of the user token sub table
+type UserTokenSubTable struct {
+	Name   string
+	Fields UserTokenSubFields
+}
+
+// UserTokenSubFields represents the fields of the user token sub table
+type UserTokenSubFields struct {
+	ID               string
+	UserID           string
+	Token            string
+	Category         string
+	CurrentInterest  string
+	PreviousInterest string
+	Threshold        string
+	Method           string
+	ScanDate         string
+	CreatedAt        string
+}
+
+// NewUserTokenSubTable creates a new instance of UserTokenSubTable
+func NewUserTokenSubTable() UserTokenSubTable {
+	return UserTokenSubTable{
+		Name: "user_token_sub",
+		Fields: UserTokenSubFields{
+			ID:               "id",
+			UserID:           "user_id",
+			Token:            "token",
+			Category:         "category",
+			CurrentInterest:  "curr_interest",
+			PreviousInterest: "prv_interest",
+			Threshold:        "threshold",
+			Method:           "method",
+			ScanDate:         "scan_date",
+			CreatedAt:        "created_at",
+		},
+	}
+}

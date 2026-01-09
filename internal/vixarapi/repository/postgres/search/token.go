@@ -143,3 +143,52 @@ func (r *Repository) SearchTokenInfo(
 
 	return res, nil
 }
+
+// GetTokenParams parmameters for getting token
+type GetTokenParams struct {
+	Token    string
+	Category string
+}
+
+// GetLatestToken retrieves the latest token record
+func (r *Repository) GetLatestToken(ctx context.Context, params *GetTokenParams) (*models.Token, error) {
+	op := "Repository.GetLatestToken"
+
+	query, args, err := r.db.Builder.
+		Select(
+			r.tbls.search.Fields.TokenName,
+			r.tbls.search.Fields.ScrapeDate,
+			r.tbls.search.Fields.Interest,
+			r.tbls.search.Fields.Sentiment,
+			r.tbls.search.Fields.Category,
+			r.tbls.search.Fields.GlobalMedian,
+			r.tbls.search.Fields.CategoryMedian,
+		).
+		From(r.tbls.search.Name).
+		Where(sq.And{
+			sq.Eq{r.tbls.search.Fields.TokenName: params.Token},
+			sq.Eq{r.tbls.search.Fields.Category: params.Category},
+		}).
+		OrderBy(fmt.Sprintf("%s DESC", r.tbls.search.Fields.ScrapeDate)).
+		Limit(1).
+		ToSql()
+	if err != nil {
+		return nil, commonRepo.ParsePostgresError(op, err)
+	}
+
+	var token models.Token
+
+	if err := r.db.Pool.QueryRow(ctx, query, args...).Scan(
+		&token.TokenName,
+		&token.ScrapeDate,
+		&token.Interest,
+		&token.Sentiment,
+		&token.Category,
+		&token.GlobalMedian,
+		&token.CategoryMedian,
+	); err != nil {
+		return nil, commonRepo.ParsePostgresError(op, err)
+	}
+
+	return &token, nil
+}

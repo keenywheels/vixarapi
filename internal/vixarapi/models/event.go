@@ -15,5 +15,4 @@ type Notification struct {
 	PreviousInterest float64   `json:"previous_interest"`
 	CurrentInterest  float64   `json:"current_interest"`
 	ScanDate         time.Time `json:"scan_date"`
-	// TODO: мб надо будет добавить поля; проверить, когда буду делать логику обработки таски в процессоре
 }

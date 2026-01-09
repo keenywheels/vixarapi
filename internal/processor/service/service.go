@@ -9,13 +9,14 @@ import (
 	"github.com/keenywheels/backend/internal/pkg/tokenizer/pkg/stemmer"
 	"github.com/keenywheels/backend/internal/pkg/tokenizer/stages"
 	"github.com/keenywheels/backend/internal/processor/models"
+	"github.com/keenywheels/backend/pkg/mailer"
 )
 
 const (
 	interestMetricKey = "interest"
 )
 
-// IClientLLM
+// IClientLLM define the intervace for LLM client interactions
 type IClientLLM interface {
 	SentimentAnalysis(ctx context.Context, req *llm.SentimentAnalysisRequest) (*llm.SentimentAnalysisResponse, error)
 }
@@ -27,15 +28,21 @@ type IRepository interface {
 
 // Service struct for service layer logic
 type Service struct {
-	repo IRepository
-	llm  IClientLLM
+	repo   IRepository
+	llm    IClientLLM
+	mailer mailer.Mailer
 }
 
 // New creates a new instance of Service
-func New(repo IRepository, llm IClientLLM) *Service {
+func New(
+	repo IRepository,
+	llm IClientLLM,
+	mailer mailer.Mailer,
+) *Service {
 	return &Service{
-		repo: repo,
-		llm:  llm,
+		repo:   repo,
+		llm:    llm,
+		mailer: mailer,
 	}
 }
 

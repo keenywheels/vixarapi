@@ -11,7 +11,13 @@ import (
 	"github.com/keenywheels/backend/pkg/ctxutils"
 )
 
-const typeEmail = "email"
+const (
+	notifyWithEmail = "email"
+)
+
+const (
+	notificationTypeInterestIncreased = "interest_increased"
+)
 
 const defaultLimit = 1000
 
@@ -73,7 +79,8 @@ func (s *Service) putNotificationTasks(ctx context.Context) (uint64, error) {
 			// TODO: надо доработать логику, чтобы была защита от повторных отправок уведомлений
 			// TODO: (если при обходе ничего не обновили, но старые значения удовлетворяют условию отправки)
 			if err := s.broker.SendNotification(models.Notification{
-				Type:             typeEmail,
+				NotifyWith:       notifyWithEmail,
+				Type:             notificationTypeInterestIncreased,
 				UserID:           sub.UserID,
 				Username:         sub.Username,
 				Email:            sub.Email,
@@ -82,6 +89,7 @@ func (s *Service) putNotificationTasks(ctx context.Context) (uint64, error) {
 				Threshold:        sub.Threshold,
 				PreviousInterest: sub.PreviousInterest,
 				CurrentInterest:  sub.CurrentInterest,
+				ScanDate:         sub.ScanDate,
 			}); err != nil {
 				log.Errorf("[%s] failed to send notification for user_id=%s, token=%s: %v",
 					op, sub.UserID, sub.Token, err,

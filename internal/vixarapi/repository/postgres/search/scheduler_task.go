@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"slices"
+	"time"
 
 	commonRepo "github.com/keenywheels/backend/internal/vixarapi/repository/postgres"
 	"github.com/keenywheels/backend/pkg/ctxutils"
@@ -87,6 +88,7 @@ type IncreasedTokenSubInfo struct {
 	CurrentInterest  float64
 	PreviousInterest float64
 	Threshold        float64
+	ScanDate         time.Time
 }
 
 // GetIncreasedTokenSubs returns all token subs that were increased
@@ -106,7 +108,8 @@ func (r *Repository) GetIncreasedTokenSubs(
 				uts.category,
 				uts.curr_interest,
 				uts.prv_interest,
-				uts.threshold
+				uts.threshold,
+				uts.scan_date
 			FROM user_token_sub uts
 			JOIN users u ON uts.user_id = u.id
 			WHERE curr_interest / prv_interest > threshold
@@ -135,6 +138,7 @@ func (r *Repository) GetIncreasedTokenSubs(
 			&sub.CurrentInterest,
 			&sub.PreviousInterest,
 			&sub.Threshold,
+			&sub.ScanDate,
 		); err != nil {
 			return nil, commonRepo.ParsePostgresError(op, err)
 		}

@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/keenywheels/backend/internal/pkg/client/llm"
+	"github.com/keenywheels/backend/pkg/mailer/smtp"
 	"github.com/spf13/viper"
 )
 
@@ -14,7 +15,7 @@ type ClientsConfig struct {
 	LLM llm.Config `mapstructure:"llm"`
 }
 
-// Config struct for logger config
+// LoggerConfig struct for logger config
 type LoggerConfig struct {
 	LogLevel      string `mapstructure:"loglvl"`
 	Mode          string `mapstructure:"mode"`
@@ -63,6 +64,7 @@ type AppConfig struct {
 	Processor ProcessorConfig `mapstructure:"processor"`
 	Postgres  PostgresConfig  `mapstructure:"postgres"`
 	LoggerCfg LoggerConfig    `mapstructure:"logger"`
+	SMTPCfg   smtp.Config     `mapstructure:"smtp"`
 }
 
 // KafkaTopics contains all kafka topics
@@ -84,7 +86,7 @@ type Config struct {
 	KafkaCfg KafkaConfig `mapstructure:"kafka"`
 }
 
-// LoadConfig
+// LoadConfig parse yaml config into Config struct
 func LoadConfig(path string) (*Config, error) {
 	v := viper.New()
 

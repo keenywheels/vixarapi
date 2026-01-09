@@ -19,6 +19,11 @@ app:
     loglvl: debug
     mode: development
     encoding: json
+  smtp:
+    host: smtp.mail.ru
+    port: "587"
+    username: ""  # should be set for testing
+    password: ""  # should be set for testing
 
 kafka:
   group_id: "vixar_processor"

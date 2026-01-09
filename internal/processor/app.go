@@ -14,6 +14,7 @@ import (
 	"github.com/keenywheels/backend/internal/processor/service"
 	"github.com/keenywheels/backend/pkg/logger"
 	"github.com/keenywheels/backend/pkg/logger/zap"
+	"github.com/keenywheels/backend/pkg/mailer/smtp"
 	"github.com/keenywheels/backend/pkg/postgres"
 	"golang.org/x/sync/errgroup"
 )
@@ -66,8 +67,10 @@ func (app *App) Run() error {
 	llm := llm.NewClient(&cfg.App.Clients.LLM)
 
 	// create service layer
+	mailer := smtp.New(&cfg.App.SMTPCfg)
+
 	repo := repository.New(db)
-	service := service.New(repo, llm)
+	service := service.New(repo, llm, mailer)
 
 	// create broker
 	brokerOpts := []broker.Option{

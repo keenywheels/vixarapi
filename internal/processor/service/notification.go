@@ -22,6 +22,8 @@ const (
 	notifyWithEmail                   = "email"
 	notificationTypeInterestIncreased = "interest_increased"
 	headerTypeInterestIncreased       = "Увеличился интерес к отслеживаемой теме"
+	interestChangedIncreased          = "увеличился"
+	interestChangedDecreased          = "уменьшился"
 )
 
 var (
@@ -67,10 +69,21 @@ func (s *Service) notifyWithEmail(ctx context.Context, event *models.Notificatio
 	case notificationTypeInterestIncreased:
 		header = headerTypeInterestIncreased
 
+		var (
+			perc   = int((event.CurrentInterest - event.PreviousInterest) / event.PreviousInterest * 100)
+			change = interestChangedIncreased
+		)
+
+		if perc < 0 {
+			change = interestChangedDecreased
+			perc *= -1 // take abs to display in the template
+		}
+
 		// TODO: подумать, что можно сделать с тем, что в сообщение токен в денормализованном виде
 		err = templates.ExecuteTemplate(&body, fmt.Sprintf("%s.tmpl", event.Type), struct {
 			Name             string
 			Token            string
+			Change           string
 			Percentage       int
 			CurrentInterest  float64
 			PreviousInterest float64
@@ -78,7 +91,8 @@ func (s *Service) notifyWithEmail(ctx context.Context, event *models.Notificatio
 		}{
 			Name:             event.Username,
 			Token:            event.Token,
-			Percentage:       int(event.CurrentInterest / event.PreviousInterest * 100),
+			Change:           change,
+			Percentage:       perc,
 			CurrentInterest:  event.CurrentInterest,
 			PreviousInterest: event.PreviousInterest,
 			ScanTime:         event.ScanDate.Format(time.DateTime),

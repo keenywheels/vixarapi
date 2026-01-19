@@ -41,6 +41,7 @@ var operationRolesCookieAuth = map[string][]string{
 	SaveUserQueryOperation:         []string{},
 	SearchTokenInfoOperation:       []string{},
 	SubscribeUserToTokenOperation:  []string{},
+	UpdateUserTokenSubOperation:    []string{},
 	UserInfoOperation:              []string{},
 	VkAuthRegisterOperation:        []string{},
 }

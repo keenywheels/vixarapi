@@ -18,6 +18,7 @@ type IService interface {
 	SubscribeToToken(ctx context.Context, params *service.SubscribeToTokenParams) (string, error)
 	GetSubscribedTokens(ctx context.Context, userID string, limit, offset uint64) ([]*service.TokenSubInfo, error)
 	UnsubscribeFromToken(ctx context.Context, id string) error
+	UpdateTokenSubscription(ctx context.Context, params *service.UpdateTokenSubParams) (*service.UpdateTokenSubResult, error)
 }
 
 // Controller contains handlers for endpoints

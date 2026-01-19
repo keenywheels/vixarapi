@@ -14,6 +14,7 @@ const (
 	SaveUserQueryOperation         OperationName = "SaveUserQuery"
 	SearchTokenInfoOperation       OperationName = "SearchTokenInfo"
 	SubscribeUserToTokenOperation  OperationName = "SubscribeUserToToken"
+	UpdateUserTokenSubOperation    OperationName = "UpdateUserTokenSub"
 	UserInfoOperation              OperationName = "UserInfo"
 	VkAuthCallbackOperation        OperationName = "VkAuthCallback"
 	VkAuthRegisterOperation        OperationName = "VkAuthRegister"

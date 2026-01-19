@@ -17,7 +17,7 @@ app:
     mode: development
     encoding: json
   scheduler:
-    refresh_search_table_pattern: "18 * * * *" # configure cron pattern for testing
+    refresh_search_table_pattern: "58 * * * *" # configure cron pattern for testing
   vk:
     http:
       timeout: 5s

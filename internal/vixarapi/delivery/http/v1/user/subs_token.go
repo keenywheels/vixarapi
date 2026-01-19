@@ -40,6 +40,12 @@ func (c *Controller) SubscribeUserToToken(
 		}, nil
 	}
 
+	if req.Threshold <= 0 {
+		return &gen.SubscribeUserToTokenBadRequest{
+			Error: httputils.ErrorBadRequest,
+		}, nil
+	}
+
 	// retrieve user info from context
 	userInfo, ok := security.GetUserInfo(ctx)
 	if !ok {
@@ -73,6 +79,10 @@ func (c *Controller) SubscribeUserToToken(
 		case errors.Is(err, commonService.ErrAlreadyExists):
 			return &gen.SubscribeUserToTokenConflict{
 				Error: httputils.ErrorConflict,
+			}, nil
+		case errors.Is(err, commonService.ErrNotFound):
+			return &gen.SubscribeUserToTokenNotFound{
+				Error: httputils.ErrorNotFound,
 			}, nil
 		}
 
@@ -157,6 +167,58 @@ func (c *Controller) DeleteUserTokenSub(
 	return &gen.DeleteUserTokenSubOK{}, nil
 }
 
+// UpdateUserTokenSub update user's token sub
+func (c *Controller) UpdateUserTokenSub(
+	ctx context.Context,
+	req *gen.UpdateUserTokenSubRequest,
+) (gen.UpdateUserTokenSubRes, error) {
+	var (
+		op  = "Controller.UpdateUserTokenSub"
+		log = ctxutils.GetLogger(ctx)
+	)
+
+	// validate request
+	if err := req.Validate(); err != nil {
+		log.Errorf("[%s] invalid request: %v", op, err)
+
+		return &gen.UpdateUserTokenSubBadRequest{
+			Error: httputils.ErrorBadRequest,
+		}, nil
+	}
+
+	if req.Threshold <= 0 {
+		return &gen.UpdateUserTokenSubBadRequest{
+			Error: httputils.ErrorBadRequest,
+		}, nil
+	}
+
+	// update token info
+	res, err := c.svc.UpdateTokenSubscription(ctx, &service.UpdateTokenSubParams{
+		ID:        req.ID,
+		Threshold: req.Threshold,
+		Method:    req.Method,
+	})
+	if err != nil {
+		switch {
+		case errors.Is(err, commonService.ErrNotFound):
+			return &gen.UpdateUserTokenSubNotFound{
+				Error: httputils.ErrorNotFound,
+			}, nil
+		}
+
+		log.Errorf("[%s] failed to update token sub: %v", op, err)
+
+		return &gen.UpdateUserTokenSubInternalServerError{
+			Error: httputils.ErrorInternalError,
+		}, nil
+	}
+
+	return &gen.UpdateUserTokenSubResponse{
+		CurrentInterest:  res.CurrInterest,
+		PreviousInterest: res.PrvInterest,
+	}, nil
+}
+
 // parseMethod validate method and set default value if wasn't set
 func parseMethod(reqMethod gen.OptString) (string, error) {
 	// return denormalized method if not set
@@ -184,6 +246,7 @@ func convertTokenSubs(subs []*service.TokenSubInfo) []gen.UserTokenSub {
 			Token:            s.Token,
 			Category:         s.Category,
 			Method:           s.Method,
+			Threshold:        s.Threshold,
 			CurrentInterest:  s.CurrentInterest,
 			PreviousInterest: s.PreviousInterest,
 			LastScan:         s.ScanDate,

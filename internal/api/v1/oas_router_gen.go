@@ -241,8 +241,10 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 							s.handleGetUserTokenSubsRequest([0]string{}, elemIsEscaped, w, r)
 						case "POST":
 							s.handleSubscribeUserToTokenRequest([0]string{}, elemIsEscaped, w, r)
+						case "PUT":
+							s.handleUpdateUserTokenSubRequest([0]string{}, elemIsEscaped, w, r)
 						default:
-							s.notAllowed(w, r, "DELETE,GET,POST")
+							s.notAllowed(w, r, "DELETE,GET,POST,PUT")
 						}
 
 						return
@@ -575,6 +577,14 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 							r.name = SubscribeUserToTokenOperation
 							r.summary = "Subscribe user to specified token"
 							r.operationID = "subscribeUserToToken"
+							r.pathPattern = "/api/v1/user/subs/token"
+							r.args = args
+							r.count = 0
+							return r, true
+						case "PUT":
+							r.name = UpdateUserTokenSubOperation
+							r.summary = "Update user's token subscription"
+							r.operationID = "updateUserTokenSub"
 							r.pathPattern = "/api/v1/user/subs/token"
 							r.args = args
 							r.count = 0

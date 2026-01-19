@@ -336,6 +336,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+        '404':
+          description: Token not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
         '409':
           description: Conflict - already subscribed
           content:
@@ -413,6 +419,49 @@ paths:
       responses:
         '200':
           description: Successfully deleted user's token subscription
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    put:
+      tags: [user]
+      summary: Update user's token subscription
+      operationId: updateUserTokenSub
+      security:
+        - cookieAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUserTokenSubRequest'
+      responses:
+        '200':
+          description: Successfully updated user's token sub
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateUserTokenSubResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
         '401':
           description: Unauthorized
           content:
@@ -613,6 +662,9 @@ components:
           type: string
         method:
           type: string
+        threshold:
+          type: number
+          format: float64
         current_interest:
           type: number
           format: float64
@@ -622,7 +674,31 @@ components:
         last_scan:
           type: string
           format: date-time
-      required: [id, token, category, method, current_interest, previous_interest, last_scan]
+      required: [id, token, category, method, threshold, current_interest, previous_interest, last_scan]
+    UpdateUserTokenSubRequest:
+      type: object
+      properties:
+        id:
+          type: string
+          minLength: 1
+          maxLength: 128
+        threshold:
+          type: number
+        method:
+          type: string
+          minLength: 1
+          maxLength: 128
+      required: [id, threshold, method]
+    UpdateUserTokenSubResponse:
+      type: object
+      properties:
+        current_interest:
+          type: number
+          format: float64
+        previous_interest:
+          type: number
+          format: float64
+      required: [current_interest, previous_interest]
 
     Error:
       type: object

@@ -33,6 +33,10 @@ type SubscribeUserToTokenRes interface {
 	subscribeUserToTokenRes()
 }
 
+type UpdateUserTokenSubRes interface {
+	updateUserTokenSubRes()
+}
+
 type UserInfoRes interface {
 	userInfoRes()
 }

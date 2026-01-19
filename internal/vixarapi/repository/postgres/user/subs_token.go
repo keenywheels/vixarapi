@@ -155,3 +155,72 @@ func (r *Repository) DeleteTokenSub(ctx context.Context, id string) error {
 
 	return nil
 }
+
+// UpdateTokenSubParams represents parameters for updating a token subscription in database
+type UpdateTokenSubParams struct {
+	ID        string
+	Threshold float64
+	Method    string
+}
+
+type UpdateTokenSubResult struct {
+	CurrInterest float64
+	PrvInterest  float64
+}
+
+// UpdateTokenSub updates a token subscription in database
+func (r *Repository) UpdateTokenSub(ctx context.Context, params *UpdateTokenSubParams) (*UpdateTokenSubResult, error) {
+	// TODO: parameterize interval in query if change scrape interval
+	var (
+		op    = "Repository.UpdateTokenSub"
+		query = `
+			WITH
+				curr_token_info AS (SELECT *
+									FROM user_token_sub uts
+											 JOIN mv_token_search ts
+												  ON uts.token = ts.token_name AND uts.category = ts.category
+									WHERE uts.id = $1
+									  AND (ts.scrape_date = uts.scan_date)),
+				prv_token_info AS (SELECT *
+								   FROM user_token_sub uts
+											JOIN mv_token_search ts
+												 ON uts.token = ts.token_name AND uts.category = ts.category
+								   WHERE uts.id = $1
+									 AND (ts.scrape_date = uts.scan_date - INTERVAL '1 days')),
+				new_data AS (SELECT $2::numeric            AS threshold,
+									$3::text               AS method,
+									(SELECT CASE $3
+												WHEN 'global_median' THEN interest / global_median
+												WHEN 'category_median' THEN interest / category_median
+												ELSE interest
+												END
+									 FROM curr_token_info) AS curr_interest,
+									(SELECT CASE $3
+												WHEN 'global_median' THEN interest / global_median
+												WHEN 'category_median' THEN interest / category_median
+												ELSE interest
+												END
+									 FROM prv_token_info)  AS prv_interest)
+			UPDATE user_token_sub uts
+			SET method        = nd.method,
+				threshold     = nd.threshold,
+				curr_interest = nd.curr_interest,
+				prv_interest  = nd.prv_interest
+			FROM new_data nd
+			WHERE uts.id = $1
+			RETURNING nd.curr_interest, nd.prv_interest;
+		`
+		args = []any{params.ID, params.Threshold, params.Method}
+	)
+
+	// update user token sub
+	var res UpdateTokenSubResult
+	if err := r.db.Pool.QueryRow(ctx, query, args...).Scan(
+		&res.CurrInterest,
+		&res.PrvInterest,
+	); err != nil {
+		return nil, commonRepo.ParsePostgresError(op, err)
+	}
+
+	return &res, nil
+}

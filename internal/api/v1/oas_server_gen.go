@@ -56,6 +56,12 @@ type Handler interface {
 	//
 	// POST /api/v1/user/subs/token
 	SubscribeUserToToken(ctx context.Context, req *SubscribeUserToTokenRequest) (SubscribeUserToTokenRes, error)
+	// UpdateUserTokenSub implements updateUserTokenSub operation.
+	//
+	// Update user's token subscription.
+	//
+	// PUT /api/v1/user/subs/token
+	UpdateUserTokenSub(ctx context.Context, req *UpdateUserTokenSubRequest) (UpdateUserTokenSubRes, error)
 	// UserInfo implements userInfo operation.
 	//
 	// Get info of logged in user.

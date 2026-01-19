@@ -66,6 +66,7 @@ type TokenSubInfo struct {
 	Token            string
 	Category         string
 	Method           string
+	Threshold        float64
 	CurrentInterest  float64
 	PreviousInterest float64
 	ScanDate         time.Time
@@ -92,6 +93,35 @@ func (s *Service) UnsubscribeFromToken(ctx context.Context, id string) error {
 	}
 
 	return nil
+}
+
+// UpdateTokenSubParams represents parameters for updating token subscription
+type UpdateTokenSubParams struct {
+	ID        string
+	Threshold float64
+	Method    string
+}
+
+// UpdateTokenSubResult represents new values of current and previous interest after updating token subscription
+type UpdateTokenSubResult struct {
+	CurrInterest float64
+	PrvInterest  float64
+}
+
+// UpdateTokenSubscription updates token subscription
+func (s *Service) UpdateTokenSubscription(ctx context.Context, params *UpdateTokenSubParams) (*UpdateTokenSubResult, error) {
+	op := "Service.UpdateTokenSubscription"
+
+	res, err := s.repo.UpdateTokenSub(ctx, &user.UpdateTokenSubParams{
+		ID:        params.ID,
+		Threshold: params.Threshold,
+		Method:    params.Method,
+	})
+	if err != nil {
+		return nil, service.ParseRepositoryError(op, err)
+	}
+
+	return &UpdateTokenSubResult{CurrInterest: res.CurrInterest, PrvInterest: res.PrvInterest}, nil
 }
 
 // parseInterest return interest based on the chosen method
@@ -121,6 +151,7 @@ func convertTokenSubs(subs []*models.UserTokenSub) []*TokenSubInfo {
 			Token:            s.Token,
 			Category:         s.Category,
 			Method:           s.Method,
+			Threshold:        s.Threshold,
 			CurrentInterest:  s.CurrentInterest,
 			PreviousInterest: s.PreviousInterest,
 			ScanDate:         s.ScanDate,

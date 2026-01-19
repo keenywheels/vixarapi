@@ -395,6 +395,10 @@ type SubscribeUserToTokenInternalServerError Error
 
 func (*SubscribeUserToTokenInternalServerError) subscribeUserToTokenRes() {}
 
+type SubscribeUserToTokenNotFound Error
+
+func (*SubscribeUserToTokenNotFound) subscribeUserToTokenRes() {}
+
 // Ref: #/components/schemas/SubscribeUserToTokenRequest
 type SubscribeUserToTokenRequest struct {
 	Token     string    `json:"token"`
@@ -574,6 +578,87 @@ func (s *TokenRecordFeatures) SetSentiment(val int16) {
 	s.Sentiment = val
 }
 
+type UpdateUserTokenSubBadRequest Error
+
+func (*UpdateUserTokenSubBadRequest) updateUserTokenSubRes() {}
+
+type UpdateUserTokenSubInternalServerError Error
+
+func (*UpdateUserTokenSubInternalServerError) updateUserTokenSubRes() {}
+
+type UpdateUserTokenSubNotFound Error
+
+func (*UpdateUserTokenSubNotFound) updateUserTokenSubRes() {}
+
+// Ref: #/components/schemas/UpdateUserTokenSubRequest
+type UpdateUserTokenSubRequest struct {
+	ID        string  `json:"id"`
+	Threshold float64 `json:"threshold"`
+	Method    string  `json:"method"`
+}
+
+// GetID returns the value of ID.
+func (s *UpdateUserTokenSubRequest) GetID() string {
+	return s.ID
+}
+
+// GetThreshold returns the value of Threshold.
+func (s *UpdateUserTokenSubRequest) GetThreshold() float64 {
+	return s.Threshold
+}
+
+// GetMethod returns the value of Method.
+func (s *UpdateUserTokenSubRequest) GetMethod() string {
+	return s.Method
+}
+
+// SetID sets the value of ID.
+func (s *UpdateUserTokenSubRequest) SetID(val string) {
+	s.ID = val
+}
+
+// SetThreshold sets the value of Threshold.
+func (s *UpdateUserTokenSubRequest) SetThreshold(val float64) {
+	s.Threshold = val
+}
+
+// SetMethod sets the value of Method.
+func (s *UpdateUserTokenSubRequest) SetMethod(val string) {
+	s.Method = val
+}
+
+// Ref: #/components/schemas/UpdateUserTokenSubResponse
+type UpdateUserTokenSubResponse struct {
+	CurrentInterest  float64 `json:"current_interest"`
+	PreviousInterest float64 `json:"previous_interest"`
+}
+
+// GetCurrentInterest returns the value of CurrentInterest.
+func (s *UpdateUserTokenSubResponse) GetCurrentInterest() float64 {
+	return s.CurrentInterest
+}
+
+// GetPreviousInterest returns the value of PreviousInterest.
+func (s *UpdateUserTokenSubResponse) GetPreviousInterest() float64 {
+	return s.PreviousInterest
+}
+
+// SetCurrentInterest sets the value of CurrentInterest.
+func (s *UpdateUserTokenSubResponse) SetCurrentInterest(val float64) {
+	s.CurrentInterest = val
+}
+
+// SetPreviousInterest sets the value of PreviousInterest.
+func (s *UpdateUserTokenSubResponse) SetPreviousInterest(val float64) {
+	s.PreviousInterest = val
+}
+
+func (*UpdateUserTokenSubResponse) updateUserTokenSubRes() {}
+
+type UpdateUserTokenSubUnauthorized Error
+
+func (*UpdateUserTokenSubUnauthorized) updateUserTokenSubRes() {}
+
 type UserInfoInternalServerError Error
 
 func (*UserInfoInternalServerError) userInfoRes() {}
@@ -653,6 +738,7 @@ type UserTokenSub struct {
 	Token            string    `json:"token"`
 	Category         string    `json:"category"`
 	Method           string    `json:"method"`
+	Threshold        float64   `json:"threshold"`
 	CurrentInterest  float64   `json:"current_interest"`
 	PreviousInterest float64   `json:"previous_interest"`
 	LastScan         time.Time `json:"last_scan"`
@@ -676,6 +762,11 @@ func (s *UserTokenSub) GetCategory() string {
 // GetMethod returns the value of Method.
 func (s *UserTokenSub) GetMethod() string {
 	return s.Method
+}
+
+// GetThreshold returns the value of Threshold.
+func (s *UserTokenSub) GetThreshold() float64 {
+	return s.Threshold
 }
 
 // GetCurrentInterest returns the value of CurrentInterest.
@@ -711,6 +802,11 @@ func (s *UserTokenSub) SetCategory(val string) {
 // SetMethod sets the value of Method.
 func (s *UserTokenSub) SetMethod(val string) {
 	s.Method = val
+}
+
+// SetThreshold sets the value of Threshold.
+func (s *UserTokenSub) SetThreshold(val float64) {
+	s.Threshold = val
 }
 
 // SetCurrentInterest sets the value of CurrentInterest.

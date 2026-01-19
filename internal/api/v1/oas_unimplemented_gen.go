@@ -85,6 +85,15 @@ func (UnimplementedHandler) SubscribeUserToToken(ctx context.Context, req *Subsc
 	return r, ht.ErrNotImplemented
 }
 
+// UpdateUserTokenSub implements updateUserTokenSub operation.
+//
+// Update user's token subscription.
+//
+// PUT /api/v1/user/subs/token
+func (UnimplementedHandler) UpdateUserTokenSub(ctx context.Context, req *UpdateUserTokenSubRequest) (r UpdateUserTokenSubRes, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
 // UserInfo implements userInfo operation.
 //
 // Get info of logged in user.

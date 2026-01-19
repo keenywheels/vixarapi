@@ -84,6 +84,14 @@ func (r *Router) DeleteUserTokenSub(
 	return r.userController.DeleteUserTokenSub(ctx, params)
 }
 
+// UpdateUserTokenSub implements UpdateUserTokenSub for gen.Handler
+func (r *Router) UpdateUserTokenSub(
+	ctx context.Context,
+	req *gen.UpdateUserTokenSubRequest,
+) (gen.UpdateUserTokenSubRes, error) {
+	return r.userController.UpdateUserTokenSub(ctx, req)
+}
+
 // SearchTokenInfo implements SearchTokenInfo for gen.Handler
 func (r *Router) SearchTokenInfo(
 	ctx context.Context,

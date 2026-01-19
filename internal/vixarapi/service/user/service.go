@@ -20,6 +20,7 @@ type IRepository interface {
 	AddTokenSub(context.Context, *user.AddTokenSubParams) (string, error)
 	GetTokenSubs(context.Context, string, uint64, uint64) ([]*models.UserTokenSub, error)
 	DeleteTokenSub(context.Context, string) error
+	UpdateTokenSub(context.Context, *user.UpdateTokenSubParams) (*user.UpdateTokenSubResult, error)
 }
 
 // ISearch provides interface to communicate with the search repository layer
